@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eac80af47b3cf248a12b6d99d825f63, type: 3}
+  m_Name: ForceJumpNormal
+  m_EditorClassIdentifier: 
+  _complexity: {fileID: 11400000, guid: 393e55977e1ab304eb0485e8407547e5, type: 2}
+  _forceJumpWalk: 400
+  _forceJumpRun: 500
