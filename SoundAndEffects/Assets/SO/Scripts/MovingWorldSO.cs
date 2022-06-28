@@ -23,7 +23,9 @@ public class MovingWorldSO : ScriptableObject
             VectorSpeed = Vector3.right * value;
         }
     }
-
+    /// <summary>
+    /// Vector3.right * CurrentSpeed
+    /// </summary>
     public Vector3 VectorSpeed { get; private set; }
 
     /// <summary>
@@ -31,25 +33,26 @@ public class MovingWorldSO : ScriptableObject
     /// </summary>
     /// <param name="xPosition">object go to negative direction</param>
     /// <returns>true if Object pass the demanded position</returns>
+    //public bool IsObjectReadyToRemove(float xPosition) => xPosition < xPositionOutScreen;
     public bool IsObjectReadyToRemove(float xPosition) => xPosition < xPositionOutScreen;
 
     /// <summary>
     /// Set the movement speed based on the current type of movement
     /// </summary>
-    /// <param name="moveType"></param>
-    public void SetWorldMovementSpeed(MovementType moveType)
+    /// <param name="playerState"></param>
+    public void SetWorldMovementSpeed(PlayerState playerState)
     {
-        switch (moveType)
+        switch (playerState)
         {
-            case MovementType.Stop:
+            case PlayerState.Stop:
                 worldIsMoving = false;
                 UpdateWorldSpeed(0);
                 break;
-            case MovementType.Walk:
+            case PlayerState.Walk:
                 worldIsMoving = true;
                 UpdateWorldSpeed(-moveSpeed);
                 break;
-            case MovementType.Run:
+            case PlayerState.Run:
                 worldIsMoving = true;
                 UpdateWorldSpeed(-runSpeed);
                 break;
@@ -58,7 +61,11 @@ public class MovingWorldSO : ScriptableObject
                 break;
         }
     }
-     
+
+    /// <summary>
+    /// Update for Object which direct use the CurrentSpeed and for other signed for Update through UnityEvent InformAboutSpeedChange
+    /// </summary>
+    /// <param name="newSpeed"></param>
     private void UpdateWorldSpeed(float newSpeed)
     {
         CurrentSpeed = newSpeed;

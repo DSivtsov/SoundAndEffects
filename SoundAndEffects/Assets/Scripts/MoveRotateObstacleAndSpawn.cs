@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+/// <summary>
+/// Direved class for rotated objects
+/// </summary>
 public class MoveRotateObstacleAndSpawn : MoveObstacleAndSpawn
 {
     [Tooltip("Set for this type of obstacle the relative speed in relation to the ground speed of World. Must be higher then 1 if obstacle are moving")]
@@ -11,10 +14,12 @@ public class MoveRotateObstacleAndSpawn : MoveObstacleAndSpawn
 
     public event Action UpdatedCurrentVelocityMoveWorld;
 
+    /// <summary>
+    /// The Rotated objected must move faster then "Ground" and updates its Abgular speed if was updatted the "Ground speed"
+    /// </summary>
     protected override void UpdateCurrentVelocityMoveWorld()
     {
         currentVectorMoveWorld = movingWorld.VectorSpeed * speedModifier;
-        //Debug.Log($"{this} : movingWorld={movingWorld} Length={UpdatedCurrentVelocityMoveWorld?.GetInvocationList().Length}");
         UpdatedCurrentVelocityMoveWorld?.Invoke();
     }
 }

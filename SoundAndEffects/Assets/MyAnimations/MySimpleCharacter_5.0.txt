@@ -1,0 +1,8 @@
+Was build on SimpleCharacter_5.0
+Turn of not used Animations Layers
+Changed the all Animations for Layers Jumping:
+-MyRunning_Jump
+-MyStanding_Jump
+Set the Root Transform Posistion Y/Bake into Pose to False, to exclude the character move without its Rigidbody
+
+See _LICENSE.txt at Assets/Course Library/_Source_Files/_LICENSE.txt

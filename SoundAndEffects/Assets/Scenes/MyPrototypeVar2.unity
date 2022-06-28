@@ -435,8 +435,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsWalkingAfterRUN: 0
-  moveBackGround: {fileID: 835818922}
-  player: {fileID: 2014335016}
   explosionPrefab: {fileID: 9125212449759046732, guid: 3be08c3c257ce6e43aa7084fd7366ca6, type: 3}
 --- !u!1 &250114422
 GameObject:
@@ -1069,7 +1067,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630604348}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -50.01, y: 0.07500017, z: 0.8}
+  m_LocalPosition: {x: -50.01, y: 0.07500005, z: 0.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 466417740}
@@ -1160,7 +1158,7 @@ GameObject:
   - component: {fileID: 711475454}
   - component: {fileID: 711475453}
   m_Layer: 5
-  m_Name: PressEnter
+  m_Name: TextPressEnter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2773,7 +2771,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1347611843
 MonoBehaviour:
@@ -2789,7 +2787,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnerType: {fileID: 11400000, guid: 9371ca91aa2421f46a2c6c634e6998bb, type: 2}
   spawnedObstacle: {fileID: 6292137778295241336, guid: d16c5de97a974fe45b44220c1e26ec04, type: 3}
-  speedModifier: 1.4
+  speedModifier: 1.3
 --- !u!4 &1347611844
 Transform:
   m_ObjectHideFlags: 0
@@ -2820,7 +2818,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1369481581
 MonoBehaviour:
@@ -3395,7 +3393,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &1835706606
 Transform:
@@ -3483,7 +3481,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &2081359987
 Transform:

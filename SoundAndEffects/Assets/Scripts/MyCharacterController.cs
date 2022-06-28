@@ -3,13 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum PlayerState
+{
+    Stop,
+    Walk,
+    Run
+}
+
 public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 {
+    //For Demo purpose only
     [SerializeField] private bool IsWalkingAfterRUN = false;
-    private bool Jump = false;
-    [SerializeField] private MoveBackGround moveBackGround;
-    [SerializeField] private CollisionGround player;
     [SerializeField] private ParticleSystem explosionPrefab;
+
+    private PlayerCollisionGround checkPlayer;
+    private bool Jump = false;
     //The current selected the difficulty level 
     private ForceJumpSO forceJumpSO;
     private MovingWorldSO movingWorld;
@@ -33,11 +41,17 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     /// Link to Text in Canvas
     /// </summary>
     private TurnOffPressEnter textTurnOffPressEnter;
-    private MovementType currentState;
+    private PlayerState _currentState;
     private bool keyChangeSpeedPressed = false;
 
     private void Awake()
     {
+        checkPlayer = FindObjectOfType<PlayerCollisionGround>();
+        if (checkPlayer== null)
+        {
+            Debug.LogError("Absent module <PlayerCollisionGround>");
+        }
+
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
 
@@ -53,12 +67,16 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         movingWorld = SingletonController.Instance.GetMovingWorld();
     }
 
+    private void OnEnable() => inputs.Move.Enable();
+    private void OnDisable() => inputs.Move.Disable();
+    
     private void Start()
     {
-        CharacterStop();
+        CharacterIdle();
 
         //If IsWalking initialy not set to true
-        // If exist the the object with initial text message "PressEnter", activate it
+        //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
+        //Later can turn off by OnStart
         if (!IsWalkingAfterRUN)
         {
             textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
@@ -71,12 +89,9 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         }
     }
 
-    private void OnEnable() =>  inputs.Move.Enable();
-    private void OnDisable() => inputs.Move.Disable();
-
     private void Update()
     {
-        if (player.IsGrounded)
+        if (checkPlayer.IsGrounded)
         {
             if ( keyChangeSpeedPressed )
             {
@@ -92,26 +107,28 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         }
     }
     /// <summary>
-    /// Change the animation and movement speed, if Player press the coresponding button.
+    /// Change the Player animation and WorldMoveSpeed, if Player press the coresponding button.
     /// Set keyChangeSpeedPressed = false
     /// </summary>
     private void ChangeMoveState()
     {
-        switch (currentState)
+        switch (_currentState)
         {
-            case MovementType.Stop:
-                CharacterStop();
+            case PlayerState.Stop:
+                CharacterIdle();
                 break;
-            case MovementType.Walk:
-                animatorCharacter.SetBool(hashStatic_b, false);
+            case PlayerState.Walk:
+                //animatorCharacter.SetBool(hashStatic_b, false);
+                animatorCharacter.SetBool(hashStatic_b, true);
                 animatorCharacter.SetFloat(hashSpeed_f, 0.26f);
-                UpdateWorldMoveSpeed(MovementType.Walk);
+                UpdateWorldMoveSpeed(PlayerState.Walk);
                 currentForceJump = forceJumpSO.ForceJumpWalk;
                 break;
-            case MovementType.Run:
-                animatorCharacter.SetBool(hashStatic_b, false);
+            case PlayerState.Run:
+                //animatorCharacter.SetBool(hashStatic_b, false);
+                animatorCharacter.SetBool(hashStatic_b, true);
                 animatorCharacter.SetFloat(hashSpeed_f, 0.51f);
-                UpdateWorldMoveSpeed(MovementType.Run);
+                UpdateWorldMoveSpeed(PlayerState.Run);
                 currentForceJump = forceJumpSO.ForceJumpRun;
                 break;
             default:
@@ -124,17 +141,30 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     public void SetForceJumpSO(ForceJumpSO newForceJumpSO) => forceJumpSO = newForceJumpSO;
 
     /// <summary>
-    /// Set Animation, WorldSpeed and State for Character Stop. Called from State switch and from Start
+    /// Can be called from Start() also: called before any Update()
+    /// Set Animation, WorldSpeed and State for Character Stop. 
     /// </summary>
-    private void CharacterStop()
+    private void CharacterIdle()
     {
-        //IsRun = false;
-        currentForceJump = 0;
-        animatorCharacter.SetBool(hashStatic_b, true);
+        WorldStop();
+        //animatorCharacter.SetBool(hashStatic_b, true);
         animatorCharacter.SetFloat(hashSpeed_f, 0);
-        UpdateWorldMoveSpeed(MovementType.Stop);
     }
 
+    private void WorldStop()
+    {
+        currentForceJump = 0;
+        UpdateWorldMoveSpeed(PlayerState.Stop);
+    }
+
+    /// <summary>
+    /// Reaction on press Go.React through ChangeMoveState()
+    /// </summary>
+    private void CharacterGo()
+    {
+        _currentState = PlayerState.Walk;
+        keyChangeSpeedPressed = true;
+    }
     /// <summary>
     /// Called from Obstacle after detected the Collision with Player
     /// </summary>
@@ -144,35 +174,34 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     {
         if (IsFirstCollision)
         {
-            movingWorld.SetWorldMovementSpeed(MovementType.Stop);
+            movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
             rigidbodyCharacter.AddForce(-contactNormal * 5, ForceMode.VelocityChange);
-
             //Explosion paritcle
-            ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab,contactPosition,Quaternion.identity);
+            ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab, contactPosition, Quaternion.identity);
             particle.Play();
 
-            currentForceJump = 0;
-            UpdateWorldMoveSpeed(MovementType.Stop);
+            //Set Player State Died
+            WorldStop();
             animatorCharacter.SetBool(hashDeath_b, true);
             animatorCharacter.SetInteger(hashDeathType_int, 1);
 
-            IsFirstCollision = false; 
+            IsFirstCollision = false;
         }
     }
     /// <summary>
     /// Update the currentState and WorlMovementSpeed
     /// </summary>
     /// <param name="moveType"></param>
-    private void UpdateWorldMoveSpeed(MovementType moveType)
+    private void UpdateWorldMoveSpeed(PlayerState moveType)
     {
-        currentState = moveType;
+        _currentState = moveType;
         movingWorld.SetWorldMovementSpeed(moveType);
     }
 
     #region Mapping for Action Map
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (player.IsGrounded && context.phase == InputActionPhase.Started)
+        if (checkPlayer.IsGrounded && context.phase == InputActionPhase.Started)
         {
             Jump = true;
         }
@@ -181,17 +210,17 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     public void OnRun(InputAction.CallbackContext context)
     {
         //The button Run/Walk will affect if current state != Stop
-        if (currentState != MovementType.Stop)
+        if (_currentState != PlayerState.Stop)
         {
             switch (context.phase)
             {
                 case InputActionPhase.Started:
                 case InputActionPhase.Performed:
-                    currentState = MovementType.Run;
+                    _currentState = PlayerState.Run;
                     //IsRun = true;
                     break;
                 case InputActionPhase.Canceled:
-                    currentState = MovementType.Walk;
+                    _currentState = PlayerState.Walk;
                     //IsRun = false;
                     break;
             }
@@ -202,33 +231,22 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     public void OnStart(InputAction.CallbackContext _)
     {
         //The button Start will affect if current state = Stop
-        if (currentState == MovementType.Stop)
+        if (_currentState == PlayerState.Stop)
         {
             //IsWalking = true;
             textTurnOffPressEnter?.Active(false);
             CharacterGo();
         }
     }
-    /// <summary>
-    /// Reaction on press Go
-    /// </summary>
-    private void CharacterGo()
-    {
-        currentState = MovementType.Walk;
-        keyChangeSpeedPressed = true;
-    }
     #endregion
 
-#if UNITY_EDITOR
-    //Show Gizmo when Player not IsGrounded
-    [ExecuteAlways]
-    private void OnDrawGizmos()
+    //Show Gizmo when Player not IsGrounded in Editor only
+    private void OnDrawGizmosSelected()
     {
-        if (!player.IsGrounded)
+        if (checkPlayer!=null && !checkPlayer.IsGrounded)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position, 0.25f);
         }
     } 
-#endif
 }

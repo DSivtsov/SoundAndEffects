@@ -3,15 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public enum MovementType
-{
-    Stop,
-    Walk,
-    Run
-}
 /// <summary>
-/// Object is moving by set the Transform.position at Update
+/// Object is moving by set the Transform.position at Update, based on movingWorld.CurrentSpeed
 /// </summary>
 public class MoveBackGround : MonoBehaviour
 {

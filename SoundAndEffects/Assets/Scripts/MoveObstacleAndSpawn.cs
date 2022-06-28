@@ -1,9 +1,8 @@
-//#define TRACEON
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+//All position set ans check through Rigidbody.position and converting these to localPositions
 /// <summary>
 /// Object is moving by Rigidbody.MovePosition() at FixedUpdate with set option Interpolate
 /// Attached to every type of Spawners
@@ -11,71 +10,82 @@ using System;
 public class MoveObstacleAndSpawn : MonoBehaviour
 {
     const int initCountObstacles = 3;
-    //[Tooltip("Set for this type of obstacle the relative speed in relation to the ground speed of World. Must be higher then 1 if obstacle are moving")]
-    //[Range(1,3f)]
-    //public float speedModifier = 1f;
     [SerializeField] private SpawnerTypeSO spawnerType;
     [SerializeField] private Rigidbody spawnedObstacle;
 
-    private List<Rigidbody> arrObstacle = new List<Rigidbody>(initCountObstacles);
-    //private List<Obstacle> arrObstacle = new List<Obstacle>(initCountObstacles);
+    private Queue<Rigidbody> arrObstacle = new Queue<Rigidbody>();
+    /// <summary>
+    /// Store the last spawned Obstacle of this Type
+    /// </summary>
+    private Rigidbody lastObstacle;
+    private Pool poolObstacle;
     protected MovingWorldSO movingWorld;
     protected Vector3 currentVectorMoveWorld;
     private MainSpawner mainSpawner;
     /// <summary>
-    /// Is this obstacle was spawned the most latest
+    /// The obstacle of this Type was spawned the most latest
     /// </summary>
     private bool _IamLastObstacle = false;
-    private int idxLastObstacleThatType = -1;
     private System.Random random;
+    private Vector3 initRigidbodyWorldPosition;
+    private float initRigidbodyWorldPositionX;
+    private float worldPositionXDistanceAfter;
     protected void Awake()
     {
         movingWorld = SingletonController.Instance.GetMovingWorld();
         random = new System.Random();
+        //The pool will Instantiate Objects if it will be demands, base on these parameters
+        poolObstacle = new Pool(() => Instantiate<Rigidbody>(spawnedObstacle, transform, worldPositionStays: false));
+        //The position and values that was obtained by the obstacle after Instantiantion under Parent with transform
+        initRigidbodyWorldPosition = transform.position;
+        initRigidbodyWorldPositionX = initRigidbodyWorldPosition.x;
+        worldPositionXDistanceAfter = initRigidbodyWorldPositionX - spawnerType.DistanceAfter;
     }
-
+    /// <summary>
+    /// Action in case of changing WorldSpeed. Can be override by Direved class
+    /// </summary>
     protected virtual void UpdateCurrentVelocityMoveWorld() => currentVectorMoveWorld = movingWorld.VectorSpeed;
 
     public void SpawnObstacle()
     {
-        float newX = spawnerType.DistanceBeforeMin + (float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble() * mainSpawner.Multiplier);
-        Rigidbody newRigidbodyObstacle = Instantiate<Rigidbody>(spawnedObstacle, transform, worldPositionStays: false);
-        //Obstacle newObstacle = new Obstacle(newRigidbodyObstacle, newRigidbodyObstacle.transform);
-        arrObstacle.Add(newRigidbodyObstacle);
-        idxLastObstacleThatType++;
-        newRigidbodyObstacle.position += Vector3.right * newX;
-        newRigidbodyObstacle.name += $"[{idxLastObstacleThatType}]";
-        //newRigidbodyObstacle.velocity = Vector3.right * movingWorld.CurrentSpeed * speedModifier;
-        newRigidbodyObstacle.velocity = currentVectorMoveWorld;
+        //Rigidbody newRigidbodyObstacle = Instantiate<Rigidbody>(spawnedObstacle, transform, worldPositionStays: false);
+        lastObstacle = poolObstacle.GetElement();
+        lastObstacle.gameObject.SetActive(true);
+        InitObstacleAndArr();
     }
 
+    private void InitObstacleAndArr()
+    {
+        float newX = spawnerType.DistanceBeforeMin + (float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin)
+            * random.NextDouble() * mainSpawner.Multiplier);
+        arrObstacle.Enqueue(lastObstacle);
+        //lastObstacle.transform.localPosition = Vector3.right * newX;
+        lastObstacle.position = initRigidbodyWorldPosition + Vector3.right * newX;
+        lastObstacle.name += $"[{arrObstacle.Count}]";
+        lastObstacle.velocity = currentVectorMoveWorld;
+        //Debug.Log($"{lastObstacle.name} newX={newX}");
+    }
+
+    private bool IsObstaclePassSpawnPosition(Rigidbody rigidbody) => rigidbody.position.x < worldPositionXDistanceAfter;
+    private float RigidbodyLocalPositionX(Rigidbody rigidbody) => rigidbody.position.x - initRigidbodyWorldPositionX;
     public bool SetIamLastObstacle(bool value) => _IamLastObstacle = value;
 
     protected void FixedUpdate()
     {
-        if (movingWorld.worldIsMoving)
+        if (movingWorld.worldIsMoving && arrObstacle.Count > 0)
         {
-            if (idxLastObstacleThatType >= 0)
+            //When the last spawned obstacle went the distance "Distance After" set for this type then will be spawned next obstacle
+            //The movement going toward by negative Axe X
+            //if (_IamLastObstacle && arrObstacle[arrObstacle.Count - 1].transform.localPosition.x < -spawnerType.DistanceAfter)
+            if (_IamLastObstacle && IsObstaclePassSpawnPosition(lastObstacle))
             {
-                for (int i = 0; i < arrObstacle.Count; i++)
-                {
-                    if (movingWorld.IsObjectReadyToRemove(arrObstacle[i].transform.localPosition.x))
-                    {
-                        RemoveObstacleFromScreen(i);
-                    }
-                }
-
-                //When the last spawned obstacle went the distance "Distance After" set for this type then will be spawned next obstacle
-                if (_IamLastObstacle && arrObstacle[idxLastObstacleThatType].transform.localPosition.x < -spawnerType.DistanceAfter)
-                {
-                    mainSpawner.SpawnNextObstacle();
-                }
-#if TRACEON
-                else
-                {
-                    if (_IamLastObstacle) Debug.Log($"{name}({idxLastObstacleThatType + 1}) x={arrXDistanceObstacles[idxLastObstacleThatType]:F1}");
-                }  
-#endif
+                //Debug.Log($"{lastObstacle.name} call SpawnNextObstacle() x={lastObstacle.transform.localPosition.x:F1} Rx={lastObstacle.position.x:F1}");
+                mainSpawner.SpawnNextObstacle();
+            }
+            //Not del the LastObstacle
+            if (movingWorld.IsObjectReadyToRemove(RigidbodyLocalPositionX(arrObstacle.Peek())) && (!_IamLastObstacle || arrObstacle.Count > 1))
+            {
+                RemoveObstacleFromScreen(); 
             }
         }
     }
@@ -85,23 +95,20 @@ public class MoveObstacleAndSpawn : MonoBehaviour
     public void UpdateWorldSpeed()
     {
         UpdateCurrentVelocityMoveWorld();
-        if (idxLastObstacleThatType >= 0)
+        if (arrObstacle.Count > 0)
         {
-            //Suggestion the all Obstacles of one type have the same speed
-            //Vector3 actualVelocityForThisType = Vector3.right * movingWorld.CurrentSpeed * speedModifier;
-            for (int i = 0; i < arrObstacle.Count; i++)
+            foreach (Rigidbody obstacle in arrObstacle)
             {
-                arrObstacle[i].velocity = currentVectorMoveWorld;
+                obstacle.velocity = currentVectorMoveWorld;
             }
         }
     }
 
     //Time Solution vs realization pool object and enable and disable them vs Instatiate and Destroy
-    protected void RemoveObstacleFromScreen(int idxObstacle)
+    protected void RemoveObstacleFromScreen()
     {
-        Destroy(arrObstacle[idxObstacle].gameObject);
-        arrObstacle.RemoveAt(idxObstacle);
-        idxLastObstacleThatType--;
+        //Debug.Log($"RemoveObstacleFromScreen() : {arrObstacle.Peek().name}");
+        poolObstacle.ReturnElement(arrObstacle.Dequeue());
     }
 
     public void InitMainSpawner(MainSpawner spawner) => mainSpawner = spawner;

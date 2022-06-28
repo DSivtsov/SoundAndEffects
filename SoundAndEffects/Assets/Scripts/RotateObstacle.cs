@@ -15,7 +15,6 @@ public class RotateObstacle : MonoBehaviour
     private float _radius;
     private MovingWorldSO movingWorld;
     private Rigidbody rigidbodyObstacle;
-    //private Vector3 m_EulerAngleVelocity;
     private MoveRotateObstacleAndSpawn moveObstacle;
     private float speedDiference;
 
@@ -24,14 +23,6 @@ public class RotateObstacle : MonoBehaviour
         movingWorld = SingletonController.Instance.GetMovingWorld();
         rigidbodyObstacle = GetComponent<Rigidbody>();
         moveObstacle = GetComponentInParent<MoveRotateObstacleAndSpawn>();
-        if (moveObstacle)
-        {
-            moveObstacle.UpdatedCurrentVelocityMoveWorld += UpdateAngularSpeed;
-        }
-        else
-        {
-            Debug.LogError($"Parent Not Have the <MoveObstacleAndSpawn> component");
-        }
         speedDiference = moveObstacle.speedModifier - 1;
         if (speedDiference == 0)
         {
@@ -51,8 +42,9 @@ public class RotateObstacle : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        moveObstacle.UpdatedCurrentVelocityMoveWorld += UpdateAngularSpeed;
         UpdateAngularSpeed();
     }
 
@@ -60,23 +52,6 @@ public class RotateObstacle : MonoBehaviour
     {
         moveObstacle.UpdatedCurrentVelocityMoveWorld -= UpdateAngularSpeed;
     }
-
-    //private void FixedUpdate()
-    //{
-    //    //Set the angular velocity of the Rigidbody (rotating around the Y axis, 100 deg/sec)
-    //    //The Angle speed is calculated in radians
-    //    speedRelative = Mathf.Abs( movingWorld.CurrentSpeed * speedDiference);
-    //    if (movingWorld.worldIsMoving)
-    //    {
-    //        //m_EulerAngleVelocity = new Vector3(0, Mathf.Rad2Deg * speedRelative / _radius, 0);
-    //        //Quaternion deltaRotation = Quaternion.Euler(m_EulerAngleVelocity * Time.fixedDeltaTime);
-    //        //rigidbodyObstacle.MoveRotation(rigidbodyObstacle.rotation * deltaRotation);
-    //        rigidbodyObstacle.angularVelocity = new Vector3(0, 0, speedRelative / _radius);
-    //    }
-    //    //else
-    //    //    rigidbodyObstacle.angularVelocity = new Vector3(0, 0, 0);
-
-    //}
 
     /// <summary>
     /// Will be called at changing the CurrentVelocityMoveWorld from MoveRotateObstacleAndSpawn
