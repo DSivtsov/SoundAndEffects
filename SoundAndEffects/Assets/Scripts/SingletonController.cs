@@ -54,5 +54,22 @@ public class SingletonController : MonoBehaviour
     public MovingWorldSO GetMovingWorld() => movingWorldSO;
 
     public MyCharacterController GetCharacterController() => characterController;
+
+    [Space()]
+    [Header("For Demo purpose only")]
+    [SerializeField] private bool isWalkingAfterRUN;
+    public bool IsWalkingAfterRUN { get => isWalkingAfterRUN; }
+    [SerializeField] private bool isTurnOffAllObstacle;
+    public bool IsTurnOffAllObstacle { get => isTurnOffAllObstacle; }
+    [SerializeField] private bool isPlayerNotCollide;
+    public bool IsPlayerNotCollide { get => isPlayerNotCollide; }
+
+    private void Start()
+    {
+        if (isWalkingAfterRUN || isPlayerNotCollide || isTurnOffAllObstacle)
+        {
+            Debug.LogWarning("Game in Demo mode");
+        }
+    }
 }
 

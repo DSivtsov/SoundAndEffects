@@ -21,12 +21,11 @@ public class MainSpawner : MonoBehaviour
     private System.Random random;
     private int? prevSpawner = null;
     private int countSpawnedAtThisLivel = 0;
-    private SingletonController singleton;
     public int Level { get; private set; } = 1;
 
     void Awake()
     {
-        singleton = SingletonController.Instance;
+        //singleton = SingletonController.Instance;
         for (int i = 0; i < arrMoveObstacles.Length; i++)
         {
             arrMoveObstacles[i].InitMainSpawner(this);
@@ -36,8 +35,12 @@ public class MainSpawner : MonoBehaviour
 
     void Start()
     {
-        UpdateMultiplier();
-        SpawnNextObstacle();
+        UpdateLevelComplexity();
+        //Temprorary turn off spawing all obstacle For Demo purpose
+        if (!SingletonController.Instance.IsTurnOffAllObstacle)
+        {
+            SpawnNextObstacle(); 
+        }
     }
 
     public int IncreaseLevel() => ++Level;
@@ -67,15 +70,15 @@ public class MainSpawner : MonoBehaviour
         if (countSpawnedAtThisLivel > 9)
         {
             Debug.Log($"New Level = {IncreaseLevel()}");
-            UpdateMultiplier();
+            UpdateLevelComplexity();
             countSpawnedAtThisLivel = 0;
         }
     }
 
     /// <summary>
-    /// Set the parameter the Level of complexity Multiplier based on the current Game Level and Game Settings
+    /// Set the Multiplier parameter - the Level of complexity based on the current Game Level and Game Settings
     /// </summary>
-    private void UpdateMultiplier()
+    private void UpdateLevelComplexity()
     {
         //Get 0.99 at singleton.Level = LevelMinMultiplier and 0 at singleton.Level = 1
         float procentLerp = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / (_levelMinMultiplier-1) * (Level - 1));

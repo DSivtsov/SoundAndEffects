@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,9 +13,8 @@ public enum PlayerState
 
 public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 {
-    //For Demo purpose only
-    [SerializeField] private bool IsWalkingAfterRUN = false;
     [SerializeField] private ParticleSystem explosionPrefab;
+
 
     private PlayerCollisionGround checkPlayer;
     private bool Jump = false;
@@ -72,13 +72,18 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     
     private void Start()
     {
+        //For Demo Purpose
+        if (SingletonController.Instance.IsPlayerNotCollide)
+        {
+            SetPhysicsIgnoreObstaclesCollisions();
+        }
         CharacterIdle();
 
-        //If IsWalking initialy not set to true
-        //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
-        //Later can turn off by OnStart
-        if (!IsWalkingAfterRUN)
+        //If IsWalking initialy not set to true For Demo Purpose
+        if (!SingletonController.Instance.IsWalkingAfterRUN)
         {
+            //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
+            //Later can turn off by OnStart
             textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
             textTurnOffPressEnter?.Active(true);
         }
@@ -248,5 +253,24 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position, 0.25f);
         }
-    } 
+    }
+
+    /// <summary>
+    /// Temporary set the Ignore Collision between Player and Obstacles. Editor only for Demo purpose
+    /// </summary>
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    private void SetPhysicsIgnoreObstaclesCollisions()
+    {
+        int layPlayer = LayerMask.NameToLayer("Player");
+        int layObstacle = LayerMask.NameToLayer("Obstacles");
+        if (layPlayer < 0 || layObstacle < 0)
+        {
+            Debug.LogWarning("SetPhysicsIgnoreObstaclesCollisions() : Can't set for Physics to ignore collisions between [Player] and [Obstacles]");
+        }
+        else
+        {
+            Physics.IgnoreLayerCollision(layPlayer, layObstacle);
+            Debug.Log("Was set for Physics -  Ignore collisions between [Player] and [Obstacles]");
+        }
+    }
 }
