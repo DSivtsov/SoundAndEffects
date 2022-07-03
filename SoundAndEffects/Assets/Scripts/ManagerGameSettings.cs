@@ -26,7 +26,7 @@ public class ManagerGameSettings : MonoBehaviour
     private void OnValidate()
     {
 #if UNITY_EDITOR
-        Debug.Log($"OnValidate() : SetForceJumpForCurrentComplexity({CurrentComplexity})");
+        //Debug.Log($"OnValidate() : SetForceJumpForCurrentComplexity({CurrentComplexity})");
         SetForceJumpForCurrentComplexity();
 #endif
     }

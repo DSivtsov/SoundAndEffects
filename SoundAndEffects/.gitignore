@@ -75,3 +75,4 @@ crashlytics-build.properties
 
 /UserSettings/EditorUserSettings.asset
 test.txt
+/Assets/_MyLib*

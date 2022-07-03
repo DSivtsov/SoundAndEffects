@@ -44,6 +44,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private PlayerState _currentState;
     private bool keyChangeSpeedPressed = false;
 
+    PlaySetAudio gameMusic;
+
     private void Awake()
     {
         checkPlayer = FindObjectOfType<PlayerCollisionGround>();
@@ -65,6 +67,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         rigidbodyCharacter = GetComponent<Rigidbody>();
 
         movingWorld = SingletonController.Instance.GetMovingWorld();
+
+        gameMusic = GetComponent<PlaySetAudio>();
     }
 
     private void OnEnable() => inputs.Move.Enable();
@@ -128,6 +132,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
                 animatorCharacter.SetFloat(hashSpeed_f, 0.26f);
                 UpdateWorldMoveSpeed(PlayerState.Walk);
                 currentForceJump = forceJumpSO.ForceJumpWalk;
+                gameMusic.PlaySound(PlayerState.Walk);
                 break;
             case PlayerState.Run:
                 //animatorCharacter.SetBool(hashStatic_b, false);
@@ -135,6 +140,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
                 animatorCharacter.SetFloat(hashSpeed_f, 0.51f);
                 UpdateWorldMoveSpeed(PlayerState.Run);
                 currentForceJump = forceJumpSO.ForceJumpRun;
+                gameMusic.PlaySound(PlayerState.Run);
                 break;
             default:
                 Debug.LogError("SetMoveState wrong state");
