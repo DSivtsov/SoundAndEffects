@@ -8,14 +8,20 @@ public enum PlayerState
 {
     Stop,
     Walk,
-    Run
+    Run,
+    Jump,
+    Collision
 }
 
 public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 {
+    #region SerializedFields
     [SerializeField] private ParticleSystem explosionPrefab;
+    [SerializeField] private GameObject dirtSplatter;
+    [SerializeField] private int BackwardForceAtCollision = 2; 
+    #endregion
 
-
+    #region NonSerializedFields
     private PlayerCollisionGround checkPlayer;
     private bool Jump = false;
     //The current selected the difficulty level 
@@ -43,8 +49,10 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private TurnOffPressEnter textTurnOffPressEnter;
     private PlayerState _currentState;
     private bool keyChangeSpeedPressed = false;
-
-    PlaySetAudio gameMusic;
+    private const float changeSoundMovementDelay = .25f;
+    private bool restoreSoundAndEffectAfterGrounded = false;
+    private PlaySetAudio gameSound; 
+    #endregion
 
     private void Awake()
     {
@@ -68,7 +76,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 
         movingWorld = SingletonController.Instance.GetMovingWorld();
 
-        gameMusic = GetComponent<PlaySetAudio>();
+        gameSound = GetComponent<PlaySetAudio>();
     }
 
     private void OnEnable() => inputs.Move.Enable();
@@ -76,50 +84,58 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     
     private void Start()
     {
-        //For Demo Purpose
-        if (SingletonController.Instance.IsPlayerNotCollide)
-        {
-            SetPhysicsIgnoreObstaclesCollisions();
-        }
-        CharacterIdle();
+        //For Demo Purpose Call only in Editor
+        SetPhysicsIgnoreObstaclesCollisions();
 
-        //If IsWalking initialy not set to true For Demo Purpose
-        if (!SingletonController.Instance.IsWalkingAfterRUN)
-        {
-            //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
-            //Later can turn off by OnStart
-            textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
-            textTurnOffPressEnter?.Active(true);
-        }
-        else
-        {
-            //in other case will be emulated the press Start button
-            CharacterGo();
-        }
+        CharacterIdle();
+#if UNITY_EDITOR
+        //For Demo Purpose Call only in Editor
+        CheckIsWalkingAfterStart();
+#else
+        ShowStartScreen();
+#endif
+    }
+
+    private void ShowStartScreen()
+    {
+        //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
+        //Later can turn off by OnStart
+        textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
+        textTurnOffPressEnter?.Active(true);
     }
 
     private void Update()
     {
         if (checkPlayer.IsGrounded)
         {
-            if ( keyChangeSpeedPressed )
+            if (restoreSoundAndEffectAfterGrounded)
             {
-                ChangeMoveState();
+                gameSound.PlaySound(_currentState, changeSoundMovementDelay);
+                dirtSplatter.SetActive( (_currentState == PlayerState.Run)? true : false);
+                restoreSoundAndEffectAfterGrounded = false;
+            }
+
+            if (keyChangeSpeedPressed)
+            {
+                ChangeMoveSpeed();
             }
 
             if (Jump)
             {
                 animatorCharacter.SetTrigger(hashJump_trig);
                 rigidbodyCharacter.AddForce(Vector3.up * currentForceJump, ForceMode.Impulse);
+                gameSound.PlaySound(PlayerState.Jump);
+                dirtSplatter.SetActive(false);
+                restoreSoundAndEffectAfterGrounded = true;
                 Jump = false;
-            } 
+            }
         }
     }
     /// <summary>
     /// Change the Player animation and WorldMoveSpeed, if Player press the coresponding button.
     /// Set keyChangeSpeedPressed = false
     /// </summary>
-    private void ChangeMoveState()
+    private void ChangeMoveSpeed()
     {
         switch (_currentState)
         {
@@ -132,7 +148,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
                 animatorCharacter.SetFloat(hashSpeed_f, 0.26f);
                 UpdateWorldMoveSpeed(PlayerState.Walk);
                 currentForceJump = forceJumpSO.ForceJumpWalk;
-                gameMusic.PlaySound(PlayerState.Walk);
+                gameSound.PlaySound(PlayerState.Walk, changeSoundMovementDelay);
+                dirtSplatter.SetActive(false);
                 break;
             case PlayerState.Run:
                 //animatorCharacter.SetBool(hashStatic_b, false);
@@ -140,7 +157,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
                 animatorCharacter.SetFloat(hashSpeed_f, 0.51f);
                 UpdateWorldMoveSpeed(PlayerState.Run);
                 currentForceJump = forceJumpSO.ForceJumpRun;
-                gameMusic.PlaySound(PlayerState.Run);
+                gameSound.PlaySound(PlayerState.Run, changeSoundMovementDelay);
+                dirtSplatter.SetActive(true);
                 break;
             default:
                 Debug.LogError("SetMoveState wrong state");
@@ -185,12 +203,13 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     {
         if (IsFirstCollision)
         {
+            dirtSplatter.SetActive(false);
             movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
-            rigidbodyCharacter.AddForce(-contactNormal * 5, ForceMode.VelocityChange);
+            rigidbodyCharacter.AddForce(-contactNormal * BackwardForceAtCollision, ForceMode.VelocityChange);
             //Explosion paritcle
             ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab, contactPosition, Quaternion.identity);
             particle.Play();
-
+            gameSound.PlaySound(PlayerState.Collision);
             //Set Player State Died
             WorldStop();
             animatorCharacter.SetBool(hashDeath_b, true);
@@ -228,11 +247,9 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
                 case InputActionPhase.Started:
                 case InputActionPhase.Performed:
                     _currentState = PlayerState.Run;
-                    //IsRun = true;
                     break;
                 case InputActionPhase.Canceled:
                     _currentState = PlayerState.Walk;
-                    //IsRun = false;
                     break;
             }
             keyChangeSpeedPressed = true;
@@ -251,15 +268,32 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     }
     #endregion
 
+    #region Call only in UNITY_EDITOR
+#if UNITY_EDITOR
     //Show Gizmo when Player not IsGrounded in Editor only
     private void OnDrawGizmosSelected()
     {
-        if (checkPlayer!=null && !checkPlayer.IsGrounded)
+        if (checkPlayer != null && !checkPlayer.IsGrounded)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position, 0.25f);
         }
     }
+
+    private void CheckIsWalkingAfterStart()
+    {
+        //If IsWalking initialy not set to true For Demo Purpose
+        if (!SingletonController.Instance.IsWalkingAfterStart)
+        {
+            ShowStartScreen();
+        }
+        else
+        {
+            //in other case will be emulated the press Start button
+            CharacterGo();
+        }
+    }
+#endif
 
     /// <summary>
     /// Temporary set the Ignore Collision between Player and Obstacles. Editor only for Demo purpose
@@ -267,16 +301,20 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
     private void SetPhysicsIgnoreObstaclesCollisions()
     {
-        int layPlayer = LayerMask.NameToLayer("Player");
-        int layObstacle = LayerMask.NameToLayer("Obstacles");
-        if (layPlayer < 0 || layObstacle < 0)
+        if (SingletonController.Instance.IsPlayerNotCollide)
         {
-            Debug.LogWarning("SetPhysicsIgnoreObstaclesCollisions() : Can't set for Physics to ignore collisions between [Player] and [Obstacles]");
+            int layPlayer = LayerMask.NameToLayer("Player");
+            int layObstacle = LayerMask.NameToLayer("Obstacles");
+            if (layPlayer < 0 || layObstacle < 0)
+            {
+                Debug.LogWarning("SetPhysicsIgnoreObstaclesCollisions() : Can't set for Physics to ignore collisions between [Player] and [Obstacles]");
+            }
+            else
+            {
+                Physics.IgnoreLayerCollision(layPlayer, layObstacle);
+                Debug.Log("Was set for Physics -  Ignore collisions between [Player] and [Obstacles]");
+            }
         }
-        else
-        {
-            Physics.IgnoreLayerCollision(layPlayer, layObstacle);
-            Debug.Log("Was set for Physics -  Ignore collisions between [Player] and [Obstacles]");
-        }
-    }
+    } 
+    #endregion
 }

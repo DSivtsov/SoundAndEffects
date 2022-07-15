@@ -13,15 +13,10 @@ public class PlayJukeBox : MonoBehaviour
 {
     #region SerializedFields
     [SerializeField] private JukeBoxSO _jukeBox;
-    //[SerializeField] private SequenceType _sequenceType;
     [SerializeField] private AudioMixerGroup _mixerGroup;
     [SerializeField] private AudioMixerGroup _mixerGroup2;
     [SerializeField] private bool _playAtAwake;
     [Range(0, 255)] [SerializeField] private int _sourcePriority;
-    //[Header("Test Mode")]
-    //[Tooltip("Set not zerro value as the special initial Value or set zerro in other cases. For RND Sequence use the Value as initial seed." +
-    //    " For InSequence use the Value as the start number")]
-    //[SerializeField] private int initValue;
     #endregion
 
     #region NonSerializedFields
@@ -34,7 +29,7 @@ public class PlayJukeBox : MonoBehaviour
     {
         if (_playAtAwake)
         {
-            TurnOnJukeBoxMusic();
+            TurnOn();
         }
 #if OWNCONTROL
         Debug.LogWarning($"Was Activated the own control in [{this}]");
@@ -53,9 +48,9 @@ public class PlayJukeBox : MonoBehaviour
         if (Mouse.current.middleButton.wasPressedThisFrame)
         {
             if (MusicState)
-                TurnOnJukeBoxMusic(false);
+                TurnOn(false);
             else
-                TurnOnJukeBoxMusic(true);
+                TurnOn(true);
         } 
 #endif
         if (MusicState && _jukeBox.IsTimeStartPreparing())
@@ -95,9 +90,9 @@ public class PlayJukeBox : MonoBehaviour
         }
     }
     /// <summary>
-    /// Try turnOn or turnOff music. The seed reinitialized every time
+    /// Try turnOn or turnOff JukeBoxMusic. The seed reinitialized every time
     /// </summary>
-    public void TurnOnJukeBoxMusic(bool turnOn = true)
+    public void TurnOn(bool turnOn = true)
     {
         if (!MusicState)
         {

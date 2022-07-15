@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "MovingWorld", menuName = "ScriptableObject/MovingWorld")]
+[CreateAssetMenu(fileName = "MovingWorld", menuName = "SoundAndEffects/MovingWorld")]
 public class MovingWorldSO : ScriptableObject
 {
     [Tooltip("Speed at m/s")]

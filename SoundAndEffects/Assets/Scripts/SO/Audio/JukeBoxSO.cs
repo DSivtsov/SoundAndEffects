@@ -43,7 +43,6 @@ public class JukeBoxSO : AudioEvent
     private int flip;
     private AudioSource[] audioSources;
     private AudioSource nextAudioSource;
-    //private SequenceIterationManager iterationManager;
     private ISequenceIteration iterationManager;
     #endregion
 
@@ -53,8 +52,6 @@ public class JukeBoxSO : AudioEvent
     /// <param name="audioSources"></param>
     public void InitJukeBox(AudioSource[] audioSources)
     {
-        //_jukeBox.InitJukeBox(audioSources, _sequenceType, initValue == 0 ? null : (int?)initValue);
-        //iterationManager = SequenceIterationManager.CreateSequenceIteration(audioClips.Length, sequenceType, initialValue);
         iterationManager = SequenceIterationManager.CreateSequenceIteration(audioClips.Length, sequenceType, initValue == 0 ? null : (int?)initValue);
 
         this.audioSources = audioSources;
@@ -76,26 +73,6 @@ public class JukeBoxSO : AudioEvent
         InitJukeBox(_audioSources);
     }
 
-    /// <summary>
-    /// USED ONLY for PlayOneClip in Editor
-    /// </summary>
-    private int nextClipIdx = 0;
-    /// <summary>
-    /// Base Method to test setting of SO AudioEvent USED ONLY in Editor. Use the sequenceType "in sequence" begin from 0 and JukeBoxMode "Full"
-    /// </summary>
-    /// <param name="audioSource">used the temporary audioSource for AudioEvent in Editor</param>
-    public override void PlayOneClip(AudioSource audioSource)
-    {
-        //nextAudioSource = audioSource;
-        if (ClipsArrayEmpty())
-        {
-            Debug.LogError($"[{this}] SO with Audio clips is Empty");
-            return;
-        }
-        audioSource.clip = audioClips[nextClipIdx];
-        audioSource.Play();
-        nextClipIdx = (nextClipIdx + 1) % audioClips.Length;
-    }
     /// <summary>
     /// Init the playing audio clip on schedule
     /// </summary>
@@ -152,10 +129,7 @@ public class JukeBoxSO : AudioEvent
     /// </summary>
     private void PrepareStopCurrentAudioSource()
     {
-        //if (PlayMode == JukeBoxMode.Begin || PlayMode == JukeBoxMode.Full)
-        //{
-            audioSources[1 - flip].SetScheduledEndTime(timeScheduled + crossDeltaTime);
-        //}
+        audioSources[1 - flip].SetScheduledEndTime(timeScheduled + crossDeltaTime);
     }
 
     private void SwitchNextAudioSource()
@@ -197,16 +171,13 @@ public class JukeBoxSO : AudioEvent
         audioSource.timeSamples = audioSource.clip.samples - GetDeltaSample(audioSource.clip, timeBeforeEnd);
     }
 
-    public bool ClipsArrayEmpty() => audioClips.Length == 0;
+    public override bool ClipsArrayEmpty() => audioClips.Length == 0;
 
     private float GetLenghtClip(AudioClip clip) => clip.samples * 1f / clip.frequency;
 
     private int GetDeltaSample(AudioClip clip, float timeDelta) => (int)(timeDelta * clip.frequency) ;
 
-    #region Editor code only for checking the set values which related to Playmode parameters
-#if UNITY_EDITOR
     private JukeBoxMode oldValue;
-
 
     string WarningMessage => $"Used the [{this}] in demo mode [{playMode}]";
 
@@ -215,9 +186,38 @@ public class JukeBoxSO : AudioEvent
         oldValue = JukeBoxMode.Full;
         if (playMode != JukeBoxMode.Full)
         {
-
             DetectValueChangeMessage(WarningMessage);
         }
+    }
+
+    private void DetectValueChangeMessage(string message)
+    {
+        if (oldValue != playMode)
+        {
+            oldValue = playMode;
+            Debug.LogWarning(message);
+        }
+    }
+
+    #region Editor code only for checking the set values which related to Playmode parameters
+#if UNITY_EDITOR
+
+    private int nextClipIdx = 0;
+
+    /// <summary>
+    /// Base Method to test setting of SO AudioEvent USED ONLY in Editor. Use the sequenceType "in sequence" begin from 0 and JukeBoxMode "Full"
+    /// </summary>
+    /// <param name="audioSource">used the temporary audioSource for AudioEvent in Editor</param>
+    public override void PlayOneClip(AudioSource audioSource)
+    {
+        if (ClipsArrayEmpty())
+        {
+            Debug.LogError($"[{this}] SO with Audio clips is Empty");
+            return;
+        }
+        audioSource.clip = audioClips[nextClipIdx];
+        audioSource.Play();
+        nextClipIdx = (nextClipIdx + 1) % audioClips.Length;
     }
 
     private void OnValidate()
@@ -255,15 +255,6 @@ public class JukeBoxSO : AudioEvent
         float min = 2 * (crossDeltaTime + loadDelayTime);
         int roundedMinTimeSwitch = Mathf.RoundToInt(min);
         return roundedMinTimeSwitch - min > 0 ? roundedMinTimeSwitch : roundedMinTimeSwitch + 2;
-    }
-
-    private void DetectValueChangeMessage(string message)
-    {
-        if (oldValue != playMode)
-        {
-            oldValue = playMode;
-            Debug.LogWarning(message);
-        }
     }
 #endif 
     #endregion

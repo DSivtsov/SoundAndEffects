@@ -13,11 +13,19 @@ MonoBehaviour:
   m_Name: SetFootSteps
   m_EditorClassIdentifier: 
   audioClips:
+  - enumClip: {fileID: 11400000, guid: 83597d195c654f842b16bf648a62061b, type: 2}
+    audioClip: {fileID: 8300000, guid: 08ab7053d586c458db3774d33c141a4b, type: 3}
+    pitch: 0.482
+    volume: 1
   - enumClip: {fileID: 11400000, guid: dfd5331d63e48144aa687f32aacc1575, type: 2}
     audioClip: {fileID: 8300000, guid: 9f63a40264852914baab6f91738184e0, type: 3}
     pitch: 1.13
     volume: 1
   - enumClip: {fileID: 11400000, guid: ee74d2a80b8ace043a3a5d05a3fc2e6c, type: 2}
     audioClip: {fileID: 8300000, guid: cecd7aa8807ce454b8985e6d904e2b5b, type: 3}
+    pitch: 1.44
+    volume: 1
+  - enumClip: {fileID: 11400000, guid: fc00825257f1bc34b9845edc1e7f8395, type: 2}
+    audioClip: {fileID: 8300000, guid: 913d6445ee8cc4152a9c18da590ee203, type: 3}
     pitch: 1.44
     volume: 1

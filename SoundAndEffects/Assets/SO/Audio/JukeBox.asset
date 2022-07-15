@@ -21,6 +21,6 @@ MonoBehaviour:
   loadDelayTime: 3
   crossDeltaTime: 0
   startDelay: 2
-  playMode: 1
-  timeFromBegin: 11
+  playMode: 0
+  timeFromBegin: 0
   timeFromEnd: 0

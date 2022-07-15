@@ -8,7 +8,6 @@ public class AudioEventEditor : Editor
 {
     AudioSource _previewAudioSource;
     GameObject _tempGameObject;
-    bool initButton;
 
     private void OnDisable()
     {
@@ -25,11 +24,6 @@ public class AudioEventEditor : Editor
             DestroyImmediate(_tempGameObject);
 
         }
-    }
-
-    private void OnEnable()
-    {
-        initButton = true;
     }
 
     private void CreateTempAudioSource()

@@ -4,5 +4,9 @@ using UnityEngine;
 
 public abstract class AudioEvent : ScriptableObject
 {
-    public abstract void PlayOneClip(AudioSource audioSource);
+    public abstract bool ClipsArrayEmpty();
+
+#if UNITY_EDITOR
+    public abstract void PlayOneClip(AudioSource audioSource); 
+#endif
 }

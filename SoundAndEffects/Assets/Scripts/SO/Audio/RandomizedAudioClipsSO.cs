@@ -26,6 +26,10 @@ public class RandomizedAudioClipsSO : AudioEvent
         rndVolume = new System.Random(seed);
     }
 
+    public override bool ClipsArrayEmpty() => audioClips.Length == 0;
+
+#if UNITY_EDITOR
+
     public override void PlayOneClip(AudioSource audioSource)
     {
         if (audioClips.Length == 0)
@@ -56,4 +60,5 @@ public class RandomizedAudioClipsSO : AudioEvent
             min = temp;
         }
     }
+#endif
 }

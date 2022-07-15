@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0210a887304b1ba4e8711bbd5d841132, type: 3}
-  m_Name: Walk
+  m_Name: Jump
   m_EditorClassIdentifier: 
-  nameEnum: Walk
+  nameEnum: Jump

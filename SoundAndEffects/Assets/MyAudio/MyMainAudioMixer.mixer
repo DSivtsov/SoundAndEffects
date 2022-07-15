@@ -66,39 +66,6 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
---- !u!244 &-759871232812107757
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: ecea927b609c59440931492c6c2cce83
-  m_EffectName: Attenuation
-  m_MixLevel: da04987c4572b634caa0a2fb688cc8ed
-  m_Parameters: []
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
---- !u!243 &-620886013394517216
-AudioMixerGroupController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: FootSteps
-  m_AudioMixer: {fileID: 24100000}
-  m_GroupID: 12df9555f99f1a0459675c3bc672096d
-  m_Children: []
-  m_Volume: 1255293382a421640b85365603fcdd5c
-  m_Pitch: 858d4d911aa6aec47bfb4eaaaf2c7a64
-  m_Send: 00000000000000000000000000000000
-  m_Effects:
-  - {fileID: -759871232812107757}
-  m_UserColorIndex: 0
-  m_Mute: 0
-  m_Solo: 0
-  m_BypassEffects: 0
 --- !u!244 &-561527415522844690
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -153,11 +120,9 @@ AudioMixerController:
   m_AudioMixerGroupViews:
   - guids:
     - 3546ae49574fbfe4ca1a538f38be92a8
-    - 1f00e3002e3f98248b72dfa2d3c2f20a
     - e58adc8a84662f24fa1765d0e85d291c
-    - 12df9555f99f1a0459675c3bc672096d
+    - 1f00e3002e3f98248b72dfa2d3c2f20a
     - 979d8ba9d7404e54b960327bc431eb8b
-    - 5a1797b12df900a4a94ce97ade4c7107
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -172,7 +137,6 @@ AudioMixerGroupController:
   m_GroupID: 3546ae49574fbfe4ca1a538f38be92a8
   m_Children:
   - {fileID: -4999261664093289611}
-  - {fileID: -620886013394517216}
   - {fileID: -421086589814812644}
   m_Volume: cdc234e7e8f05f0479ce64fc62663b19
   m_Pitch: d01df335bffc7914b810ed85963a09c1
@@ -211,7 +175,7 @@ AudioMixerSnapshotController:
     da9a7fa16edcc0a4dbebc092e6aa2694: -3486
     7394de13f48c59645b3842c991febaf9: -852
     1255293382a421640b85365603fcdd5c: -4.935647
-    50f54454e94aa694caff537ea7d03b12: -0.1491296
+    50f54454e94aa694caff537ea7d03b12: 0.002517381
     05cb30a6020cd4b498d30e25985ccf57: 0.234
     ee5f6c87a86873f49b17630de7dda7a4: -6282
     6abb6b590f89ce14abaad1eda6b6a6c2: -5035

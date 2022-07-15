@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SpawnerType",menuName = "ScriptableObject/Create Spawner Type")]
+[CreateAssetMenu(fileName = "SpawnerType",menuName = "SoundAndEffects/Create Spawner Type")]
 public class SpawnerTypeSO : ScriptableObject
 {
     public float DistanceBeforeMin;

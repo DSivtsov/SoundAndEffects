@@ -19,20 +19,22 @@ public class SingletonController : SingletonController<SingletonController>
     public MyCharacterController GetCharacterController() => characterController;
 
     [Space()]
-    [Header("For Demo purpose only")]
-    [SerializeField] private bool isWalkingAfterRUN;
-    public bool IsWalkingAfterRUN { get => isWalkingAfterRUN; }
+    [Header("For Demo purpose only, used only in Editor")]
+    [SerializeField] private bool isWalkingAfterStart;
+    public bool IsWalkingAfterStart { get => isWalkingAfterStart; }
     [SerializeField] private bool isTurnOffAllObstacle;
     public bool IsTurnOffAllObstacle { get => isTurnOffAllObstacle; }
     [SerializeField] private bool isPlayerNotCollide;
     public bool IsPlayerNotCollide { get => isPlayerNotCollide; }
 
+#if UNITY_EDITOR
     private void Start()
     {
-        if (isWalkingAfterRUN || isPlayerNotCollide || isTurnOffAllObstacle)
+        if (isWalkingAfterStart || isPlayerNotCollide || isTurnOffAllObstacle)
         {
             Debug.LogWarning("Game in Demo mode");
         }
-    }
+    } 
+#endif
 }
 

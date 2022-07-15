@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ForceJump", menuName = "ScriptableObject/ForceJump")]
+[CreateAssetMenu(fileName = "ForceJump", menuName = "SoundAndEffects/ForceJump")]
 public class ForceJumpSO : ScriptableObject
 {
     [SerializeField] private ComplexitySO _complexity;
