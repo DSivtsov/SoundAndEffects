@@ -68,8 +68,9 @@ crashlytics-build.properties
 #Test Builds
 /_test*
 
-#Asset with Exampels
-/Assets/TextMesh Pro*
+#Included TextMesh Pro standart + custom fonts, include shaders and etc.
+#/Assets/TextMesh Pro*
+/Assets/TextMesh Pro/Documentation*
 #Base Objects from Course
 /Assets/Course Library*
 

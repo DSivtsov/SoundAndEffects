@@ -11,12 +11,16 @@ public class SingletonController : SingletonController<SingletonController>
 {
     [SerializeField] private MyCharacterController characterController;
     [SerializeField] private MovingWorldSO movingWorldSO;
+    [SerializeField] private MainSpawner mainSpawner;
+
     //All modules which affected by MoveWorldSpeed must be called
     public UnityEvent InformAboutSpeedChange;
 
     public MovingWorldSO GetMovingWorld() => movingWorldSO;
 
     public MyCharacterController GetCharacterController() => characterController;
+
+    public MainSpawner GetMainSpawner() => mainSpawner;
 
     [Space()]
     [Header("For Demo purpose only, used only in Editor")]

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d12fedab9390344b80c23bce9afbfd2, type: 3}
-  m_Name: MyRandomizeSFX
+  m_Name: MyRandomizeSounds
   m_EditorClassIdentifier: 
   audioClips:
-  - {fileID: 8300000, guid: 4bcde6de2166e41e284ec46d8a01fb90, type: 3}
-  - {fileID: 8300000, guid: 913d6445ee8cc4152a9c18da590ee203, type: 3}
-  - {fileID: 8300000, guid: e7ee25a47d63b46cdaf65480d62b405c, type: 3}
-  minPitch: 0.675
-  maxPitch: 0.978
-  minVolume: 0.635
-  maxVolume: 0.756
+  - {fileID: 8300000, guid: 08ab7053d586c458db3774d33c141a4b, type: 3}
+  - {fileID: 8300000, guid: 0f7d0b7c3397f4dac91f20e8a77d2d57, type: 3}
+  - {fileID: 8300000, guid: 113ee460fadc340e4957a7404a9fbb27, type: 3}
+  minPitch: 0.815
+  maxPitch: 0.934
+  minVolume: 0.482
+  maxVolume: 0.541
