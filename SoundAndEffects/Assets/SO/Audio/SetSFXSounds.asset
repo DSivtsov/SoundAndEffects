@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c099714935d532042a9addd5e7fce360, type: 3}
-  m_Name: SetFootSteps
+  m_Name: SetSFXSounds
   m_EditorClassIdentifier: 
   audioClips:
   - enumClip: {fileID: 11400000, guid: 83597d195c654f842b16bf648a62061b, type: 2}
-    audioClip: {fileID: 8300000, guid: 08ab7053d586c458db3774d33c141a4b, type: 3}
-    pitch: 0.482
+    audioClip: {fileID: 8300000, guid: 113ee460fadc340e4957a7404a9fbb27, type: 3}
+    pitch: 1
     volume: 1
   - enumClip: {fileID: 11400000, guid: dfd5331d63e48144aa687f32aacc1575, type: 2}
     audioClip: {fileID: 8300000, guid: 9f63a40264852914baab6f91738184e0, type: 3}
@@ -27,5 +27,9 @@ MonoBehaviour:
     volume: 1
   - enumClip: {fileID: 11400000, guid: fc00825257f1bc34b9845edc1e7f8395, type: 2}
     audioClip: {fileID: 8300000, guid: 913d6445ee8cc4152a9c18da590ee203, type: 3}
-    pitch: 1.44
+    pitch: 0.88
+    volume: 1
+  - enumClip: {fileID: 11400000, guid: 44a4b56c45375eb4793e64c7358efc5d, type: 2}
+    audioClip: {fileID: 8300000, guid: e7ee25a47d63b46cdaf65480d62b405c, type: 3}
+    pitch: 1.39
     volume: 1

@@ -10,6 +10,7 @@ public enum PlayerState
     Walk,
     Run,
     Jump,
+    Died,
     Collision
 }
 
@@ -18,7 +19,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     #region SerializedFields
     [SerializeField] private ParticleSystem explosionPrefab;
     [SerializeField] private GameObject dirtSplatter;
-    [SerializeField] private int BackwardForceAtCollision = 2; 
+    [SerializeField] private int BackwardForceAtCollision = 2;
+    [SerializeField] private GameSceneManager gameSceneManager;
     #endregion
 
     #region NonSerializedFields
@@ -35,6 +37,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private int hashJump_trig;
     private int hashDeath_b;
     private int hashDeathType_int;
+    private int AnimatorState_Dead_01;
+    private int AnimatorLayerIndex_Death;
     /// <summary>
     /// The strength of the jump depends on the selected difficulty level and movement speed 
     /// </summary>
@@ -42,7 +46,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     /// <summary>
     /// React on First Collision only
     /// </summary>
-    private bool WasCollision = false;
+    private bool isWasCollision = false;
     /// <summary>
     /// Link to Text in Canvas
     /// </summary>
@@ -51,16 +55,18 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private bool keyChangeSpeedPressed = false;
     private const float changeSoundMovementDelay = .25f;
     private bool restoreSoundAndEffectAfterGrounded = false;
-    private PlaySetAudio gameSound; 
+    private PlaySetAudio gameSound;
     #endregion
+    public bool IsCharacterDied { get; private set; } = false;
 
     private void Awake()
     {
+        if (!gameSceneManager)
+            Debug.LogError($"{this} not linked to GameSceneManager");
+        
         checkPlayer = FindObjectOfType<PlayerCollisionGround>();
         if (checkPlayer== null)
-        {
-            Debug.LogError("Absent module <PlayerCollisionGround>");
-        }
+            Debug.LogError($"{this} absent the <PlayerCollisionGround> module");
 
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
@@ -71,6 +77,9 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         hashJump_trig = Animator.StringToHash("Jump_trig");
         hashDeath_b = Animator.StringToHash("Death_b");
         hashDeathType_int = Animator.StringToHash("DeathType_int");
+        
+        AnimatorState_Dead_01 = Animator.StringToHash("Dead_01");
+        AnimatorLayerIndex_Death = animatorCharacter.GetLayerIndex("Death");
 
         rigidbodyCharacter = GetComponent<Rigidbody>();
 
@@ -106,9 +115,18 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 
     private void Update()
     {
-        if (WasCollision)
+        if (isWasCollision)
         {
             //skip other Game Logic
+            //Debug.Log("I'm here");
+            if (IsCharacterDied)
+                CharacterDiedIteraction();
+            if (IsCurrentAnimatorState(AnimatorState_Dead_01))
+            {
+                //Character died
+                IsCharacterDied = true;
+                gameSceneManager.ManDied();
+            }
             return;
         }
         if (checkPlayer.IsGrounded)
@@ -136,6 +154,25 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             }
         }
     }
+
+    private void CharacterDiedIteraction()
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Check the current Animator state
+    /// </summary>
+    /// <param name="shortNameHashAnimatorState">Animator state hash</param>
+    /// <returns>true if equal to shortNameHashAnimatorState</returns>
+    private bool IsCurrentAnimatorState(int shortNameHashAnimatorState)
+    {
+        //if (clips.Length != 0)
+        //    Debug.Log($"num={clips.Length} ClipInfo[0].name = {animatorCharacter.GetCurrentAnimatorClipInfo(AnimatorLayerIndex_Death)[0].clip.name}");
+        //Debug.Log($"GetCurrentAnimatorStateInfo = {animatorCharacter.GetCurrentAnimatorStateInfo(AnimatorLayerIndex_Death).shortNameHash}");
+        return animatorCharacter.GetCurrentAnimatorStateInfo(AnimatorLayerIndex_Death).shortNameHash == shortNameHashAnimatorState;
+    }
+
     /// <summary>
     /// Change the Player animation and WorldMoveSpeed, if Player press the coresponding button.
     /// Set keyChangeSpeedPressed = false
@@ -206,21 +243,31 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     /// <param name="contactNormal"></param>
     public void ObstacleCollision(Vector3 contactPosition, Vector3 contactNormal)
     {
-        if (!WasCollision)
+        if (!isWasCollision)
         {
             dirtSplatter.SetActive(false);
             movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
-            rigidbodyCharacter.AddForce(-contactNormal * BackwardForceAtCollision, ForceMode.VelocityChange);
-            //Explosion paritcle
-            ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab, contactPosition, Quaternion.identity);
-            particle.Play();
-            gameSound.PlaySound(PlayerState.Collision);
-            //Set Player State Died
             WorldStop();
-            animatorCharacter.SetBool(hashDeath_b, true);
-            animatorCharacter.SetInteger(hashDeathType_int, 1);
 
-            WasCollision = true;
+            if (gameSceneManager.TryDecreaseLifes())
+            {
+                //Character left lives and continue run 
+            }
+            else
+            {
+                //Character throw Foce
+                rigidbodyCharacter.AddForce(-contactNormal * BackwardForceAtCollision, ForceMode.VelocityChange);
+                //Explosion paritcle
+                ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab, contactPosition, Quaternion.identity);
+                particle.Play();
+                gameSound.PlaySound(PlayerState.Died);
+                
+                animatorCharacter.SetBool(hashDeath_b, true);
+                animatorCharacter.SetInteger(hashDeathType_int, 1);
+                isWasCollision = true;
+                //Character starts to die 
+            }
+
         }
     }
     /// <summary>
@@ -266,7 +313,12 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         //The button Start will affect if current state = Stop
         if (_currentState == PlayerState.Stop)
         {
-            //IsWalking = true;
+            //if (!textTurnOffPressEnter)
+            //{
+            //    Debug.LogError("Time Workaround !!!");
+            //    textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
+            //    textTurnOffPressEnter?.Active(false);
+            //}
             textTurnOffPressEnter?.Active(false);
             CharacterGo();
         }
