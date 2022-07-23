@@ -1,0 +1,41 @@
+//Attach this script to your Camera
+//This draws a line in the Scene view going through a point where Target Trandform
+//To see this, enter Play Mode and switch to the Scene tab. Zoom into your Camera's position.
+using UnityEngine.InputSystem;
+using UnityEngine;
+using System.Collections;
+
+namespace GMTools.Templates
+{
+    public class ScreenPointTo : MonoBehaviour
+    {
+        UnityEngine.Camera cam;
+        [SerializeField] private Transform Target;
+
+
+        void Start()
+        {
+            cam = GetComponent<UnityEngine.Camera>();
+        }
+
+        void Update()
+
+        {
+
+            Ray raytest = cam.ScreenPointToRay(cam.WorldToScreenPoint(Target.position));
+            //Ray raytest = cam.ScreenPointToRay(new Vector3(cam.pixelWidth / 2, cam.pixelHeight / 2,0));
+            Debug.DrawRay(raytest.origin, raytest.direction * 10, Color.yellow);
+
+            //if (Input.GetButtonDown("Fire1"))
+            if (Mouse.current.leftButton.isPressed)
+            {
+                //Vector3 mousePos = Input.mousePosition;
+                Vector3 mousePos = Mouse.current.position.ReadValue();
+                {
+                    //Debug.Log(mousePos.x);
+                    Debug.Log(mousePos);
+                }
+            }
+        }
+    } 
+}
