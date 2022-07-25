@@ -15,7 +15,7 @@ public class CollisionObstacle : MonoBehaviour
 
     private void Awake()
     {
-        characterController = SingletonController.Instance.GetCharacterController();
+        characterController = SingletonGame.Instance.GetCharacterController();
     }
 
     /// <summary>
@@ -29,6 +29,6 @@ public class CollisionObstacle : MonoBehaviour
         // Visualize the contact point
         Debug.DrawRay(contact.point, -contact.normal * 3, Color.blue,10f);
 
-        characterController?.ObstacleCollision(contact.point, contact.normal);
+        characterController?.ObstacleCollision(contact.point, contact.normal, GetComponent<Rigidbody>());
     }
 }

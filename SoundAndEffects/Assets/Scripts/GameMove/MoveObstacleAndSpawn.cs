@@ -9,7 +9,7 @@ using System;
 /// </summary>
 public class MoveObstacleAndSpawn : MonoBehaviour
 {
-    const int initCountObstacles = 3;
+    //const int initCountObstacles = 3;
     [SerializeField] private SpawnerTypeSO spawnerType;
     [SerializeField] private Rigidbody spawnedObstacle;
 
@@ -25,14 +25,14 @@ public class MoveObstacleAndSpawn : MonoBehaviour
     /// <summary>
     /// The obstacle of this Type was spawned the most latest
     /// </summary>
-    private bool _IamLastObstacle = false;
+    private bool _IamLastSpawner = false;
     private System.Random random;
     private Vector3 initRigidbodyWorldPosition;
     private float initRigidbodyWorldPositionX;
     private float worldPositionXDistanceAfter;
     protected void Awake()
     {
-        movingWorld = SingletonController.Instance.GetMovingWorld();
+        movingWorld = SingletonGame.Instance.GetMovingWorld();
         random = new System.Random();
         //The pool will Instantiate Objects if it will be demands, base on these parameters
         poolObstacle = new Pool(() => Instantiate<Rigidbody>(spawnedObstacle, transform, worldPositionStays: false));
@@ -68,7 +68,7 @@ public class MoveObstacleAndSpawn : MonoBehaviour
 
     private bool IsObstaclePassSpawnPosition(Rigidbody rigidbody) => rigidbody.position.x < worldPositionXDistanceAfter;
     private float RigidbodyLocalPositionX(Rigidbody rigidbody) => rigidbody.position.x - initRigidbodyWorldPositionX;
-    public bool SetIamLastObstacle(bool value) => _IamLastObstacle = value;
+    public bool SetIamLastSpawner(bool value) => _IamLastSpawner = value;
 
     protected void FixedUpdate()
     {
@@ -77,13 +77,13 @@ public class MoveObstacleAndSpawn : MonoBehaviour
             //When the last spawned obstacle went the distance "Distance After" set for this type then will be spawned next obstacle
             //The movement going toward by negative Axe X
             //if (_IamLastObstacle && arrObstacle[arrObstacle.Count - 1].transform.localPosition.x < -spawnerType.DistanceAfter)
-            if (_IamLastObstacle && IsObstaclePassSpawnPosition(lastObstacle))
+            if (_IamLastSpawner && IsObstaclePassSpawnPosition(lastObstacle))
             {
                 //Debug.Log($"{lastObstacle.name} call SpawnNextObstacle() x={lastObstacle.transform.localPosition.x:F1} Rx={lastObstacle.position.x:F1}");
                 mainSpawner.SpawnNextObstacle();
             }
             //Not del the LastObstacle
-            if (movingWorld.IsObjectReadyToRemove(RigidbodyLocalPositionX(arrObstacle.Peek())) && (!_IamLastObstacle || arrObstacle.Count > 1))
+            if (movingWorld.IsObjectReadyToRemove(RigidbodyLocalPositionX(arrObstacle.Peek())) && (!_IamLastSpawner || arrObstacle.Count > 1))
             {
                 RemoveObstacleFromScreen(); 
             }
@@ -107,9 +107,20 @@ public class MoveObstacleAndSpawn : MonoBehaviour
     //Time Solution vs realization pool object and enable and disable them vs Instatiate and Destroy
     protected void RemoveObstacleFromScreen()
     {
-        //Debug.Log($"RemoveObstacleFromScreen() : {arrObstacle.Peek().name}");
         poolObstacle.ReturnElement(arrObstacle.Dequeue());
     }
 
     public void InitMainSpawner(MainSpawner spawner) => mainSpawner = spawner;
+
+    public void RemoveAllObstacleFromScreen()
+    {
+        int count = arrObstacle.Count;
+        //Debug.Log($"RemoveAllObstacleFromScreen({this.gameObject.name}) = {count} ");
+        for (int i = 0; i < count; i++)
+        {
+            //Debug.Log($"ReturnElement : {arrObstacle.Peek().name}");
+            poolObstacle.ReturnElement(arrObstacle.Dequeue());
+        }
+        //Debug.Log($"At End({this.gameObject.name}) = {arrObstacle.Count} ");
+    }
 }

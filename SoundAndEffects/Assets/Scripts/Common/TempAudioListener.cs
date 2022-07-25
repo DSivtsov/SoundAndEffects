@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.SceneManagement;
 /// <summary>
-/// Add AudioListener to current object if Scene can't find any one actine Audiolisneter
+/// Add AudioListener to current object if Scene can't find any one actine Audiolisneter, in Editor only
 /// </summary>
 public class TempAudioListener : MonoBehaviour
 {
@@ -32,4 +30,5 @@ public class TempAudioListener : MonoBehaviour
         gameObject.AddComponent<AudioListener>();
         Debug.LogWarning($"Temporary for [{gameObject.scene.name}] Scene was added [AudioListener]");
     }
-}
+} 
+#endif

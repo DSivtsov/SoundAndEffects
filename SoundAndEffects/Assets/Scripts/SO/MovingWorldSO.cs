@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class MovingWorldSO : ScriptableObject
     [SerializeField] private float runSpeed;
     [Tooltip("The distance which must pass the objects on Screen before remove them")]
     [SerializeField] private float xPositionOutScreen;
+
+    public event Action WorldSpeedChanged;
     public bool worldIsMoving { get; private set; }
     private float _currentSpeed;
     public float CurrentSpeed
@@ -69,6 +72,7 @@ public class MovingWorldSO : ScriptableObject
     private void UpdateWorldSpeed(float newSpeed)
     {
         CurrentSpeed = newSpeed;
-        SingletonController.Instance.InformAboutSpeedChange.Invoke();
+        //SingletonGame.Instance.WorldSpeedChanged.Invoke();
+        WorldSpeedChanged.Invoke();
     }
 }

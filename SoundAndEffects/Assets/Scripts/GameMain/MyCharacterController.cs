@@ -17,9 +17,10 @@ public enum PlayerState
 public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 {
     #region SerializedFields
-    [SerializeField] private ParticleSystem explosionPrefab;
+    [SerializeField] private ParticleSystem explosionDied;
+    [SerializeField] private ParticleSystem explosionNotDied;
     [SerializeField] private GameObject dirtSplatter;
-    [SerializeField] private int BackwardForceAtCollision = 2;
+    [SerializeField] private int ReactForceAtCollision = 2;
     [SerializeField] private GameSceneManager gameSceneManager;
     #endregion
 
@@ -37,7 +38,12 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private int hashJump_trig;
     private int hashDeath_b;
     private int hashDeathType_int;
+    private int hashCollision_t;
+    private int hashBody_Vertical_f;
+    private int hashBody_Horizontal_f;
+    private int hashWeaponType_int;
     private int AnimatorState_Dead_01;
+    private int AnimatorState_Alive;
     private int AnimatorLayerIndex_Death;
     /// <summary>
     /// The strength of the jump depends on the selected difficulty level and movement speed 
@@ -54,78 +60,120 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private PlayerState _currentState;
     private bool keyChangeSpeedPressed = false;
     private const float changeSoundMovementDelay = .25f;
+    private const float DragObstacleAfterLightCollision = 0.5f;
     private bool restoreSoundAndEffectAfterGrounded = false;
     private PlaySetAudio gameSound;
+    private Rigidbody lastCollised;
+    private float storeDraglastCollised;
+    private bool isGameOverState;
+    private Vector3 characterInitWordPos;
+    private TypeMsg waitMsg;
     #endregion
-    public bool IsCharacterDied { get; private set; } = false;
+    public bool DiedAnimManFinished { get; private set; } = false;
+    public bool CollisionAnimManFinished { get; private set; } = false;
 
     private void Awake()
     {
         if (!gameSceneManager)
             Debug.LogError($"{this} not linked to GameSceneManager");
-        
         checkPlayer = FindObjectOfType<PlayerCollisionGround>();
         if (checkPlayer== null)
             Debug.LogError($"{this} absent the <PlayerCollisionGround> module");
-
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
-
         animatorCharacter = GetComponent<Animator>();
         hashStatic_b = Animator.StringToHash("Static_b");
         hashSpeed_f = Animator.StringToHash("Speed_f");
         hashJump_trig = Animator.StringToHash("Jump_trig");
         hashDeath_b = Animator.StringToHash("Death_b");
         hashDeathType_int = Animator.StringToHash("DeathType_int");
-        
+        hashCollision_t = Animator.StringToHash("Collision_t");
+        hashBody_Vertical_f = Animator.StringToHash("Body_Vertical_f");
+        hashBody_Horizontal_f = Animator.StringToHash("Body_Horizontal_f");
+        hashWeaponType_int = Animator.StringToHash("WeaponType_int");
         AnimatorState_Dead_01 = Animator.StringToHash("Dead_01");
+        AnimatorState_Alive = Animator.StringToHash("Alive");
         AnimatorLayerIndex_Death = animatorCharacter.GetLayerIndex("Death");
-
         rigidbodyCharacter = GetComponent<Rigidbody>();
-
-        movingWorld = SingletonController.Instance.GetMovingWorld();
-
+        movingWorld = SingletonGame.Instance.GetMovingWorld();
         gameSound = GetComponent<PlaySetAudio>();
+
+        characterInitWordPos = transform.position;
+        //waitMsg = TypeMsg.Start;
+        isGameOverState = true;
     }
 
     private void OnEnable() => inputs.Move.Enable();
     private void OnDisable() => inputs.Move.Disable();
     
-    private void Start()
+    public void Start()
     {
+        if (gameSceneManager.GameMainManagerOff)
+            ReStartGame();
+    }
+
+    public void ReStartGame()
+    {
+        if (isGameOverState)
+        {
+            waitMsg = TypeMsg.Start;
+            isGameOverState = false; 
+        }
         //For Demo Purpose Call only in Editor
         SetPhysicsIgnoreObstaclesCollisions();
-
+        CharacterMoveToInitPosition();
         CharacterIdle();
 #if UNITY_EDITOR
         //For Demo Purpose Call only in Editor
         CheckIsWalkingAfterStart();
 #else
-        ShowStartScreen();
+        ShowWaitScreen();
 #endif
     }
 
-    private void ShowStartScreen()
+    private void CharacterMoveToInitPosition()
+    {
+        Debug.Log("CharacterMoveToInitPosition()");
+        //animatorCharacter.keepAnimatorControllerStateOnDisable = false;
+        animatorCharacter.enabled = false;
+        transform.position = characterInitWordPos;
+        animatorCharacter.enabled = true;
+    }
+
+    private void ShowWaitScreen()
     {
         //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
         //Later can turn off by OnStart
         textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
-        textTurnOffPressEnter?.Active(true);
+        textTurnOffPressEnter?.Active(true, waitMsg);
     }
 
     private void Update()
     {
+        if (isGameOverState)
+        {
+            return;
+        }
         if (isWasCollision)
         {
-            //skip other Game Logic
-            //Debug.Log("I'm here");
-            if (IsCharacterDied)
-                CharacterDiedIteraction();
-            if (IsCurrentAnimatorState(AnimatorState_Dead_01))
+            //skip other Game Logic and waiting the finishing Animation Collision or Dying
+             if (CollisionAnimManFinished)
             {
-                //Character died
-                IsCharacterDied = true;
-                gameSceneManager.ManDied();
+                RestoreOldDragLastCollisedRigidbody();
+                gameSceneManager.CharacterCollision();
+                CollisionAnimManFinished = false;
+                //isContinueGame = true;
+                waitMsg = TypeMsg.Continue;
+                ReStartGame();
+                isWasCollision = false;
+            }
+            else if (DiedAnimManFinished)
+            {
+                gameSceneManager.CharacterDied();
+                waitMsg = TypeMsg.EndGame;
+                ShowWaitScreen();
+                isWasCollision = false;
+                isGameOverState = true;
             }
             return;
         }
@@ -134,7 +182,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             if (restoreSoundAndEffectAfterGrounded)
             {
                 gameSound.PlaySound(_currentState, changeSoundMovementDelay);
-                dirtSplatter.SetActive( (_currentState == PlayerState.Run)? true : false);
+                dirtSplatter.SetActive((_currentState == PlayerState.Run)? true : false);
                 restoreSoundAndEffectAfterGrounded = false;
             }
 
@@ -154,23 +202,18 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             }
         }
     }
-
-    private void CharacterDiedIteraction()
-    {
-        throw new NotImplementedException();
-    }
-
     /// <summary>
-    /// Check the current Animator state
+    /// Check the current Animator state in the Layer
     /// </summary>
+    /// <param name="layerindex"></param>
     /// <param name="shortNameHashAnimatorState">Animator state hash</param>
     /// <returns>true if equal to shortNameHashAnimatorState</returns>
-    private bool IsCurrentAnimatorState(int shortNameHashAnimatorState)
+    private bool IsCurrentAnimatorState(int layerindex, int shortNameHashAnimatorState)
     {
         //if (clips.Length != 0)
         //    Debug.Log($"num={clips.Length} ClipInfo[0].name = {animatorCharacter.GetCurrentAnimatorClipInfo(AnimatorLayerIndex_Death)[0].clip.name}");
         //Debug.Log($"GetCurrentAnimatorStateInfo = {animatorCharacter.GetCurrentAnimatorStateInfo(AnimatorLayerIndex_Death).shortNameHash}");
-        return animatorCharacter.GetCurrentAnimatorStateInfo(AnimatorLayerIndex_Death).shortNameHash == shortNameHashAnimatorState;
+        return animatorCharacter.GetCurrentAnimatorStateInfo(layerindex).shortNameHash == shortNameHashAnimatorState;
     }
 
     /// <summary>
@@ -212,21 +255,22 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     public void SetForceJumpSO(ForceJumpSO newForceJumpSO) => forceJumpSO = newForceJumpSO;
 
     /// <summary>
-    /// Can be called from Start() also: called before any Update()
-    /// Set Animation, WorldSpeed and State for Character Stop. 
+    /// Set Animation, WorldSpeed and State for Character Idle (not Walk or Run Anim) 
     /// </summary>
     private void CharacterIdle()
     {
-        WorldStop();
-        //animatorCharacter.SetBool(hashStatic_b, true);
+        dirtSplatter.SetActive(false);
         animatorCharacter.SetFloat(hashSpeed_f, 0);
-    }
-
-    private void WorldStop()
-    {
+        //WorldStop();
         currentForceJump = 0;
         UpdateWorldMoveSpeed(PlayerState.Stop);
     }
+
+    //private void WorldStop()
+    //{
+    //    currentForceJump = 0;
+    //    UpdateWorldMoveSpeed(PlayerState.Stop);
+    //}
 
     /// <summary>
     /// Reaction on press Go.React through ChangeMoveState()
@@ -241,35 +285,121 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     /// </summary>
     /// <param name="contactPosition"></param>
     /// <param name="contactNormal"></param>
-    public void ObstacleCollision(Vector3 contactPosition, Vector3 contactNormal)
+    public void ObstacleCollision(Vector3 contactPosition, Vector3 contactNormal, Rigidbody rigidbodyObstacle)
     {
         if (!isWasCollision)
         {
-            dirtSplatter.SetActive(false);
-            movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
-            WorldStop();
-
-            if (gameSceneManager.TryDecreaseLifes())
+            //dirtSplatter.SetActive(false);
+            //movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
+            //WorldStop();
+            //Set Anim to Idle at Layer Walk the Dying and CollisionAndGym Anim on Layers Died and Body
+            CharacterIdle();
+            if (gameSceneManager.CharacterNotDiedAfterCollision())
             {
-                //Character left lives and continue run 
+                //Character left lives and continue run
+                //obstacle after not killing collision receive an impulse and must have a drag
+                TempChangeDragLastCollisedRigidbody(rigidbodyObstacle);
+                rigidbodyObstacle.AddForce(contactNormal * ReactForceAtCollision, ForceMode.Impulse);
+                ParticleSystem particle = Instantiate<ParticleSystem>(explosionNotDied, contactPosition, Quaternion.identity);
+                particle.Play();
+                gameSound.PlaySound(PlayerState.Collision);
+                //Start Corunite before Transition starts and check when it finished
+                StartAndCheckFinishCollisionAnim();
             }
             else
             {
-                //Character throw Foce
-                rigidbodyCharacter.AddForce(-contactNormal * BackwardForceAtCollision, ForceMode.VelocityChange);
+                //Character throw Force
+                //rigidbodyCharacter.AddForce(-contactNormal * ReactForceAtCollision, ForceMode.VelocityChange);
+                rigidbodyCharacter.AddForce(-contactNormal * ReactForceAtCollision, ForceMode.Impulse);
                 //Explosion paritcle
-                ParticleSystem particle = Instantiate<ParticleSystem>(explosionPrefab, contactPosition, Quaternion.identity);
+                ParticleSystem particle = Instantiate<ParticleSystem>(explosionDied, contactPosition, Quaternion.identity);
                 particle.Play();
                 gameSound.PlaySound(PlayerState.Died);
-                
-                animatorCharacter.SetBool(hashDeath_b, true);
-                animatorCharacter.SetInteger(hashDeathType_int, 1);
-                isWasCollision = true;
-                //Character starts to die 
+                //Start Animation and check when it finished
+                StartCoroutine(StartAndCheckFinishDiedAnim());
             }
-
+            isWasCollision = true;
         }
     }
+
+    private void TempChangeDragLastCollisedRigidbody(Rigidbody rigidbodyObstacle)
+    {
+        lastCollised = rigidbodyObstacle;
+        storeDraglastCollised = rigidbodyObstacle.drag;
+        rigidbodyObstacle.drag = DragObstacleAfterLightCollision;
+    }
+
+    private void RestoreOldDragLastCollisedRigidbody()
+    {
+        lastCollised.drag = storeDraglastCollised;
+    }
+
+
+    /// <summary>
+    /// Start DiedAnim after finish set DiedAnimManFinished = true
+    /// </summary>
+    /// <returns>IEnumerator</returns>
+    private IEnumerator StartAndCheckFinishDiedAnim()
+    {
+        animatorCharacter.SetBool(hashDeath_b, true);
+        animatorCharacter.SetInteger(hashDeathType_int, 1);
+
+        do { yield return null; } while (!IsCurrentAnimatorState(AnimatorLayerIndex_Death, AnimatorState_Dead_01));
+        DiedAnimManFinished = true;
+    }
+
+    /// <summary>
+    /// Start CollisionAnim after finish set CollisionAnimManFinished = true
+    /// </summary>
+    /// <param name="showMakeGymnasticAnim"></param>
+    private void StartAndCheckFinishCollisionAnim(bool showMakeGymnasticAnim = true)
+    {
+        //Coroutine for guarantee must run before SetTriger is initiated and Transition starts, so as not to miss the exit from the current state
+        StartCoroutine(CheckFinishCollisionAnim(showMakeGymnasticAnim));
+        //Initiate the Tsansition
+        animatorCharacter.SetTrigger(hashCollision_t);
+    }
+
+    private IEnumerator CheckFinishCollisionAnim(bool showMakeGymnasticAnim)
+    {
+        //The coroutine runs before the animator exits the AnimatorState_Alive state.
+        while (IsCurrentAnimatorState(AnimatorLayerIndex_Death, AnimatorState_Alive)) { yield return null; }
+
+        //Pause till finishing the hashCollision_t animation
+        do { yield return null; } while (!IsCurrentAnimatorState(AnimatorLayerIndex_Death, AnimatorState_Alive));
+        if (showMakeGymnasticAnim)
+            StartCoroutine(CharacterMakeGyme());
+        else
+            CollisionAnimManFinished = true;
+    }
+
+    private IEnumerator CharacterMakeGyme()
+    {
+        int part = 20;
+        float deltaAnimationStep = 1f / part;
+        float pauseIteration = 1f / part / 1.4f;
+        //To Acitivate Layer Body must not used on Layer Weapon
+        animatorCharacter.SetInteger(hashWeaponType_int, 20);
+        for (int i = 0; i <= part; i++)
+        {
+            animatorCharacter.SetFloat(hashBody_Vertical_f, i * deltaAnimationStep);
+            yield return new WaitForSeconds(pauseIteration);
+        }
+        pauseIteration = 1f / part / 1.6f;
+        for (int i = part; i >= -part; i--)
+        {
+            animatorCharacter.SetFloat(hashBody_Vertical_f, i * deltaAnimationStep);
+            yield return new WaitForSeconds(pauseIteration);
+        }
+        pauseIteration = 1f / part / 1.8f;
+        for (int i = -part; i <= 0; i++)
+        {
+            animatorCharacter.SetFloat(hashBody_Vertical_f, i * deltaAnimationStep);
+            yield return new WaitForSeconds(pauseIteration);
+        }
+        CollisionAnimManFinished = true;
+    }
+
     /// <summary>
     /// Update the currentState and WorlMovementSpeed
     /// </summary>
@@ -313,14 +443,18 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         //The button Start will affect if current state = Stop
         if (_currentState == PlayerState.Stop)
         {
-            //if (!textTurnOffPressEnter)
-            //{
-            //    Debug.LogError("Time Workaround !!!");
-            //    textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
-            //    textTurnOffPressEnter?.Active(false);
-            //}
             textTurnOffPressEnter?.Active(false);
-            CharacterGo();
+            Debug.LogError("Time Solution");
+            if (waitMsg != TypeMsg.EndGame)
+            {
+                CharacterGo(); 
+            }
+            else if (!SingletonGame.Instance.GameSceneManager().GameMainManagerOff)
+                {
+                    GameMainManager.Instance?.ReturnFromGameToMainMenu();
+                    gameSceneManager.ClearReinitScene();
+                    CharacterMoveToInitPosition(); 
+                }
         }
     }
     #endregion
@@ -340,9 +474,9 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     private void CheckIsWalkingAfterStart()
     {
         //If IsWalking initialy not set to true For Demo Purpose
-        if (!SingletonController.Instance.IsWalkingAfterStart)
+        if (!SingletonGame.Instance.IsWalkingAfterStart)
         {
-            ShowStartScreen();
+            ShowWaitScreen();
         }
         else
         {
@@ -358,7 +492,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
     private void SetPhysicsIgnoreObstaclesCollisions()
     {
-        if (SingletonController.Instance.IsPlayerNotCollide)
+        if (SingletonGame.Instance.IsPlayerNotCollide)
         {
             int layPlayer = LayerMask.NameToLayer("Player");
             int layObstacle = LayerMask.NameToLayer("Obstacles");

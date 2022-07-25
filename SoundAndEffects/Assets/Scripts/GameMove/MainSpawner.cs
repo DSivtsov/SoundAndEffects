@@ -8,38 +8,46 @@ using UnityEngine;
 /// </summary>
 public class MainSpawner : MonoBehaviour
 {
-    [SerializeField] MoveObstacleAndSpawn[] arrMoveObstacles;
-
+    [SerializeField] MoveObstacleAndSpawn[] arrSpawners;
+    [Header("Parameters Game Complexity rising")]
     //At Level = 1
-    [SerializeField] private int _initialMaxMultiplier = 5;
-    //At Level = 4 the Multiplier ~ 1,01
-    [SerializeField] private int _levelMinMultiplier = 6;
+    [Tooltip("The maximum spacing Obstacles at Game start")]
+    [SerializeField] private int _maxMultiplier = 5;
+    [Tooltip("The minimum spacing Obstacles at Selected Level and nexts")]
     [SerializeField] private int _minMultiplier = 1;
+    [Tooltip("The Selected Level with the minimal spacing Obstacles. At previous Level the value = min + (max - min) * 0,01")]
+    [SerializeField] private int _levelMinMultiplier = 6;
 
-    public float Multiplier { get; private set; }
 
     private System.Random random;
-    private int? prevSpawner = null;
+    private int? idxPrevSpawner;// = null;
     private int countSpawnedAtThisLivel = 0;
-    public int Level { get; private set; } = 1;
+    private MovingWorldSO movingWorldSO;
 
+    public int Level { get; private set; } = 1;
+    public float Multiplier { get; private set; }
     public event Action<int> LevelChanged;
 
     void Awake()
     {
-        //singleton = SingletonController.Instance;
-        for (int i = 0; i < arrMoveObstacles.Length; i++)
+        movingWorldSO = SingletonGame.Instance.GetMovingWorld();
+        for (int i = 0; i < arrSpawners.Length; i++)
         {
-            arrMoveObstacles[i].InitMainSpawner(this);
+            arrSpawners[i].InitMainSpawner(this);
         }
         random = new System.Random();
     }
 
-    void Start()
+    private void OnEnable() => movingWorldSO.WorldSpeedChanged += UpdatedWorldSpeedForObstacles;
+    private void OnDisable() => movingWorldSO.WorldSpeedChanged -= UpdatedWorldSpeedForObstacles;
+
+    public void Start()
     {
+        idxPrevSpawner = null;
+
         UpdateLevelComplexity();
         //Temprorary turn off spawing all obstacle For Demo purpose
-        if (!SingletonController.Instance.IsTurnOffAllObstacle)
+        if (!SingletonGame.Instance.IsTurnOffAllObstacle)
         {
             SpawnNextObstacle(); 
         }
@@ -49,19 +57,19 @@ public class MainSpawner : MonoBehaviour
 
     public void SpawnNextObstacle()
     {
-        int nextSpawner = random.Next(arrMoveObstacles.Length);
-        if (prevSpawner.HasValue)
+        int idxCurrentSpawner = random.Next(arrSpawners.Length);
+        if (idxPrevSpawner.HasValue)
         {
             //Skip this for first run
-            arrMoveObstacles[prevSpawner.Value].SetIamLastObstacle(false);
+            arrSpawners[idxPrevSpawner.Value].SetIamLastSpawner(false);
         }
-        prevSpawner = nextSpawner;
+        idxPrevSpawner = idxCurrentSpawner;
 
         CheckAndChangeLevel();
 
-        arrMoveObstacles[nextSpawner].SpawnObstacle();
+        arrSpawners[idxCurrentSpawner].SpawnObstacle();
         countSpawnedAtThisLivel++;
-        arrMoveObstacles[nextSpawner].SetIamLastObstacle(true);
+        arrSpawners[idxCurrentSpawner].SetIamLastSpawner(true);
     }
 
     /// <summary>
@@ -72,6 +80,7 @@ public class MainSpawner : MonoBehaviour
         if (countSpawnedAtThisLivel > 9)
         {
             IncreaseLevel();
+            LevelChanged?.Invoke(Level);
             UpdateLevelComplexity();
             countSpawnedAtThisLivel = 0;
         }
@@ -82,21 +91,26 @@ public class MainSpawner : MonoBehaviour
     /// </summary>
     private void UpdateLevelComplexity()
     {
-        //Get 0.99 at singleton.Level = LevelMinMultiplier and 0 at singleton.Level = 1
+        //Get 0.99 at (LevelMinMultiplier-1) Level and ~1 at Level = LevelMinMultiplier
         float procentLerp = 1f - Mathf.Exp(Mathf.Log(1f - 0.99f) / (_levelMinMultiplier-1) * (Level - 1));
-        Multiplier = Mathf.Lerp(_initialMaxMultiplier, _minMultiplier, procentLerp);
-        LevelChanged?.Invoke(Level);
-        //Debug.Log($"UpdateMultiplier : Level={Level} procentLerp={procentLerp:F2} Multiplier={Multiplier:F2}");
+        Multiplier = Mathf.Lerp(_maxMultiplier, _minMultiplier, procentLerp);
+        ////Debug.Log($"UpdateMultiplier : Level={Level} procentLerp={procentLerp:F2} Multiplier={Multiplier:F2}");
     }
 
-    /// <summary>
-    /// Called through UnityEvent InformAboutSpeedChange
-    /// </summary>
     public void UpdatedWorldSpeedForObstacles()
     {
-        for (int i = 0; i < arrMoveObstacles.Length; i++)
+        for (int i = 0; i < arrSpawners.Length; i++)
         {
-            arrMoveObstacles[i].UpdateWorldSpeed();
+            arrSpawners[i].UpdateWorldSpeed();
+        }
+    }
+
+    public void RemoveAllObstacles()
+    {
+        for (int i = 0; i < arrSpawners.Length; i++)
+        {
+            arrSpawners[i].SetIamLastSpawner(false);
+            arrSpawners[i].RemoveAllObstacleFromScreen();
         }
     }
 }

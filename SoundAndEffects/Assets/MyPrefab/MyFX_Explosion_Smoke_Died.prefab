@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9125212449759046732}
   - component: {fileID: 3092082114216064087}
   m_Layer: 7
-  m_Name: MyFX_Explosion_Smoke
+  m_Name: MyFX_Explosion_Smoke_Died
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

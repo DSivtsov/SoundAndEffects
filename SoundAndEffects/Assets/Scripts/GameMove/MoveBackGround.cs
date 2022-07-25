@@ -19,7 +19,7 @@ public class MoveBackGround : MonoBehaviour
 
     private void Awake()
     {
-        movingWorld = SingletonController.Instance.GetMovingWorld();
+        movingWorld = SingletonGame.Instance.GetMovingWorld();
         backGroundTransform = GetComponent<Transform>();
         xCurrentSpritePos = xInitialSpritePos;
         yInitialSpritePos = backGroundTransform.position.y;

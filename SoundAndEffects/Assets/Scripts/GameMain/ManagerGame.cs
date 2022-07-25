@@ -6,19 +6,20 @@ using UnityEngine;
 /// </summary>
 public class ManagerGame : MonoBehaviour
 {
+    [Tooltip("Selected the base Game Complexity")]
     [SerializeField] private ComplexitySO InitialComplexity;
     [Tooltip("The array of ForceJumpSO")]
     [SerializeField] private ForceJumpSO[] arrForceJump;
     [Range(30, 60)]
     [Tooltip("Works at Awake")]
-    [SerializeField] private int FrameRate = 30;
+    [SerializeField] private int FPS = 30;
 
     private MyCharacterController characterController;
 
     void Awake()
     {
-        Application.targetFrameRate = FrameRate;
-        characterController = SingletonController.Instance.GetCharacterController();
+        Application.targetFrameRate = FPS;
+        characterController = SingletonGame.Instance.GetCharacterController();
 
         SetForceJumpForCurrentComplexity(); 
     }

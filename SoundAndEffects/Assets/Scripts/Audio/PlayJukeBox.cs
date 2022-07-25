@@ -32,7 +32,7 @@ public class PlayJukeBox : MonoBehaviour
             TurnOn();
         }
 #if OWNCONTROL
-        Debug.LogWarning($"Was Activated the own control in [{this}]");
+        Debug.LogWarning($"Was Activated the own control in [{this}] at [{this.gameObject.scene.name}] Scene");
 #endif
     }
 

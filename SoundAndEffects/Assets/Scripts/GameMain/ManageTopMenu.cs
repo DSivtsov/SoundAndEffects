@@ -6,27 +6,31 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 
-public class DisplayTopMenu : MonoBehaviour
+public class ManageTopMenu : MonoBehaviour
 {
-    [SerializeField] GameObject[] gameObjectHealth;
-    [SerializeField] TextMeshProUGUI strScore;
-    [SerializeField] TextMeshProUGUI strLevel;
+    [SerializeField] private GameObject[] gameObjectHealth;
+    [SerializeField] private TextMeshProUGUI strScore;
+    [SerializeField] private TextMeshProUGUI strLevel;
 
-    private MainSpawner mainSpawner;
+    private MainSpawner _mainSpawner;
+    private CharacterData _characterData;
 
     private void Awake()
     {
-        mainSpawner = SingletonController.Instance.GetMainSpawner();
+        _mainSpawner = SingletonGame.Instance.GetMainSpawner();
+        _characterData = SingletonGame.Instance.GetCharacterData();
     }
 
     private void OnEnable()
     {
-        mainSpawner.LevelChanged += SetLevel;
+        _mainSpawner.LevelChanged += SetLevel;
+        _characterData.HealthChanged += SetHealth;
     }
 
     private void OnDisable()
     {
-        mainSpawner.LevelChanged -= SetLevel;
+        _mainSpawner.LevelChanged -= SetLevel;
+        _characterData.HealthChanged -= SetHealth;
     }
 
     void Start()
@@ -36,7 +40,7 @@ public class DisplayTopMenu : MonoBehaviour
         //strScore.text = $"{9:000 000}";
         SetScore(9);
         //gameObjectHealth[0].SetActive(false);
-        SetHealth(3);
+        //SetHealth(3);
     }
     private void Update()
     {

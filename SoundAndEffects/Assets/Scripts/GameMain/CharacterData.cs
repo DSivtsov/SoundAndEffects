@@ -5,9 +5,9 @@ using UnityEngine;
 public class CharacterData : MonoBehaviour
 {
     [SerializeField] private int _maxHealth;
-    [SerializeField] private int _maxDefence;
+    //[SerializeField] private int _maxDefence;
 
-    public event Action<string> HealthChanged;
+    public event Action<int> HealthChanged;
     private int _health;
 
     public int Health
@@ -26,13 +26,34 @@ public class CharacterData : MonoBehaviour
 
     private void Start()
     {
-        HealthChanged?.Invoke(Health.ToString());
+        if (SingletonGame.Instance.GameSceneManager().GameMainManagerOff)
+        {
+            ResetHealth(); 
+        }
     }
 
-    private void OnValidate()
+    public void ResetHealth()
     {
-        Health = _health;
-        HealthChanged?.Invoke(Health.ToString());
+        Health = _maxHealth;
+        HealthChanged?.Invoke(Health);
+    }
+
+    //private void OnValidate()
+    //{
+    //    Health = _health;
+    //    HealthChanged?.Invoke(_health);
+    //}
+
+
+    /// <summary>
+    /// Change health
+    /// </summary>
+    /// <param name="decreaseAmmount">value with sign</param>
+    public void ChangeHealth(int decreaseAmmount)
+    {
+        Health += decreaseAmmount;
+        HealthChanged?.Invoke(Health);
+        Debug.Log($"HealthChanged to {Health}");
     }
 }
 

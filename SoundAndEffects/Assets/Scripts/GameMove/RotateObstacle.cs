@@ -21,7 +21,7 @@ public class RotateObstacle : MonoBehaviour
 
     private void Awake()
     {
-        movingWorld = SingletonController.Instance.GetMovingWorld();
+        movingWorld = SingletonGame.Instance.GetMovingWorld();
         rigidbodyObstacle = GetComponent<Rigidbody>();
         moveObstacle = GetComponentInParent<MoveRotateObstacleAndSpawn>();
         speedDiference = moveObstacle.speedModifier - 1;

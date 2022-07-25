@@ -21,6 +21,12 @@ public class LoaderSceneManager : MonoBehaviour
             Debug.LogError($"{this} not linked to GameMainManager");
     }
 
+    private void Start()
+    {
+        TurnOnLoaderCanvas(true);
+        _loaderManager.LoadScenes();
+    }
+
     public bool GetStatusLoadingScenes() => _loaderManager.AllScenesLoaded;
 
     public void TurnOnLoaderCanvas(bool value)

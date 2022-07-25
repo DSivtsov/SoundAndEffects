@@ -42,7 +42,11 @@ public class LoaderManager : MonoBehaviour
         sliderLoad.value = 0;
         arrAphorism = AphorismText.GetArrAphorismTex();
         textAphorism.text = arrAphorism[random.Next(0, arrAphorism.Length)];
+        //LoadScenes();
+    }
 
+    public void LoadScenes()
+    {
         numberOperations = loadOrder.Length;
         asyncOperations = new AsyncOperation[numberOperations];
 

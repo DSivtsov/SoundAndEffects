@@ -23,17 +23,6 @@ public class GameMainManager : SingletonController<GameMainManager>
     protected override void Awake()
     {
         base.Awake();
-
-    }
-
-    private void Update()
-    {
-        //if (_loaderSceneManager.GetStatusLoadingScenes() && !init)
-        //{
-        //    Debug.Log($"AllScenesLoaded && !init = {++count}");
-        //    changeScene?.Invoke(SceneState.Load);
-        //    init = true;
-        //}
     }
 
     public void LinkMenuSceneManager(MenuSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
@@ -42,9 +31,12 @@ public class GameMainManager : SingletonController<GameMainManager>
 
     public void StartNewGame()
     {
-        _menuSceneManager.TurnOnMainMenuCanvas(false);
-        _gameSceneManager.TurnOnGameCanvas(true);
         SetActiveScene(SceneName.Game);
+        _gameSceneManager.TurnOnGame(true);
+        _menuSceneManager.TurnOnMainMenuCanvas(false);
+        //_gameSceneManager.TurnOnGameCanvas(true);
+
+        //SingletonGame.Instance.GetGraveStoneControl().ActivateField();
     }
 
     private static void SetActiveScene(SceneName sceneName)
@@ -57,5 +49,13 @@ public class GameMainManager : SingletonController<GameMainManager>
     public void AllScenesLoaded()
     {
         _loaderSceneManager.TurnOnLoaderCanvas(false);
+    }
+
+    internal void ReturnFromGameToMainMenu()
+    {
+        SetActiveScene(SceneName.Menus);
+        _menuSceneManager.TurnOnMainMenuCanvas(true);
+        _gameSceneManager.TurnOnGame(false);
+
     }
 }
