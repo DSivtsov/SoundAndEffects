@@ -1,4 +1,5 @@
 //#define TRACEON
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,46 +9,49 @@ using UnityEngine;
 /// </summary>
 public class MoveBackGround : MonoBehaviour
 {
-    private MovingWorldSO movingWorld;
-    private const float xMaxMove = -56.4f;
-    private const float xInitialSpritePos = 0f;
-    
-    private float yInitialSpritePos;
-    private float zInitialSpritePos;
-    private float xCurrentSpritePos;
-    private Transform backGroundTransform;
+    private MovingWorldSO _movingWorld;
+    private const float _xMaxMove = -56.4f;
+    private const float _xInitialSpritePos = 0f;
+    private float _yInitialSpritePos;
+    private float _zInitialSpritePos;
+    private float _zxCurrentSpritePos;
+    private Transform _backGroundTransform;
+    private CharacterData _characterData;
 
     private void Awake()
     {
-        movingWorld = SingletonGame.Instance.GetMovingWorld();
-        backGroundTransform = GetComponent<Transform>();
-        xCurrentSpritePos = xInitialSpritePos;
-        yInitialSpritePos = backGroundTransform.position.y;
-        zInitialSpritePos = backGroundTransform.position.z;
+        _movingWorld = SingletonGame.Instance.GetMovingWorld();
+        _characterData = SingletonGame.Instance.GetCharacterData();
+        _backGroundTransform = GetComponent<Transform>();
+        _zxCurrentSpritePos = _xInitialSpritePos;
+        _yInitialSpritePos = _backGroundTransform.position.y;
+        _zInitialSpritePos = _backGroundTransform.position.z;
 
         SetBackGroundPosition();
     }
 
     private void Update()
     {
-        if (movingWorld.worldIsMoving)
+        if (_movingWorld.worldIsMoving)
         {
-            UpdateBackGroundPosition();
+            float deltaDistance = _movingWorld.CurrentSpeed * Time.deltaTime;
+            UpdateBackGroundPosition(deltaDistance);
+            _characterData.AddDeltaDistance(Math.Abs(deltaDistance));
         }
     }
 
-    private void UpdateBackGroundPosition()
+    private void UpdateBackGroundPosition(float deltaDistance)
     {
-        xCurrentSpritePos += movingWorld.CurrentSpeed * Time.deltaTime;
-        if (xCurrentSpritePos < xMaxMove)
+        _zxCurrentSpritePos += deltaDistance;
+        if (_zxCurrentSpritePos < _xMaxMove)
         {
-            xCurrentSpritePos = xInitialSpritePos;
+            _zxCurrentSpritePos = _xInitialSpritePos;
         }
         else
             SetBackGroundPosition();
     }
 
-    private void SetBackGroundPosition() => backGroundTransform.position = new Vector3(xCurrentSpritePos, yInitialSpritePos, zInitialSpritePos);
+    private void SetBackGroundPosition() => _backGroundTransform.position = new Vector3(_zxCurrentSpritePos, _yInitialSpritePos, _zInitialSpritePos);
 
     public void UpdatedWorldSpeedForBackGround()
     {

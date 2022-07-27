@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using TMPro;
+using System;
 
-enum SceneName
+public enum SceneName
 {
     //Put only Scenes possible to Load don't put the "Loader" Scene
     //Loader = 0,
@@ -29,20 +30,18 @@ public class LoaderManager : MonoBehaviour
     [Header("Scenes loading Order")]
     [SerializeField] private SceneName[] loadOrder;
     [Header("Demo Option")]
+    [SerializeField] private bool madePauseBeforeStart = true;
     [SerializeField] private float pauseBeforeStart = 3f;
 
     public bool AllScenesLoaded { get; private set; }
     private System.Random random  = new System.Random();
     private AsyncOperation[] asyncOperations;
     private int numberOperations;
-    private string[] arrAphorism;
     private void Awake()
     {
         imageLoadPicture.texture = arrLoadPictures[random.Next(0, arrLoadPictures.Length)];
         sliderLoad.value = 0;
-        arrAphorism = AphorismText.GetArrAphorismTex();
-        textAphorism.text = arrAphorism[random.Next(0, arrAphorism.Length)];
-        //LoadScenes();
+        textAphorism.text = AphorismText.GetStrRandomAphorismText();
     }
 
     public void LoadScenes()
@@ -89,15 +88,19 @@ public class LoaderManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Loading progress indicator never reaches 100%, because the first Scene will start early and overlap it before other Scenes will be fully loaded
+    /// Loading progress indicator never reaches 100%, because the first Scene will start early and overlap it before other Scenes will be fully loaded.
+    /// It made one "yield return null" after load
     /// </summary>
     /// <returns></returns>
     IEnumerator StartFirstLoadedScene()
     {
+        //Debug.Log($"{this} [{CountFrame.currentNumFrame}] [{this.gameObject.scene.name}] StartFirstLoadedScene()");
+        yield return null;
         float totalProgress;
         bool totalIsDone;
         do
         {
+            //Debug.Log($"{this} [{CountFrame.currentNumFrame}] [{this.gameObject.scene.name}] StartFirstLoadedScene() : LoadCycle");
             totalProgress = 0;
             totalIsDone = true;
             for (int i = 0; i < numberOperations; i++)
@@ -105,35 +108,39 @@ public class LoaderManager : MonoBehaviour
                 AsyncOperation currentOperation = asyncOperations[i];
                 totalProgress += currentOperation.progress;
                 totalIsDone &= currentOperation.isDone;
-                Debug.Log($"[{i}] currentOperation={currentOperation.progress} totalIsDone={totalIsDone}");
+                //Debug.Log($"[{i}] currentOperation={currentOperation.progress} totalIsDone={totalIsDone}");
             }
-            Debug.Log($"sum={totalProgress} {Mathf.Clamp01(totalProgress / (.9f * numberOperations))}");
-            totalProgress = Mathf.Clamp01(totalProgress / (.9f * numberOperations));
+            //Debug.Log($"sum={totalProgress} {(Mathf.Clamp01(totalProgress / (numberOperations)) * 100):F2}%");
+            totalProgress = Mathf.Clamp01(totalProgress / (numberOperations));
             sliderLoad.value = totalProgress;
             yield return null;
         } while (!totalIsDone);
+#if UNITY_EDITOR
+        //Demo Only
+        if (madePauseBeforeStart)
+        {
+            yield return new WaitForSeconds(pauseBeforeStart);
+        }
+#endif
         AllScenesLoadedActivated();
-        //AllScenesLoaded = true;
     }
 
     /// <summary>
-    /// Loading progress indicator always reaches 100%, only after that will activated the first Scene and other Scenes after 
+    /// Loading progress indicator always reaches 100%, only after that will activated the first Scene and other Scenes after.
+    /// It made one "yield return null" after load
     /// </summary>
     /// <returns></returns>
     IEnumerator StartAfterLoadedAllScenes()
     {
+        //Debug.Log($"{this} [{CountFrame.currentNumFrame}] [{this.gameObject.scene.name}] StartAfterLoadedAllScenes()");
         //Unity Bug https://issuetracker.unity3d.com/issues/loadsceneasync-allowsceneactivation-flag-is-ignored-in-awake
         yield return null;
-        //for (int i = 0; i < numberOperations; i++)
-        //{
-        //    asyncOperations[i] = SceneManager.LoadSceneAsync((int)loadOrder[i], LoadSceneMode.Additive);
-        //    asyncOperations[i].allowSceneActivation = false;
-        //}
         //Don't Activate Scenes after load
         StartAsyncLoad(false);
         float totalProgress;
         do
         {
+            //Debug.Log($"{this} [{CountFrame.currentNumFrame}] [{this.gameObject.scene.name}] StartAfterLoadedAllScenes() : LoadCycle");
             totalProgress = 0;
             for (int i = 0; i < numberOperations; i++)
             {
@@ -141,14 +148,17 @@ public class LoaderManager : MonoBehaviour
                 totalProgress += currentOperation.progress;
                 //Debug.Log($"[{i}] currentOperation={currentOperation.progress} currentOperation={currentOperation.isDone}");
             }
-            //Debug.Log($"sum={totalProgress} {Mathf.Clamp01(totalProgress / (.9f * numberOperations))}");
+            //Debug.Log($"sum={totalProgress} {(Mathf.Clamp01(totalProgress / (.9f * numberOperations)) * 100):F2}%");
             totalProgress = Mathf.Clamp01(totalProgress / (.9f * numberOperations));
             sliderLoad.value = totalProgress;
             yield return null;
         } while (totalProgress != 1);
 #if UNITY_EDITOR
         //Demo Only
-        yield return new WaitForSeconds(pauseBeforeStart);
+        if (madePauseBeforeStart)
+        {
+            yield return new WaitForSeconds(pauseBeforeStart); 
+        }
 #endif
         //All scenes are loaded but not Acivated
         ActivateFirstScene();
@@ -157,9 +167,6 @@ public class LoaderManager : MonoBehaviour
             ActivateOtherScene(); 
         }
         AllScenesLoadedActivated();
-        //AllScenesLoaded = true;
-        //loaderCameraObj.SetActive(false);
-        //loaderCanvas.SetActive(false);
     }
 
     private void ActivateFirstScene()
@@ -174,6 +181,25 @@ public class LoaderManager : MonoBehaviour
     }
 
     private void AllScenesLoadedActivated()
+    {
+        CountFrame.DebugLogUpdate(this, $"AllScenesLoadedActivated()");
+        if (loadedAllAfterStartFirst)
+            StartCoroutine(WaitAfterLoad());
+        else
+            LoadingFinished();
+    }
+
+    //Wait in Case of use the loadedAllAfterStartFirst
+    private IEnumerator WaitAfterLoad()
+    {
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+        LoadingFinished();
+    }
+
+    private void LoadingFinished()
     {
         AllScenesLoaded = true;
         GameMainManager.Instance.AllScenesLoaded();

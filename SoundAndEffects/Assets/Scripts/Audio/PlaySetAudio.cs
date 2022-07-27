@@ -35,21 +35,29 @@ public class PlaySetAudio : MonoBehaviour
     #endregion
 
     #region NonSerializedFields
-    private bool initAudioSources = false;
-    //private AudioSource[] audioSources = new AudioSource[2];
     private AudioSource audioSource;
+    private GameObject SoundtrackGameObject;
     public bool SFXState { get; private set; } = false;
     #endregion
 
-    private void Start()
+    private void OnEnable()
     {
+        //Debug.Log($"{this} OnEnable()");
         CheckInitSetSounds();
+    }
+
+    private void OnDisable()
+    {
+        //Debug.Log($"{this} OnDisable()");
+        Destroy(SoundtrackGameObject);
     }
 
     public void PlaySound(PlayerState currentState, float delay = 0)
     {
         if (SFXState)
-            _audioSet.PlayClip(audioSource, currentState, delay);
+        {
+            _audioSet.PlayClip(audioSource, currentState, delay); 
+        }
     }
 
     /// <summary>
@@ -64,16 +72,11 @@ public class PlaySetAudio : MonoBehaviour
         }
         else
         {
-            if (!initAudioSources)
-            {
-                GameObject child = new GameObject($"Soundtrack");
-                child.transform.parent = gameObject.transform;
-                audioSource = child.AddComponent<AudioSource>();
-                audioSource.priority = _sourcePriority;
-                audioSource.outputAudioMixerGroup = _mixerGroup;
-
-                initAudioSources = true;
-            }
+            SoundtrackGameObject = new GameObject($"Soundtrack");
+            SoundtrackGameObject.transform.parent = gameObject.transform;
+            audioSource = SoundtrackGameObject.AddComponent<AudioSource>();
+            audioSource.priority = _sourcePriority;
+            audioSource.outputAudioMixerGroup = _mixerGroup;
             if (_audioSet.InitClipDict(linksSetAudio))
                 SFXState = true;
         }

@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
 public class CharacterData : MonoBehaviour
 {
     [SerializeField] private int _maxHealth;
-    //[SerializeField] private int _maxDefence;
-
     public event Action<int> HealthChanged;
     private int _health;
+    private float _summaryDistance;
+    private PlayerCollisionGround _checkPlayer;
+    private bool _characterInAir;
 
     public int Health
     {
@@ -24,11 +26,34 @@ public class CharacterData : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        _checkPlayer = SingletonGame.Instance.GetPlayerCollisionGround();
+        ScoreCounting.InitScoreCounting(SingletonGame.Instance.GetGameParametersManager());
+    }
+
     private void Start()
     {
-        if (SingletonGame.Instance.GameSceneManager().GameMainManagerOff)
+        if (SingletonGame.Instance.GetGameSceneManager().GameMainManagerNotLinked)
         {
-            ResetHealth(); 
+            ResetHealth();
+            ResetScoreDistance();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (_checkPlayer.IsGrounded && _characterInAir)
+        {
+            _characterInAir = false;
+            ScoreCounting.JumpFinished();
+            //ScoreChanged.Invoke(ScoreCounting.AllSum);
+            return;
+        }
+        if (!_checkPlayer.IsGrounded && !_characterInAir)
+        {
+            _characterInAir = true;
+            return;
         }
     }
 
@@ -38,12 +63,13 @@ public class CharacterData : MonoBehaviour
         HealthChanged?.Invoke(Health);
     }
 
-    //private void OnValidate()
-    //{
-    //    Health = _health;
-    //    HealthChanged?.Invoke(_health);
-    //}
-
+    public void ResetScoreDistance()
+    {
+        _summaryDistance = 0;
+        _characterInAir = false;
+        ScoreCounting.Reset();
+        //ScoreChanged.Invoke(ScoreCounting.AllSum);
+    }
 
     /// <summary>
     /// Change health
@@ -53,7 +79,15 @@ public class CharacterData : MonoBehaviour
     {
         Health += decreaseAmmount;
         HealthChanged?.Invoke(Health);
-        Debug.Log($"HealthChanged to {Health}");
     }
+
+    public void AddDeltaDistance(float deltaDistance)
+    {
+        _summaryDistance += deltaDistance;
+    }
+
+    public int GetCurrentSummaryDistance() => Mathf.RoundToInt(_summaryDistance);
+
+    public int GetCurrentSummaryScore() => ScoreCounting.AllSum;
 }
 

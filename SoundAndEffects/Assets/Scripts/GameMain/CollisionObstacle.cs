@@ -11,7 +11,7 @@ using UnityEngine;
 public class CollisionObstacle : MonoBehaviour
 {
     //public MyCharacterController characterController;
-    private MyCharacterController characterController;
+    private CharacterManager characterController;
 
     private void Awake()
     {
@@ -25,10 +25,9 @@ public class CollisionObstacle : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         ContactPoint contact = collision.GetContact(0);
-        print(contact.thisCollider.name + " hit " + contact.otherCollider.name);
+        //Debug.Log(contact.thisCollider.name + " hit " + contact.otherCollider.name);
         // Visualize the contact point
-        Debug.DrawRay(contact.point, -contact.normal * 3, Color.blue,10f);
-
+        //Debug.DrawRay(contact.point, -contact.normal * 3, Color.blue,10f);
         characterController?.ObstacleCollision(contact.point, contact.normal, GetComponent<Rigidbody>());
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using GMTools;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public enum SceneState
 {
@@ -15,47 +16,69 @@ public enum SceneState
 public class GameMainManager : SingletonController<GameMainManager>
 {
     private LoaderSceneManager _loaderSceneManager;
-    private MenuSceneManager _menuSceneManager;
+    private MainMenusSceneManager _menuSceneManager;
     private GameSceneManager _gameSceneManager;
-
-    public event Action<SceneState>  changeScene;
 
     protected override void Awake()
     {
         base.Awake();
     }
 
-    public void LinkMenuSceneManager(MenuSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
+    public void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
     public void LinkLoaderSceneManager(LoaderSceneManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
     public void LinkGameSceneManager(GameSceneManager gameSceneManager) => _gameSceneManager = gameSceneManager;
 
-    public void StartNewGame()
+    public void FromMenusToStartGame()
     {
+        CountFrame.DebugLogUpdate(this,$"FromMenusToStartGame()");
+        _gameSceneManager.ActivateGameCamera(true);
         SetActiveScene(SceneName.Game);
-        _gameSceneManager.TurnOnGame(true);
-        _menuSceneManager.TurnOnMainMenuCanvas(false);
-        //_gameSceneManager.TurnOnGameCanvas(true);
-
-        //SingletonGame.Instance.GetGraveStoneControl().ActivateField();
+        //_gameSceneManager.SelectGameObjectFromScene();
+        _gameSceneManager.StartNewGame();
+        _menuSceneManager.ActivateMainMenusCamera(false);
+        //_menuSceneManager.TurnOffMusicMenus();
     }
 
-    private static void SetActiveScene(SceneName sceneName)
-    {
-        //Debug.Log(SceneManager.GetActiveScene().name);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)sceneName));
-        //Debug.Log(SceneManager.GetActiveScene().name);
-    }
+    private static void SetActiveScene(SceneName sceneName) => SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)sceneName));
 
     public void AllScenesLoaded()
     {
-        _loaderSceneManager.TurnOnLoaderCanvas(false);
+        CountFrame.DebugLogUpdate(this, $"AllScenesLoaded()");
+        FromLoaderToMenus();
     }
 
-    internal void ReturnFromGameToMainMenu()
+    public void FromLoaderToMenus()
     {
+        _menuSceneManager.ActivateMainMenusCamera(true);
         SetActiveScene(SceneName.Menus);
-        _menuSceneManager.TurnOnMainMenuCanvas(true);
-        _gameSceneManager.TurnOnGame(false);
+        _gameSceneManager.ActivateGameCamera(false);
+        _loaderSceneManager.ActivateLoaderCamera(false);
+    }
+
+    public void FromGameToMenus()
+    {
+        _menuSceneManager.ActivateMainMenusCamera(true);
+        SwitchMusicTo(SceneName.Menus);
+        SetActiveScene(SceneName.Menus);
+        _gameSceneManager.ActivateGameCamera(false);
+    }
+
+    public void SwitchMusicTo(SceneName scene)
+    {
+        switch (scene)
+        {
+            case SceneName.Menus:
+                _menuSceneManager.TurnOnMusicMenus();
+                _gameSceneManager.TurnOnMusic(false);
+                break;
+            case SceneName.Game:
+                _gameSceneManager.TurnOnMusic();
+                _menuSceneManager.TurnOnMusicMenus(false);
+                break;
+            default:
+                Debug.LogError("{this} SwitchMusicTo() can't switch to {scene} Scene");
+                break;
+        }
 
     }
 }

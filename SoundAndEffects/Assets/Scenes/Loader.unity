@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44668144, g: 0.49653333, b: 0.5748794, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -464,6 +464,49 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222467552}
   m_CullTransparentMesh: 1
+--- !u!1 &458428176
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 458428178}
+  - component: {fileID: 458428177}
+  m_Layer: 0
+  m_Name: CountFrame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &458428177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458428176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38db97ea94c78f942ba6865fa38d16fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &458428178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458428176}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -35.456013, y: 4.0504794, z: -3.6267548}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &650577465
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,7 +640,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loaderCameraObj: {fileID: 1423803072}
-  loaderCanvas: {fileID: 650577465}
   _loaderManager: {fileID: 1816536148}
 --- !u!4 &867799156
 Transform:
@@ -785,9 +827,10 @@ MonoBehaviour:
   textAphorism: {fileID: 62677654}
   loaderCameraObj: {fileID: 1423803072}
   loaderCanvas: {fileID: 650577465}
-  loadedAllAfterStartFirst: 1
-  activateOtherAfterFirst: 1
+  loadedAllAfterStartFirst: 0
+  activateOtherAfterFirst: 0
   loadOrder: 0100000002000000
+  madePauseBeforeStart: 0
   pauseBeforeStart: 3
 --- !u!4 &1816536149
 Transform:

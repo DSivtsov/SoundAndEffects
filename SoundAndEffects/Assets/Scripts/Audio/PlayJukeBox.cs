@@ -12,7 +12,7 @@ using GMTools;
 public class PlayJukeBox : MonoBehaviour
 {
     #region SerializedFields
-    [SerializeField] private JukeBoxSO _jukeBox;
+    [SerializeField] protected JukeBoxSO _jukeBox;
     [SerializeField] private AudioMixerGroup _mixerGroup;
     [SerializeField] private AudioMixerGroup _mixerGroup2;
     [SerializeField] private bool _playAtAwake;
@@ -20,7 +20,7 @@ public class PlayJukeBox : MonoBehaviour
     #endregion
 
     #region NonSerializedFields
-    public bool MusicState { get; private set; } = false;
+    public bool MusicPlaying { get; private set; } = false;
     private bool initAudioSources = false;
     private AudioSource[] audioSources = new AudioSource[2];
     #endregion
@@ -41,19 +41,19 @@ public class PlayJukeBox : MonoBehaviour
 #if OWNCONTROL
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            if (MusicState)
+            if (MusicPlaying)
                 _jukeBox.SwitchToNextClip();
         }
 
         if (Mouse.current.middleButton.wasPressedThisFrame)
         {
-            if (MusicState)
+            if (MusicPlaying)
                 TurnOn(false);
             else
                 TurnOn(true);
         } 
 #endif
-        if (MusicState && _jukeBox.IsTimeStartPreparing())
+        if (MusicPlaying && _jukeBox.IsTimeStartPreparing())
         {
             _jukeBox.PlayScheduledNextClip();
         }
@@ -67,7 +67,7 @@ public class PlayJukeBox : MonoBehaviour
         if (_jukeBox.ClipsArrayEmpty())
         {
             Debug.LogError($"[{gameObject.name}] AudioEvent disabled because SO with Audio clips is Empty");
-            MusicState = false;
+            MusicPlaying = false;
         }
         else
         {
@@ -84,9 +84,8 @@ public class PlayJukeBox : MonoBehaviour
                 audioSources[1].outputAudioMixerGroup = _mixerGroup2;
                 initAudioSources = true;
             }
-            //_jukeBox.InitJukeBox(audioSources, _sequenceType, initValue == 0 ? null : (int?)initValue);
             _jukeBox.InitJukeBox(audioSources);
-            MusicState = true;
+            MusicPlaying = true;
         }
     }
     /// <summary>
@@ -94,12 +93,12 @@ public class PlayJukeBox : MonoBehaviour
     /// </summary>
     public void TurnOn(bool turnOn = true)
     {
-        if (!MusicState)
+        if (!MusicPlaying)
         {
             if (turnOn)
             {
                 CheckInitJukeBox();
-                if (MusicState)
+                if (MusicPlaying)
                     _jukeBox.PlayClipNextInit();  
             }
         }
@@ -111,7 +110,7 @@ public class PlayJukeBox : MonoBehaviour
                 {
                     audioSources[i].Stop();
                 }
-                MusicState = false; 
+                MusicPlaying = false; 
             }
         }
     }

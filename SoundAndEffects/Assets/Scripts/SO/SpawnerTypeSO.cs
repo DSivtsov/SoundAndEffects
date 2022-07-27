@@ -8,4 +8,5 @@ public class SpawnerTypeSO : ScriptableObject
     public float DistanceBeforeMin;
     public float DistanceBeforeMax;
     public float DistanceAfter;
+    public int BaseScore;
 }

@@ -15,3 +15,4 @@ MonoBehaviour:
   DistanceBeforeMin: 0.5
   DistanceBeforeMax: 2.5
   DistanceAfter: 2
+  BaseScore: 1

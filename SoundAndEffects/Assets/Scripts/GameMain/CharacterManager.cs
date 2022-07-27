@@ -14,7 +14,7 @@ public enum PlayerState
     Collision
 }
 
-public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
+public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
 {
     #region SerializedFields
     [SerializeField] private ParticleSystem explosionDied;
@@ -26,7 +26,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
 
     #region NonSerializedFields
     private PlayerCollisionGround checkPlayer;
-    private bool Jump = false;
+    private bool WasPressedJump;
     //The current selected the difficulty level 
     private ForceJumpSO forceJumpSO;
     private MovingWorldSO movingWorld;
@@ -52,36 +52,40 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     /// <summary>
     /// React on First Collision only
     /// </summary>
-    private bool isWasCollision = false;
+    private bool isWasCollision;
     /// <summary>
     /// Link to Text in Canvas
     /// </summary>
     private TurnOffPressEnter textTurnOffPressEnter;
     private PlayerState _currentState;
-    private bool keyChangeSpeedPressed = false;
+    private bool _inAir;
+    private bool keyChangeSpeedPressed;
     private const float changeSoundMovementDelay = .25f;
     private const float DragObstacleAfterLightCollision = 0.5f;
-    private bool restoreSoundAndEffectAfterGrounded = false;
     private PlaySetAudio gameSound;
     private Rigidbody lastCollised;
     private float storeDraglastCollised;
-    private bool isGameOverState;
+    private bool isGameEndState;
     private Vector3 characterInitWordPos;
-    private TypeMsg waitMsg;
+    public TypeWaitMsg WaitState { get; private set; }
     #endregion
-    public bool DiedAnimManFinished { get; private set; } = false;
-    public bool CollisionAnimManFinished { get; private set; } = false;
+    public bool DiedAnimManFinished { get; private set; }
+    public bool CollisionAnimManFinished { get; private set; }
+    public float GetCharacterInitWordPosX() => characterInitWordPos.x;
 
     private void Awake()
     {
         if (!gameSceneManager)
             Debug.LogError($"{this} not linked to GameSceneManager");
-        checkPlayer = FindObjectOfType<PlayerCollisionGround>();
-        if (checkPlayer== null)
+        checkPlayer = SingletonGame.Instance.GetPlayerCollisionGround();
+        if (checkPlayer == null)
             Debug.LogError($"{this} absent the <PlayerCollisionGround> module");
+
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
+
         animatorCharacter = GetComponent<Animator>();
+        
         hashStatic_b = Animator.StringToHash("Static_b");
         hashSpeed_f = Animator.StringToHash("Speed_f");
         hashJump_trig = Animator.StringToHash("Jump_trig");
@@ -94,30 +98,47 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         AnimatorState_Dead_01 = Animator.StringToHash("Dead_01");
         AnimatorState_Alive = Animator.StringToHash("Alive");
         AnimatorLayerIndex_Death = animatorCharacter.GetLayerIndex("Death");
+        
         rigidbodyCharacter = GetComponent<Rigidbody>();
+        
         movingWorld = SingletonGame.Instance.GetMovingWorld();
-        gameSound = GetComponent<PlaySetAudio>();
+
+        //gameSound = GetComponent<PlaySetAudio>();
+        gameSound = FindObjectOfType<PlaySetAudio>();
 
         characterInitWordPos = transform.position;
-        //waitMsg = TypeMsg.Start;
-        isGameOverState = true;
+        textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
     }
 
-    private void OnEnable() => inputs.Move.Enable();
+    private void OnEnable()
+    {
+        inputs.Move.Enable();
+        isGameEndState = true;
+    }
     private void OnDisable() => inputs.Move.Disable();
     
     public void Start()
     {
-        if (gameSceneManager.GameMainManagerOff)
-            ReStartGame();
+        if (gameSceneManager.GameMainManagerNotLinked)
+            StartNewAttemptGame();
     }
-
-    public void ReStartGame()
+    /// <summary>
+    /// Start New Game or New Attempt
+    /// </summary>
+    public void StartNewAttemptGame()
     {
-        if (isGameOverState)
+        WasPressedJump = false;
+        _currentState = PlayerState.Stop;
+        isWasCollision = false;
+        keyChangeSpeedPressed = false;
+        DiedAnimManFinished = false;
+        CollisionAnimManFinished = false;
+        _inAir = false;
+        //Debug.Log($"{this} : ReStartGame() isGameOverState={isGameEndState}");
+        if (isGameEndState)
         {
-            waitMsg = TypeMsg.Start;
-            isGameOverState = false; 
+            WaitState = TypeWaitMsg.waitStart;
+            isGameEndState = false; 
         }
         //For Demo Purpose Call only in Editor
         SetPhysicsIgnoreObstaclesCollisions();
@@ -125,16 +146,41 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         CharacterIdle();
 #if UNITY_EDITOR
         //For Demo Purpose Call only in Editor
-        CheckIsWalkingAfterStart();
+        //If IsWalking initialy set to true For Demo Purpose
+        if (SingletonGame.Instance.IsWalkingAfterStart)
+            CharacterGo();
+        else
+            ShowWaitScreen();
 #else
         ShowWaitScreen();
 #endif
     }
 
+    /// <summary>
+    /// It's Start/Restart or end Game after user press Enter after wait State
+    /// </summary>
+    private void WasPressedEnter()
+    {
+        //CountFrame.DebugLog(this, "WasPressedEnter()");
+        //The button Start will affect if current state = Stop
+        textTurnOffPressEnter.Active(false);
+        if (WaitState != TypeWaitMsg.waitEndGame)
+        {//It's Start or Restart Game
+            CharacterGo();
+            if (WaitState == TypeWaitMsg.waitStart)
+            {
+                gameSceneManager.SwitchMusicCollection(CollectionName.Walking, false);
+                gameSceneManager.SwitchMusicToGameScene();
+            }
+        }
+        else
+        {
+            gameSceneManager.StoreResultAndSwitchGameToMainMenus(); 
+        }
+    }
+
     private void CharacterMoveToInitPosition()
     {
-        Debug.Log("CharacterMoveToInitPosition()");
-        //animatorCharacter.keepAnimatorControllerStateOnDisable = false;
         animatorCharacter.enabled = false;
         transform.position = characterInitWordPos;
         animatorCharacter.enabled = true;
@@ -144,14 +190,16 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     {
         //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
         //Later can turn off by OnStart
-        textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
-        textTurnOffPressEnter?.Active(true, waitMsg);
+        
+        textTurnOffPressEnter.Active(true, WaitState);
     }
 
     private void Update()
     {
-        if (isGameOverState)
+        if (isGameEndState)
         {
+            //The game is in a final state, waiting for a username to be entered and Enter to exit using the WasPressedEnter() script
+            //Debug.LogWarning($"I'm Here Update() isGameEndState={isGameEndState}");
             return;
         }
         if (isWasCollision)
@@ -161,44 +209,42 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             {
                 RestoreOldDragLastCollisedRigidbody();
                 gameSceneManager.CharacterCollision();
-                CollisionAnimManFinished = false;
-                //isContinueGame = true;
-                waitMsg = TypeMsg.Continue;
-                ReStartGame();
-                isWasCollision = false;
+                WaitState = TypeWaitMsg.waitContinue;
+                StartNewAttemptGame();
             }
             else if (DiedAnimManFinished)
             {
                 gameSceneManager.CharacterDied();
-                waitMsg = TypeMsg.EndGame;
+                WaitState = TypeWaitMsg.waitEndGame;
                 ShowWaitScreen();
-                isWasCollision = false;
-                isGameOverState = true;
+                isGameEndState = true;
             }
             return;
         }
         if (checkPlayer.IsGrounded)
         {
-            if (restoreSoundAndEffectAfterGrounded)
-            {
-                gameSound.PlaySound(_currentState, changeSoundMovementDelay);
-                dirtSplatter.SetActive((_currentState == PlayerState.Run)? true : false);
-                restoreSoundAndEffectAfterGrounded = false;
-            }
-
-            if (keyChangeSpeedPressed)
-            {
-                ChangeMoveSpeed();
-            }
-
-            if (Jump)
+            if (WasPressedJump)
             {
                 animatorCharacter.SetTrigger(hashJump_trig);
                 rigidbodyCharacter.AddForce(Vector3.up * currentForceJump, ForceMode.Impulse);
                 gameSound.PlaySound(PlayerState.Jump);
                 dirtSplatter.SetActive(false);
-                restoreSoundAndEffectAfterGrounded = true;
-                Jump = false;
+                _inAir = true;
+                WasPressedJump = false;
+                return;
+            }
+            if (_inAir)
+            {
+                _inAir = false;
+                if (!keyChangeSpeedPressed)
+                {
+                    gameSound.PlaySound(_currentState, changeSoundMovementDelay);
+                    dirtSplatter.SetActive((_currentState == PlayerState.Run) ? true : false);
+                }
+            }
+            if (keyChangeSpeedPressed)
+            {
+                ChangeMoveSpeed();
             }
         }
     }
@@ -215,6 +261,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         //Debug.Log($"GetCurrentAnimatorStateInfo = {animatorCharacter.GetCurrentAnimatorStateInfo(AnimatorLayerIndex_Death).shortNameHash}");
         return animatorCharacter.GetCurrentAnimatorStateInfo(layerindex).shortNameHash == shortNameHashAnimatorState;
     }
+
 
     /// <summary>
     /// Change the Player animation and WorldMoveSpeed, if Player press the coresponding button.
@@ -281,7 +328,7 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         keyChangeSpeedPressed = true;
     }
     /// <summary>
-    /// Called from Obstacle after detected the Collision with Player
+    /// Called from Obstacle OnCollisionEnter() after detected the Collision with Player
     /// </summary>
     /// <param name="contactPosition"></param>
     /// <param name="contactNormal"></param>
@@ -289,11 +336,9 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     {
         if (!isWasCollision)
         {
-            //dirtSplatter.SetActive(false);
-            //movingWorld.SetWorldMovementSpeed(PlayerState.Stop);
-            //WorldStop();
             //Set Anim to Idle at Layer Walk the Dying and CollisionAndGym Anim on Layers Died and Body
             CharacterIdle();
+            ScoreCounting.CollisionOccur(rigidbodyObstacle.GetInstanceID());
             if (gameSceneManager.CharacterNotDiedAfterCollision())
             {
                 //Character left lives and continue run
@@ -308,8 +353,8 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
             }
             else
             {
+                gameSceneManager.SwitchMusicCollection(CollectionName.Died);
                 //Character throw Force
-                //rigidbodyCharacter.AddForce(-contactNormal * ReactForceAtCollision, ForceMode.VelocityChange);
                 rigidbodyCharacter.AddForce(-contactNormal * ReactForceAtCollision, ForceMode.Impulse);
                 //Explosion paritcle
                 ParticleSystem particle = Instantiate<ParticleSystem>(explosionDied, contactPosition, Quaternion.identity);
@@ -415,13 +460,14 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
     {
         if (checkPlayer.IsGrounded && context.phase == InputActionPhase.Started)
         {
-            Jump = true;
+            WasPressedJump = true;
         }
     }
 
     public void OnRun(InputAction.CallbackContext context)
     {
         //The button Run/Walk will affect if current state != Stop
+        //if (_currentState != PlayerState.Stop && _currentState != PlayerState.Jump)
         if (_currentState != PlayerState.Stop)
         {
             switch (context.phase)
@@ -438,24 +484,10 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         }
     }
 
-    public void OnStart(InputAction.CallbackContext _)
+    public void OnStart(InputAction.CallbackContext context)
     {
-        //The button Start will affect if current state = Stop
-        if (_currentState == PlayerState.Stop)
-        {
-            textTurnOffPressEnter?.Active(false);
-            Debug.LogError("Time Solution");
-            if (waitMsg != TypeMsg.EndGame)
-            {
-                CharacterGo(); 
-            }
-            else if (!SingletonGame.Instance.GameSceneManager().GameMainManagerOff)
-                {
-                    GameMainManager.Instance?.ReturnFromGameToMainMenu();
-                    gameSceneManager.ClearReinitScene();
-                    CharacterMoveToInitPosition(); 
-                }
-        }
+        if (_currentState == PlayerState.Stop && context.phase == InputActionPhase.Started)
+            WasPressedEnter();
     }
     #endregion
 
@@ -468,20 +500,6 @@ public class MyCharacterController : MonoBehaviour, MyControls.IMoveActions
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position, 0.25f);
-        }
-    }
-
-    private void CheckIsWalkingAfterStart()
-    {
-        //If IsWalking initialy not set to true For Demo Purpose
-        if (!SingletonGame.Instance.IsWalkingAfterStart)
-        {
-            ShowWaitScreen();
-        }
-        else
-        {
-            //in other case will be emulated the press Start button
-            CharacterGo();
         }
     }
 #endif

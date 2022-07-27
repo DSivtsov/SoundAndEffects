@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public enum TypeMsg
+public enum TypeWaitMsg
 {
-    Start,
-    Continue,
-    EndGame
+    waitStart,
+    waitContinue,
+    waitEndGame
 }
 
 /// <summary>
@@ -28,19 +28,19 @@ public class TurnOffPressEnter : MonoBehaviour
         textMesh = textPreesEnter.GetComponent<TextMeshProUGUI>();
     }
 
-    public void Active(bool value, TypeMsg typeMsg = TypeMsg.Start)
+    public void Active(bool value, TypeWaitMsg typeMsg = TypeWaitMsg.waitStart)
     {
         if (value)
         {
             switch (typeMsg)
             {
-                case TypeMsg.Start:
+                case TypeWaitMsg.waitStart:
                     textMesh.text = strStart;
                     break;
-                case TypeMsg.Continue:
+                case TypeWaitMsg.waitContinue:
                     textMesh.text = strContinue;
                     break;
-                case TypeMsg.EndGame:
+                case TypeWaitMsg.waitEndGame:
                     textMesh.text = strEndGame;
                     break;
             }

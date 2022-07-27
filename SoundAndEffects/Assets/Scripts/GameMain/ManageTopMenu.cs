@@ -12,29 +12,19 @@ public class ManageTopMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI strScore;
     [SerializeField] private TextMeshProUGUI strLevel;
 
-    private MainSpawner _mainSpawner;
+    private GameParametersManager _gameParametersManager;
     private CharacterData _characterData;
 
     private void Awake()
     {
-        _mainSpawner = SingletonGame.Instance.GetMainSpawner();
+        //Debug.Log($"{this} Awake()");
+        _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
         _characterData = SingletonGame.Instance.GetCharacterData();
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        _mainSpawner.LevelChanged += SetLevel;
-        _characterData.HealthChanged += SetHealth;
-    }
 
-    private void OnDisable()
-    {
-        _mainSpawner.LevelChanged -= SetLevel;
-        _characterData.HealthChanged -= SetHealth;
-    }
-
-    void Start()
-    {
         //strLevel.text = $"{9:D2}";
         //SetLevel(9);
         //strScore.text = $"{9:000 000}";
@@ -42,12 +32,19 @@ public class ManageTopMenu : MonoBehaviour
         //gameObjectHealth[0].SetActive(false);
         //SetHealth(3);
     }
-    private void Update()
+
+    private void OnEnable()
     {
-        //if (Mouse.current.leftButton.wasPressedThisFrame)
-        //{
-        //    SetHealth(testlives);
-        //}
+        _gameParametersManager.LevelChanged += SetLevel;
+        _characterData.HealthChanged += SetHealth;
+        ScoreCounting.ScoreChanged += SetScore;
+    }
+
+    private void OnDisable()
+    {
+        _gameParametersManager.LevelChanged -= SetLevel;
+        _characterData.HealthChanged -= SetHealth;
+        ScoreCounting.ScoreChanged -= SetScore;
     }
     /// <summary>
     /// Set the Game Score

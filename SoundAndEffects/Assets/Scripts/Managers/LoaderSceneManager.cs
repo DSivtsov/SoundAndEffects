@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 public class LoaderSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject loaderCameraObj;
-    [SerializeField] private GameObject loaderCanvas;
+    //[SerializeField] private GameObject loaderCanvas;
     [SerializeField] private LoaderManager _loaderManager;
+    [Tooltip("To show the Loading screen in loading")]
+    [SerializeField] private bool _makePauseBeforeStartLoad = true;
+    [SerializeField] private float _pauseTime = 1f;
 
     private GameMainManager _gameMainManager;
     private void Awake()
@@ -15,23 +18,29 @@ public class LoaderSceneManager : MonoBehaviour
         _gameMainManager = GameMainManager.Instance;
         if (_gameMainManager)
         {
-            _gameMainManager.LinkLoaderSceneManager(this); ;
+            _gameMainManager.LinkLoaderSceneManager(this);
         }
         else
             Debug.LogError($"{this} not linked to GameMainManager");
+        ActivateLoaderCamera(true);
+        //loaderCanvas.SetActive(true);
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
-        TurnOnLoaderCanvas(true);
+        if (_makePauseBeforeStartLoad)
+        {
+            yield return new WaitForSeconds(_pauseTime); 
+        }
         _loaderManager.LoadScenes();
     }
 
+
+
     public bool GetStatusLoadingScenes() => _loaderManager.AllScenesLoaded;
 
-    public void TurnOnLoaderCanvas(bool value)
+    public void ActivateLoaderCamera(bool activate)
     {
-        loaderCameraObj.SetActive(value);
-        loaderCanvas.SetActive(value);
+        loaderCameraObj.SetActive(activate);
     }
 }

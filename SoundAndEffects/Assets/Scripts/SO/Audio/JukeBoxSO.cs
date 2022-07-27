@@ -46,6 +46,16 @@ public class JukeBoxSO : AudioEvent
     private ISequenceIteration iterationManager;
     #endregion
 
+    //Checking and warning if playMode != JukeBoxMode.Full
+    private void OnEnable()
+    {
+        oldValue = JukeBoxMode.Full;
+        if (playMode != JukeBoxMode.Full)
+        {
+            DetectValueChangeMessage(WarningMessage);
+        }
+    }
+
     /// <summary>
     /// Initialize the JukeBox with parameters from SO
     /// </summary>
@@ -181,14 +191,7 @@ public class JukeBoxSO : AudioEvent
 
     string WarningMessage => $"Used the [{this}] in demo mode [{playMode}]";
 
-    private void OnEnable()
-    {
-        oldValue = JukeBoxMode.Full;
-        if (playMode != JukeBoxMode.Full)
-        {
-            DetectValueChangeMessage(WarningMessage);
-        }
-    }
+
 
     private void DetectValueChangeMessage(string message)
     {

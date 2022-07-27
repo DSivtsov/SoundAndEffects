@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0387ee27d2048ca4f8ab962f005d756b, type: 3}
-  m_Name: JukeBox
+  m_Name: JukeBoxMainMenu
   m_EditorClassIdentifier: 
   audioClips:
-  - {fileID: 8300000, guid: b7307f7710b35c74892567caa5644c25, type: 3}
-  - {fileID: 8300000, guid: cabffe14d8ef13d4aa99b744406a2c1f, type: 3}
-  - {fileID: 8300000, guid: d2d512caff17614408f8bc23ce7ae786, type: 3}
+  - {fileID: 8300000, guid: f1362cffcc6efd9498d01e7b0bd1ec72, type: 3}
+  - {fileID: 8300000, guid: 2c5adecb97749184ea271fb69ed2db57, type: 3}
+  - {fileID: 8300000, guid: 35c20390bb3b1e5438976771de602b13, type: 3}
+  - {fileID: 8300000, guid: 8f182527736129143887e259e0c90a7c, type: 3}
   sequenceType: 1
   initValue: 0
   loadDelayTime: 3
   crossDeltaTime: 0
-  startDelay: 2
+  startDelay: 1
   playMode: 0
   timeFromBegin: 0
   timeFromEnd: 0
