@@ -81,4 +81,9 @@ public class GameMainManager : SingletonController<GameMainManager>
         }
 
     }
+
+    public void AddAndSaveNewCharacterData(CharacterData newCharacterData)
+    {
+        Debug.Log("AddAndSaveNewCharacterData()");
+    }
 }

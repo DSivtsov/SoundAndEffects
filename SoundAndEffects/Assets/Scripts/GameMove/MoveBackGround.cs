@@ -16,12 +16,12 @@ public class MoveBackGround : MonoBehaviour
     private float _zInitialSpritePos;
     private float _zxCurrentSpritePos;
     private Transform _backGroundTransform;
-    private CharacterData _characterData;
+    private CharacterDataController _characterDataCtrl;
 
     private void Awake()
     {
         _movingWorld = SingletonGame.Instance.GetMovingWorld();
-        _characterData = SingletonGame.Instance.GetCharacterData();
+        _characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
         _backGroundTransform = GetComponent<Transform>();
         _zxCurrentSpritePos = _xInitialSpritePos;
         _yInitialSpritePos = _backGroundTransform.position.y;
@@ -36,7 +36,7 @@ public class MoveBackGround : MonoBehaviour
         {
             float deltaDistance = _movingWorld.CurrentSpeed * Time.deltaTime;
             UpdateBackGroundPosition(deltaDistance);
-            _characterData.AddDeltaDistance(Math.Abs(deltaDistance));
+            _characterDataCtrl.AddDeltaDistance(Math.Abs(deltaDistance));
         }
     }
 

@@ -12,7 +12,7 @@ public class SingletonGame : SingletonController<SingletonGame>
     [SerializeField] private CharacterManager _characterController;
     [SerializeField] private MovingWorldSO _movingWorldSO;
     [SerializeField] private MainSpawner _mainSpawner;
-    [SerializeField] private CharacterData _characterData;
+    [SerializeField] private CharacterDataController _characterDataCtrl;
     [SerializeField] private GraveStoneControl _graveStoneControl;
     [SerializeField] private GameSceneManager _gameSceneManager;
     [SerializeField] private GameParametersManager _gameParametersManager;
@@ -27,7 +27,7 @@ public class SingletonGame : SingletonController<SingletonGame>
     public MovingWorldSO GetMovingWorld() => _movingWorldSO;
     public CharacterManager GetCharacterController() => _characterController;
     public MainSpawner GetMainSpawner() => _mainSpawner;
-    public CharacterData GetCharacterData() => _characterData;
+    public CharacterDataController GetCharacterDataCtrl() => _characterDataCtrl;
     public GraveStoneControl GetGraveStoneControl() => _graveStoneControl;
     public GameSceneManager GetGameSceneManager() => _gameSceneManager;
     public GameParametersManager GetGameParametersManager() => _gameParametersManager;

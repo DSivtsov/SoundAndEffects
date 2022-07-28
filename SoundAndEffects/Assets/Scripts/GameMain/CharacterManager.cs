@@ -30,6 +30,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     //The current selected the difficulty level 
     private ForceJumpSO forceJumpSO;
     private MovingWorldSO movingWorld;
+    private CharacterDataController characterDataCtrl;
     private MyControls inputs;
     private Animator animatorCharacter;
     private Rigidbody rigidbodyCharacter;
@@ -81,6 +82,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         if (checkPlayer == null)
             Debug.LogError($"{this} absent the <PlayerCollisionGround> module");
 
+        characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
 
@@ -338,7 +340,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         {
             //Set Anim to Idle at Layer Walk the Dying and CollisionAndGym Anim on Layers Died and Body
             CharacterIdle();
-            ScoreCounting.CollisionOccur(rigidbodyObstacle.GetInstanceID());
+            characterDataCtrl.ScoreAfterCollisionOccur(rigidbodyObstacle.GetInstanceID());
             if (gameSceneManager.CharacterNotDiedAfterCollision())
             {
                 //Character left lives and continue run

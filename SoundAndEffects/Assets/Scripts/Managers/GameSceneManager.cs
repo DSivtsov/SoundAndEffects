@@ -8,12 +8,9 @@ using UnityEngine.EventSystems;
 public class GameSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameCamera;
-    //[SerializeField] private GameObject gameCanvas;
-
-    [SerializeField] private AudioSource audioSource;
 
     private GameMainManager _gameMainManager;
-    private CharacterData _characterData;
+    private CharacterDataController _characterDataCtrl;
     private MainSpawner _mainSpawner;
     private GraveStoneControl _graveStoneControl;
     private GameParametersManager _gameParametersManager;
@@ -27,7 +24,7 @@ public class GameSceneManager : MonoBehaviour
     private void Awake()
     {
         CountFrame.DebugLogUpdate(this, $"Awake()");
-        _characterData = SingletonGame.Instance.GetCharacterData();
+        _characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
         _mainSpawner = SingletonGame.Instance.GetMainSpawner();
         _graveStoneControl = SingletonGame.Instance.GetGraveStoneControl();
         _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
@@ -66,10 +63,10 @@ public class GameSceneManager : MonoBehaviour
         //The Character GameObject will be Turn off at EndGame to reinit the Character Animator
         _characterObject.SetActive(true);
         SelectGameObjectFromScene(_characterObject);
-        _characterData.ResetHealth();
+        _characterDataCtrl.ResetHealth();
         //WaitState before restart Game
         if (_characterManager.WaitState == TypeWaitMsg.waitEndGame)
-            _characterData.ResetScoreDistance();
+            _characterDataCtrl.ResetScoreDistance();
         _mainSpawner.ReStartSpawner();
         _characterManager.StartNewAttemptGame();
     }
@@ -87,9 +84,9 @@ public class GameSceneManager : MonoBehaviour
     /// <returns>true if it not died</returns>
     public bool CharacterNotDiedAfterCollision()
     {
-        _characterData.ChangeHealth(DecreaseAmmountLife);
+        _characterDataCtrl.ChangeHealth(DecreaseAmmountLife);
         // Character lost the one life and continue the game or Character starts to die 
-        return _characterData.Health > 0;
+        return _characterDataCtrl.Health > 0;
     }
 
     public void CharacterCollision()
@@ -101,16 +98,12 @@ public class GameSceneManager : MonoBehaviour
 
     public void CharacterDied()
     {
-        Debug.LogWarning("GameSceneManager : CharacterDied()");
         _mainSpawner.RemoveAllObstacles();
         _graveStoneControl.ActivateGraveStoneGroupAndFocusInputField();
-        //Debug.LogError("Temp Solution CharacterDied() audioSource.Play()");
-        //audioSource.Play();
     }
 
     public void ClearSceneAfterEndGame()
     {
-        audioSource.Stop();
         _graveStoneControl.DeactivategraveStoneGroup();
         //Turn off Character GameObject to reinit the Character Animator
         _characterObject.SetActive(false);
@@ -132,11 +125,13 @@ public class GameSceneManager : MonoBehaviour
 
     public void StoreResultAndSwitchGameToMainMenus()
     {
-        _graveStoneControl.StoreUserResult();
+        CharacterData newCharacterData = new CharacterData(_graveStoneControl.GetUserName(), _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
         if (!GameMainManagerNotLinked)
         {//It's end Game and Scene linked to GameMainManager
             GameMainManager.Instance.FromGameToMenus();
+            GameMainManager.Instance.AddAndSaveNewCharacterData(newCharacterData);
         }
+        Debug.Log(newCharacterData);
         //It's common part of the EndGame  for Scenes are linked or  NOT linked to GameMainManager
         ClearSceneAfterEndGame();
     }

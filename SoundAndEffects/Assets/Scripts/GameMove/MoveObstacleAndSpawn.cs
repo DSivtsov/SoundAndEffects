@@ -50,11 +50,11 @@ public class MoveObstacleAndSpawn : MonoBehaviour
     /// the local position of the character, relative to the spawned position of these obstacles
     /// </summary>
     private float _characterInitLocPosX;
-    private CharacterData characterData;
+    private CharacterDataController characterDataCtrl;
     protected void Awake()
     {
         movingWorld = SingletonGame.Instance.GetMovingWorld();
-        characterData = SingletonGame.Instance.GetCharacterData();
+        characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
         random = new System.Random();
         //The pool will Instantiate Objects if it will be demands, base on these parameters
         poolObstacle = new Pool(() => Instantiate<Rigidbody>(spawnedObstacle, transform, worldPositionStays: false));
@@ -120,7 +120,7 @@ public class MoveObstacleAndSpawn : MonoBehaviour
             // object not stored in arrSpawnedObstacleWScore
             if (IsAnObstaclePassInitCharacterPosition(firstObstacleLocalPositionX))
             {
-                ScoreCounting.AddObstacleToStack(rigidbodyFirstObstacle.GetInstanceID(), firstObstacleInQueue.ScoreObstacle);
+                characterDataCtrl.AddObstacleToStack(rigidbodyFirstObstacle.GetInstanceID(), firstObstacleInQueue.ScoreObstacle);
                 //CountFrame.DebugLogFixedUpdate($"AddObstacleToStack([{rigidbodyFirstObstacle.name}] [{firstObstacleInQueue.ScoreObstacle}]" +
                 //    $" Pos={firstObstacleLocalPositionX:F2})");
                 arrObstaclesRemoveQueue.Enqueue(rigidbodyFirstObstacle);
