@@ -1,0 +1,16 @@
+﻿cce4e624-44af-40de-8ddd-c62fce7fff23
+10
+{"_userName":"01234567890123456","_summaryDistance":489,"_summaryScore":809866}
+{"_userName":"ABHGJHGJHGJHGJHGJ","_summaryDistance":498,"_summaryScore":697594}
+{"_userName":"ABHGJHGJHGJHGJHGJ","_summaryDistance":411,"_summaryScore":514024}
+{"_userName":"ABHGJHGJHGJHGJHGJ","_summaryDistance":171,"_summaryScore":476473}
+{"_userName":"ABHGJHGJHGJHGJHGJ","_summaryDistance":160,"_summaryScore":431915}
+{"_userName":"abhgjhgjhgjhgjhgj","_summaryDistance":146,"_summaryScore":368847}
+{"_userName":"abhgjhgjhgjhgjhgj","_summaryDistance":160,"_summaryScore":218782}
+{"_userName":"ABHGJHGJHGJHGJHGJ","_summaryDistance":82,"_summaryScore":182326}
+{"_userName":"abhgjhgjhgjhgjhgj","_summaryDistance":297,"_summaryScore":180563}
+{"_userName":"abhgjhgjhgjhgjhgj","_summaryDistance":588,"_summaryScore":74705}
+67bdf25a-0da2-4965-a59f-1aab3a3f40d3
+2
+{"_tempGameObject":[]}
+{"First":false,"Second":false}

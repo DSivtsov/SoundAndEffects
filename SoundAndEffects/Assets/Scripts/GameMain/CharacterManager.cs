@@ -121,7 +121,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     
     public void Start()
     {
-        if (gameSceneManager.GameMainManagerNotLinked)
+        if (!gameSceneManager.GameMainManagerLinked)
             StartNewAttemptGame();
     }
     /// <summary>

@@ -1,12 +1,14 @@
-﻿[System.Serializable]
-public class CharacterData
+﻿using UnityEngine;
+
+[System.Serializable]
+public class CharacterData : System.IComparable<CharacterData>
 {
-    private string _userName;
+    [SerializeField] private string _userName;
     /// <summary>
     /// distance in meters
     /// </summary>
-    private int _summaryDistance;
-    private int _summaryScore;
+    [SerializeField] private int _summaryDistance;
+    [SerializeField] private int _summaryScore;
 
     public CharacterData(string userName, int summaryDistance, int summaryScore)
     {
@@ -14,6 +16,8 @@ public class CharacterData
         _summaryDistance = summaryDistance;
         _summaryScore = summaryScore;
     }
+    //Sorting in descending order by Score
+    public int CompareTo(CharacterData other) => other._summaryScore - _summaryScore;
 
     public (string userName, int summaryDistance, int summaryScore) GetValues() => (_userName, _summaryDistance, _summaryScore);
 

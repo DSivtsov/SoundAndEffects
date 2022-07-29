@@ -8,6 +8,8 @@ using UnityEngine.EventSystems;
 public class GameSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameCamera;
+    [Header("For Testing purpose only, used in Editor only")]
+    [SerializeField] private GameObject buttonRestart;
 
     private GameMainManager _gameMainManager;
     private CharacterDataController _characterDataCtrl;
@@ -19,7 +21,7 @@ public class GameSceneManager : MonoBehaviour
     private PlayJukeBoxCollection _playJukeBoxGameCollection;
 
     private const int DecreaseAmmountLife = -1;
-    public bool GameMainManagerNotLinked { get; private set; }
+    public bool GameMainManagerLinked { get; private set; }
 
     private void Awake()
     {
@@ -35,7 +37,7 @@ public class GameSceneManager : MonoBehaviour
 
         if (_gameMainManager)
         {
-            GameMainManagerNotLinked = false;
+            GameMainManagerLinked = true;
             _gameMainManager.LinkGameSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateGameCamera(false);
@@ -43,7 +45,7 @@ public class GameSceneManager : MonoBehaviour
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
-            GameMainManagerNotLinked = true;
+            GameMainManagerLinked = false;
             ActivateGameCamera(true);
             //TurnOnMusic();
             Debug.LogWarning($"Music at Awake not TurnOn because in build will be used Music from Menu Scene");
@@ -59,6 +61,7 @@ public class GameSceneManager : MonoBehaviour
 
     public void StartNewGame()
     {
+        ActivateButtonLocalRestart(false);
         _gameParametersManager.ReInitParameters();
         //The Character GameObject will be Turn off at EndGame to reinit the Character Animator
         _characterObject.SetActive(true);
@@ -117,7 +120,7 @@ public class GameSceneManager : MonoBehaviour
 
     public void SwitchMusicToGameScene()
     {
-        if (!GameMainManagerNotLinked)
+        if (GameMainManagerLinked)
             GameMainManager.Instance.SwitchMusicTo(SceneName.Game);
         else
             TurnOnMusic();
@@ -126,13 +129,20 @@ public class GameSceneManager : MonoBehaviour
     public void StoreResultAndSwitchGameToMainMenus()
     {
         CharacterData newCharacterData = new CharacterData(_graveStoneControl.GetUserName(), _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
-        if (!GameMainManagerNotLinked)
+        if (GameMainManagerLinked)
         {//It's end Game and Scene linked to GameMainManager
             GameMainManager.Instance.FromGameToMenus();
             GameMainManager.Instance.AddAndSaveNewCharacterData(newCharacterData);
         }
+        else
+            ActivateButtonLocalRestart(true);
         Debug.Log(newCharacterData);
         //It's common part of the EndGame  for Scenes are linked or  NOT linked to GameMainManager
         ClearSceneAfterEndGame();
+    }
+
+    public void ActivateButtonLocalRestart(bool activate)
+    {
+        buttonRestart.SetActive(activate);
     }
 }

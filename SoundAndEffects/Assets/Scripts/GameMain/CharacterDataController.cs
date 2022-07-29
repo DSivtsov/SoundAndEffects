@@ -66,7 +66,7 @@ public class CharacterDataController : MonoBehaviour
 
     private void Start()
     {
-        if (SingletonGame.Instance.GetGameSceneManager().GameMainManagerNotLinked)
+        if (!SingletonGame.Instance.GetGameSceneManager().GameMainManagerLinked)
         {
             ResetHealth();
             ResetScoreDistance();

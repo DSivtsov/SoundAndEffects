@@ -3,7 +3,9 @@ using UnityEngine.UI;
 
 namespace GMTools.Menu
 {
-
+    /// <summary>
+    /// To set reaction on presseing Buttom edit the ButtonActions class (CanvasButtonType.cs)
+    /// </summary>
     [RequireComponent(typeof(Button))]
     public class ButtonController : MonoBehaviour
     {

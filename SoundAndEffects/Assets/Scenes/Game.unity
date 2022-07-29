@@ -3896,6 +3896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameCamera: {fileID: 534669902}
+  buttonRestart: {fileID: 149082664}
 --- !u!4 &1415545851
 Transform:
   m_ObjectHideFlags: 0
@@ -4568,7 +4569,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tempGameObject:
-  - {fileID: 149082664}
   - {fileID: 2098539598}
 --- !u!1 &1910964380
 GameObject:
@@ -4718,6 +4718,7 @@ MonoBehaviour:
   arrSpawners:
   - {fileID: 1835706607}
   - {fileID: 1369481581}
+  - {fileID: 1347611843}
 --- !u!1 &2098539598
 GameObject:
   m_ObjectHideFlags: 0
