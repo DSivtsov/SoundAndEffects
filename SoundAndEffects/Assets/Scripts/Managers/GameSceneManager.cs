@@ -132,11 +132,13 @@ public class GameSceneManager : MonoBehaviour
         if (GameMainManagerLinked)
         {//It's end Game and Scene linked to GameMainManager
             GameMainManager.Instance.FromGameToMenus();
-            GameMainManager.Instance.AddAndSaveNewCharacterData(newCharacterData);
+            GameMainManager.Instance.AddNewCharacterData(newCharacterData);
         }
         else
-            ActivateButtonLocalRestart(true);
-        Debug.Log(newCharacterData);
+        {
+            Debug.Log(newCharacterData);
+            ActivateButtonLocalRestart(true); 
+        }
         //It's common part of the EndGame  for Scenes are linked or  NOT linked to GameMainManager
         ClearSceneAfterEndGame();
     }

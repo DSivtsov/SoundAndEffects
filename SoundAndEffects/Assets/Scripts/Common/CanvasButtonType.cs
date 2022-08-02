@@ -26,7 +26,8 @@ public enum ButtonType
 {
     StartGame,
     QuitGame,
-    TopList
+    //TopList,
+    ResetTopList
 }
 
 public static class ButtonActions
@@ -45,7 +46,7 @@ public static class ButtonActions
             switch (buttonType)
             {
                 case ButtonType.StartGame:
-                    GameMainManager.Instance.FromMenusToStartGame();
+                    _menuSceneManager.StartGame();
                     break;
                 case ButtonType.QuitGame:
 #if UNITY_EDITOR
@@ -55,9 +56,9 @@ public static class ButtonActions
 #endif
                     //CanvasManager.Instance.SwitchCanvas(CanvasName.EndScreen);
                     break;
-                //case ButtonType.TOP_LIST:
-                //    Debug.Log("ButtonType.TOP_LIST");
-                //    break;
+                case ButtonType.ResetTopList:
+                    _menuSceneManager.ResetTopList();
+                    break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");
                     break;

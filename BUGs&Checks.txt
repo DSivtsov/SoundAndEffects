@@ -1,0 +1,9 @@
+BUGs
+1. At Start Game in the TopMenu Score 999 999
+2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times
+
+Additional Checks
+3. Check spacing for Spawning after restart Game
+
+Proposals
+4. Add to Video Option TurnOff Additional Animation at Collision

@@ -11,16 +11,19 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private PlayJukeBox playJukeBoxMainMenus;
     [SerializeField] private TopListController _topListController;
 
-    private GameMainManager _gameMainManager;
+    private GameMainManager _mainManager;
+    //public bool MenusMainManagerLinked { get; private set; }
 
     private void Awake()
     {
         CountFrame.DebugLogUpdate(this, $"Awake()");
-        _gameMainManager = GameMainManager.Instance;
-        if (_gameMainManager)
+        _mainManager = GameMainManager.Instance;
+        //Not extensively tested
+        ButtonActions.LinkMenuSceneManager(this);
+        if (_mainManager)
         {
-            ButtonActions.LinkMenuSceneManager(this);
-            _gameMainManager.LinkMenuSceneManager(this);
+            //ButtonActions.LinkMenuSceneManager(this);
+            _mainManager.LinkMenuSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
         }
@@ -29,10 +32,23 @@ public class MainMenusSceneManager : MonoBehaviour
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
         }
-        _topListController.InitialLoadTopList();
-        //Debug.LogError("Temporary Switched on TopList");
-        //FindObjectOfType<CanvasManager>().SwitchCanvas(CanvasName.TopList);
     }
+
+    private void Start()
+    {
+        _topListController.InitialLoadTopList();
+        TempSwitchToCanvsa(CanvasName.Options);
+    }
+
+    private static void TempSwitchToCanvsa(CanvasName canvasName)
+    {
+        Debug.LogError("Temporary Switched on TopList");
+        FindObjectOfType<CanvasManager>().SwitchCanvas(canvasName);
+    }
+
+    public void StartGame() => _mainManager?.FromMenusToStartGame();
+
+    public void ResetTopList() => _topListController.ResetTopList();
 
     public void TurnOnMusicMenus(bool turnOn = true)
     {
@@ -42,5 +58,10 @@ public class MainMenusSceneManager : MonoBehaviour
     public void ActivateMainMenusCamera(bool activate)
     {
         cameraMainMenus.SetActive(activate);
+    }
+
+    public void AddNewCharacterData(CharacterData newCharacterData)
+    {
+        _topListController.AddNewCharacterData(newCharacterData);
     }
 }

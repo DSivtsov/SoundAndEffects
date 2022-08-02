@@ -79,11 +79,10 @@ public class GameMainManager : SingletonController<GameMainManager>
                 Debug.LogError("{this} SwitchMusicTo() can't switch to {scene} Scene");
                 break;
         }
-
     }
 
-    public void AddAndSaveNewCharacterData(CharacterData newCharacterData)
+    public void AddNewCharacterData(CharacterData newCharacterData)
     {
-        Debug.Log("AddAndSaveNewCharacterData()");
+        _menuSceneManager.AddNewCharacterData(newCharacterData);
     }
 }
