@@ -33,7 +33,15 @@ namespace GMTools.Menu
             CanvasObject desiredCanvas = canvasControllerList.Find(x => x.canvasName == _type);
             if (desiredCanvas != null)
             {
-                desiredCanvas.gameObject.SetActive(true);
+                GameObject gameObjectCanvas = desiredCanvas.gameObject;
+                gameObjectCanvas.SetActive(true);
+                SectionManager sectionManager = gameObjectCanvas.GetComponent<SectionManager>();
+                //Check the desiredCanvas that it has the SectionManager
+                if (sectionManager)
+                {
+                    //Debug.Log($"{sectionManager.name} is made Active");
+                    sectionManager.SetActiveSectionManager();
+                }
                 lastActiveCanvas = desiredCanvas;
             }
             else { Debug.LogWarning("The desired canvas was not found!"); }

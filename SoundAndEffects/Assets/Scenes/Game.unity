@@ -1593,7 +1593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f2edf7c887a2c4459f363068ff5f03c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 1
+  _maxHealth: 3
 --- !u!1 &656674930
 GameObject:
   m_ObjectHideFlags: 0
@@ -3695,7 +3695,7 @@ GameObject:
   - component: {fileID: 1282639048}
   - component: {fileID: 1282639047}
   m_Layer: 0
-  m_Name: GameJukeBoxBig
+  m_Name: JukeBoxGameCollection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

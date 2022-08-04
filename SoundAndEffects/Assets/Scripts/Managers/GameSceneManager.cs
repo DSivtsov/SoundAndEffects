@@ -74,7 +74,17 @@ public class GameSceneManager : MonoBehaviour
         _characterManager.StartNewAttemptGame();
     }
 
-    public void TurnOnMusic(bool turnOn = true) => _playJukeBoxGameCollection.TurnOn(turnOn);
+    public void TurnOnMusic(bool turnOn = true)
+    {
+        if (turnOn)
+        {
+            _playJukeBoxGameCollection.TurnOn(true);
+        }
+        else
+        {
+            _playJukeBoxGameCollection.TurnOn(false); 
+        }
+    }
 
     public void SwitchMusicCollection(CollectionName collectionName, bool turnOnMusicAfterSwitch = true)
         => _playJukeBoxGameCollection.SwitchCollection(collectionName, turnOnMusicAfterSwitch);

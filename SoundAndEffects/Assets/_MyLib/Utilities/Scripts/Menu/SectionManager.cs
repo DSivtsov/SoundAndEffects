@@ -12,8 +12,11 @@ namespace GMTools.Menu
         [SerializeField] private Transform _groupsSections;
         [SerializeField] private bool _useInitialStartSection = true;
         [SerializeField] private SectionName _initialStartSection;
-        
+
+        public static SectionManager ActiveSectionManager { get; private set; }
+
         private SectionObject _lastActiveSection;
+        public SectionObject GetLastActiveSection => _lastActiveSection;
         private Dictionary<SectionName, SectionObject> _dictSections = new Dictionary<SectionName, SectionObject>();
 
         //Initialization of dictSections must be made only after finishing of all Awakes of SectionObject
@@ -34,6 +37,8 @@ namespace GMTools.Menu
                 SwitchSection(_initialStartSection);
         }
 
+        public void SetActiveSectionManager() => ActiveSectionManager = this;
+
         public void SwitchSection(SectionName selectedSection)
         {
             if (_lastActiveSection != null)
@@ -48,7 +53,7 @@ namespace GMTools.Menu
                 Debug.LogWarning($"The desired [{selectedSection}] Section was not found!");
         }
 
-        private static void ActivateSelectedSession(SectionObject selectedSection, bool activate = true)
+        private void ActivateSelectedSession(SectionObject selectedSection, bool activate = true)
         {
             //When the Section is Active the coresponded Button must not active
             selectedSection.SetValueMenuButtonInteractable(!activate);

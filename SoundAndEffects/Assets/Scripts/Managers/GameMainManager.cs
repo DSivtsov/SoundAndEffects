@@ -39,6 +39,8 @@ public class GameMainManager : SingletonController<GameMainManager>
         //_menuSceneManager.TurnOffMusicMenus();
     }
 
+    public bool GetStatusLoadingScenes() => _loaderSceneManager.AllScenesLoaded;
+
     private static void SetActiveScene(SceneName sceneName) => SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)sceneName));
 
     public void AllScenesLoaded()

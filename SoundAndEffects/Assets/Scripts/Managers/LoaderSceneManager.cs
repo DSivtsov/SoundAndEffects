@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class LoaderSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject loaderCameraObj;
-    //[SerializeField] private GameObject loaderCanvas;
     [SerializeField] private LoaderManager _loaderManager;
     [Tooltip("To show the Loading screen in loading")]
     [SerializeField] private bool _makePauseBeforeStartLoad = true;
@@ -35,9 +34,7 @@ public class LoaderSceneManager : MonoBehaviour
         _loaderManager.LoadScenes();
     }
 
-
-
-    public bool GetStatusLoadingScenes() => _loaderManager.AllScenesLoaded;
+    public bool AllScenesLoaded => _loaderManager.AllScenesLoaded;
 
     public void ActivateLoaderCamera(bool activate)
     {

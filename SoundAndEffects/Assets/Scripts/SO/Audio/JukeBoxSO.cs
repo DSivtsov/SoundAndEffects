@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GMTools;
+using System;
 
 public enum JukeBoxMode
 {
@@ -69,19 +70,19 @@ public class JukeBoxSO : AudioEvent
         flip = 0;
         nextAudioSource = audioSources[flip];
     }
-    /// <summary>
-    /// Initialize the JukeBox with demanded a sequence type and an initial value (overwrite SO parameters)
-    /// </summary>
-    /// <param name="_audioSources"></param>
-    /// <param name="_sequenceType"></param>
-    /// <param name="_initValue"> Set not zerro value as the special initial Value or set zerro in other cases. For RND Sequence use the Value as initial seed.
-    /// For InSequence use the Value as the start number</param>
-    public void InitJukeBox(AudioSource[] _audioSources, SequenceType _sequenceType, int _initValue)
-    {
-        this.sequenceType = _sequenceType;
-        this.initValue = _initValue;
-        InitJukeBox(_audioSources);
-    }
+    ///// <summary>
+    ///// Initialize the JukeBox with demanded a sequence type and an initial value (overwrite SO parameters)
+    ///// </summary>
+    ///// <param name="_audioSources"></param>
+    ///// <param name="_sequenceType"></param>
+    ///// <param name="_initValue"> Set not zerro value as the special initial Value or set zerro in other cases. For RND Sequence use the Value as initial seed.
+    ///// For InSequence use the Value as the start number</param>
+    //public void InitJukeBox(AudioSource[] _audioSources, SequenceType _sequenceType, int _initValue)
+    //{
+    //    this.sequenceType = _sequenceType;
+    //    this.initValue = _initValue;
+    //    InitJukeBox(_audioSources);
+    //}
 
     /// <summary>
     /// Init the playing audio clip on schedule
@@ -99,6 +100,13 @@ public class JukeBoxSO : AudioEvent
 
         UpdatePrepareStartTimers(lenght);
     }
+
+    public void SetNewSequenceType(SequenceType newSequenceType)
+    {
+        //Debug.Log($"{this} : JukeBoxSO.SetNewSequenceType({newSequenceType})");
+        sequenceType = newSequenceType;
+    }
+
     /// <summary>
     /// Start next audio clip on schedule
     /// </summary>
@@ -191,7 +199,7 @@ public class JukeBoxSO : AudioEvent
 
     string WarningMessage => $"Used the [{this}] in demo mode [{playMode}]";
 
-
+    public SequenceType CurrentSeqenceType => sequenceType;
 
     private void DetectValueChangeMessage(string message)
     {

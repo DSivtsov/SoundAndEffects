@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GMTools;
+using System.Linq;
+using System;
 
 public enum CollectionName
 {
@@ -30,5 +33,14 @@ public class PlayJukeBoxCollection : PlayJukeBox
             }
         }
         TurnOn(turnOnMusicAfterSwitch);
+    }
+
+    protected override IEnumerable<JukeBoxSO> GetUsedSequenceType()
+    {
+        //Debug.Log($"{this} : PlayJukeBoxCollection.GetUsedSequenceType");
+        for (int i = 0; i < jukeBoxCollections.Length; i++)
+        {
+            yield return jukeBoxCollections[i].jukeBoxSO;
+        }
     }
 }

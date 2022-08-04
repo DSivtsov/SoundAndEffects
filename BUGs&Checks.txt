@@ -3,7 +3,19 @@ BUGs
 2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times
 
 Additional Checks
-3. Check spacing for Spawning after restart Game
+1. Check spacing for Spawning after restart Game (problem occur time to times)
 
 Proposals
-4. Add to Video Option TurnOff Additional Animation at Collision
+1. Add to Video Option TurnOff Additional Animation at Collision
+2. Customization Character
+3. Save Setting from Options to file
+4. Add the possibility to set different SequentType for different JukeBox 
+5. (--)Add the possibility to set different Volumes for different Scenes
+
+Features
+1. In current Time it's a possibile to have the different setting the SequentType for different JukeBox (at "Initial Load" only)
+2. The SequentType after changing is stored in assets until next change if it change in Play Editor mode. !!! In Build Play Mode the SO Assets not save the changes at the end Game.
+
+Fix 0.1
+"3. PlayJukeBox & PlayJukeBoxCollection can use in one time the Update() cycle to manager Input as result the input command can repeats twice (use the workaround directly turn off the coresponded GameObject when Music not played)"
+Made the separate AudioControls script which single point for Get Input, the PlayJukeBox & PlayJukeBoxCollection doesn't use the Update() any more for get Input actions

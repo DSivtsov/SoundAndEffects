@@ -12,7 +12,7 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private TopListController _topListController;
 
     private GameMainManager _mainManager;
-    //public bool MenusMainManagerLinked { get; private set; }
+    public Func<bool> FuncGetStatusLoadingScenes;
 
     private void Awake()
     {
@@ -26,18 +26,30 @@ public class MainMenusSceneManager : MonoBehaviour
             _mainManager.LinkMenuSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
+            FuncGetStatusLoadingScenes = _mainManager.GetStatusLoadingScenes;
         }
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
+            StartCoroutine(EmulatorGetStatusLoadingScenes());
         }
     }
 
     private void Start()
     {
         _topListController.InitialLoadTopList();
-        TempSwitchToCanvsa(CanvasName.Options);
+        //TempSwitchToCanvsa(CanvasName.Options);
+    }
+
+    public bool GetStatusLoadingScenes() => FuncGetStatusLoadingScenes();
+
+    //The GetStatusLoadingScenes() = true will be little postponed
+    private IEnumerator EmulatorGetStatusLoadingScenes()
+    {
+        FuncGetStatusLoadingScenes = () => { return false; };
+        yield return new WaitForSeconds(.5f);
+        FuncGetStatusLoadingScenes = () => { return true; };
     }
 
     private static void TempSwitchToCanvsa(CanvasName canvasName)
@@ -52,7 +64,15 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void TurnOnMusicMenus(bool turnOn = true)
     {
-        playJukeBoxMainMenus.TurnOn(turnOn);
+        if (turnOn)
+        {
+            playJukeBoxMainMenus.TurnOn(true);
+
+        }
+        else
+        {
+            playJukeBoxMainMenus.TurnOn(false);
+        }
     }
 
     public void ActivateMainMenusCamera(bool activate)

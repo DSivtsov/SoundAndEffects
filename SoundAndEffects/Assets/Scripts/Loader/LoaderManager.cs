@@ -29,9 +29,9 @@ public class LoaderManager : MonoBehaviour
     [SerializeField] private bool activateOtherAfterFirst = true;
     [Header("Scenes loading Order")]
     [SerializeField] private SceneName[] loadOrder;
-    [Header("Demo Option")]
-    [SerializeField] private bool madePauseBeforeStart = true;
-    [SerializeField] private float pauseBeforeStart = 3f;
+    //[Header("Demo Option")]
+    //[SerializeField] private bool madePauseBeforeStart = true;
+    //[SerializeField] private float pauseBeforeStart = 3f;
 
     public bool AllScenesLoaded { get; private set; }
     private System.Random random  = new System.Random();
@@ -115,13 +115,13 @@ public class LoaderManager : MonoBehaviour
             sliderLoad.value = totalProgress;
             yield return null;
         } while (!totalIsDone);
-#if UNITY_EDITOR
-        //Demo Only
-        if (madePauseBeforeStart)
-        {
-            yield return new WaitForSeconds(pauseBeforeStart);
-        }
-#endif
+//#if UNITY_EDITOR
+//        //Demo Only
+//        if (madePauseBeforeStart)
+//        {
+//            yield return new WaitForSeconds(pauseBeforeStart);
+//        }
+//#endif
         AllScenesLoadedActivated();
     }
 
@@ -153,13 +153,13 @@ public class LoaderManager : MonoBehaviour
             sliderLoad.value = totalProgress;
             yield return null;
         } while (totalProgress != 1);
-#if UNITY_EDITOR
-        //Demo Only
-        if (madePauseBeforeStart)
-        {
-            yield return new WaitForSeconds(pauseBeforeStart); 
-        }
-#endif
+//#if UNITY_EDITOR
+//        //Demo Only
+//        if (madePauseBeforeStart)
+//        {
+//            yield return new WaitForSeconds(pauseBeforeStart); 
+//        }
+//#endif
         //All scenes are loaded but not Acivated
         ActivateFirstScene();
         if (activateOtherAfterFirst)

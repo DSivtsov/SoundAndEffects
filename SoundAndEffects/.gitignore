@@ -79,8 +79,5 @@ crashlytics-build.properties
 /Assets/_MyLib/Controls*
 /Assets/_MyLib/Prefab*
 
-
-
 /UserSettings/EditorUserSettings.asset
-test.txt
-TopList.txt
+/TopList.txt

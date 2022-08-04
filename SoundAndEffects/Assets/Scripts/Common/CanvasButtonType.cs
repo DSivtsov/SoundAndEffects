@@ -4,6 +4,10 @@ using System.Linq;
 using UnityEngine;
 using GMTools.Menu;
 
+public interface IButtonAction
+{
+    public void ResetDefault();
+}
 
 public enum SectionName
 {
@@ -26,13 +30,14 @@ public enum ButtonType
 {
     StartGame,
     QuitGame,
-    //TopList,
-    ResetTopList
+    ResetTopList,
+    ResetDefault
 }
 
 public static class ButtonActions
 {
     private static MainMenusSceneManager _menuSceneManager;
+    //private static SectionManager _sectionManagerOptions;
 
     public static void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager)
     {
@@ -59,10 +64,14 @@ public static class ButtonActions
                 case ButtonType.ResetTopList:
                     _menuSceneManager.ResetTopList();
                     break;
+                case ButtonType.ResetDefault:
+                    ((SectionManagerOptions)SectionManager.ActiveSectionManager).ResetDefault();
+                    //Debug.Log("End ButtonType.ResetDefault");
+                    break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");
                     break;
-            } 
+            }
         }
         else
         {
