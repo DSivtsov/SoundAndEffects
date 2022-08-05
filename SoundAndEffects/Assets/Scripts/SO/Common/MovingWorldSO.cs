@@ -31,6 +31,11 @@ public class MovingWorldSO : ScriptableObject
     /// </summary>
     public Vector3 VectorSpeed { get; private set; }
 
+    private void OnEnable()
+    {
+        worldIsMoving = false;
+    }
+
     /// <summary>
     /// Check the Position of Object
     /// </summary>

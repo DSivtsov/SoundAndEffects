@@ -4716,9 +4716,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrSpawners:
+  - {fileID: 1347611843}
   - {fileID: 1835706607}
   - {fileID: 1369481581}
-  - {fileID: 1347611843}
 --- !u!1 &2098539598
 GameObject:
   m_ObjectHideFlags: 0

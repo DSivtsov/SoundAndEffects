@@ -66,7 +66,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private PlaySetAudio gameSound;
     private Rigidbody lastCollised;
     private float storeDraglastCollised;
-    private bool isGameEndState;
+    //private bool isGameEndState;
     private Vector3 characterInitWordPos;
     public TypeWaitMsg WaitState { get; private set; }
     #endregion
@@ -115,7 +115,8 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private void OnEnable()
     {
         inputs.Move.Enable();
-        isGameEndState = true;
+        //isGameEndState = true;
+        WaitState = TypeWaitMsg.waitEndGame;
     }
     private void OnDisable() => inputs.Move.Disable();
     
@@ -136,11 +137,11 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         DiedAnimManFinished = false;
         CollisionAnimManFinished = false;
         _inAir = false;
-        //Debug.Log($"{this} : ReStartGame() isGameOverState={isGameEndState}");
-        if (isGameEndState)
+        //if (isGameEndState)
+        if (WaitState == TypeWaitMsg.waitEndGame)
         {
             WaitState = TypeWaitMsg.waitStart;
-            isGameEndState = false; 
+            //isGameEndState = false; 
         }
         //For Demo Purpose Call only in Editor
         SetPhysicsIgnoreObstaclesCollisions();
@@ -198,7 +199,8 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
 
     private void Update()
     {
-        if (isGameEndState)
+        //if (isGameEndState)
+        if (WaitState == TypeWaitMsg.waitEndGame)
         {
             //The game is in a final state, waiting for a username to be entered and Enter to exit using the WasPressedEnter() script
             //Debug.LogWarning($"I'm Here Update() isGameEndState={isGameEndState}");
@@ -209,7 +211,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
             //skip other Game Logic and waiting the finishing Animation Collision or Dying
              if (CollisionAnimManFinished)
             {
-                RestoreOldDragLastCollisedRigidbody();
+                RestoreInitialParametersLastCollisedRigidbody();
                 gameSceneManager.CharacterCollision();
                 WaitState = TypeWaitMsg.waitContinue;
                 StartNewAttemptGame();
@@ -219,7 +221,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
                 gameSceneManager.CharacterDied();
                 WaitState = TypeWaitMsg.waitEndGame;
                 ShowWaitScreen();
-                isGameEndState = true;
+                //isGameEndState = true;
             }
             return;
         }
@@ -375,10 +377,13 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         storeDraglastCollised = rigidbodyObstacle.drag;
         rigidbodyObstacle.drag = DragObstacleAfterLightCollision;
     }
-
-    private void RestoreOldDragLastCollisedRigidbody()
+    /// <summary>
+    /// After collision the rigidbody of Obstacle must receive initial drag = 0 and restore the initial rotation before next its time of spawning
+    /// </summary>
+    private void RestoreInitialParametersLastCollisedRigidbody()
     {
         lastCollised.drag = storeDraglastCollised;
+        lastCollised.transform.localRotation = Quaternion.identity;
     }
 
 

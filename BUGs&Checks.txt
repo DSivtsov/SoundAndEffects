@@ -1,6 +1,5 @@
 BUGs
-1. At Start Game in the TopMenu Score 999 999
-2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times
+
 
 Additional Checks
 1. Check spacing for Spawning after restart Game (problem occur time to times)
@@ -19,3 +18,9 @@ Features
 Fix 0.1
 "3. PlayJukeBox & PlayJukeBoxCollection can use in one time the Update() cycle to manager Input as result the input command can repeats twice (use the workaround directly turn off the coresponded GameObject when Music not played)"
 Made the separate AudioControls script which single point for Get Input, the PlayJukeBox & PlayJukeBoxCollection doesn't use the Update() any more for get Input actions
+
+Fix 0.2
+"1. At Start Game in the TopMenu Score 999 999"
+Refactoring Management Restart Game
+"2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times"
+Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly set the initial transfrom rotation of Obstacles
