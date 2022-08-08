@@ -9,9 +9,11 @@ public class ForceJumpSO : ScriptableObject
     //Speed at m/s
     [SerializeField] private float _forceJumpWalk = 350f;
     [SerializeField] private float _forceJumpRun = 450f;
+    [SerializeField] private int _jumpComplexityMultipler = 1;
 
     public float ForceJumpWalk { get => _forceJumpWalk; }
     public float ForceJumpRun { get => _forceJumpRun; }
+    public int JumpComplexityMultipler { get => _jumpComplexityMultipler; }
 
     public ComplexitySO Complexity { get => _complexity; }
     /// <summary>

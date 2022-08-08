@@ -61,7 +61,9 @@ public class MoveObstacleAndSpawn : MonoBehaviour
         //The position and values that was obtained by the obstacle after Instantiantion under Parent with transform
         initRigidbodyWorldPosition = transform.position;
         initRigidbodyWorldPositionX = initRigidbodyWorldPosition.x;
+        //The all movement going toward by negative Axe X therefore the all values of positions is negative
         worldPositionXDistanceAfter = initRigidbodyWorldPositionX - spawnerType.DistanceAfter;
+        //CountFrame.DebugLogFixedUpdate(this, $"worldPositionXDistanceAfter={worldPositionXDistanceAfter}={initRigidbodyWorldPositionX} - {spawnerType.DistanceAfter} ");
         _characterInitLocPosX = SingletonGame.Instance.GetCharacterController().GetCharacterInitWordPosX() - initRigidbodyWorldPositionX;
     }
 
@@ -75,19 +77,29 @@ public class MoveObstacleAndSpawn : MonoBehaviour
     /// </summary>
     protected virtual void UpdateCurrentVelocityMoveWorld() => currentVectorMoveWorld = movingWorld.VectorSpeed;
 
-    public void SpawnObstacle()
+    public void SpawnObstacle(bool notFirst = true, float distanceAfter = 0)
     {
         lastSpawnedObstacle = poolObstacle.GetElement();
         lastSpawnedObstacle.gameObject.SetActive(true);
-        InitObstacleAndArr();
+        InitObstacleAndArr(notFirst, distanceAfter);
     }
 
-    private void InitObstacleAndArr()
+    private void InitObstacleAndArr(bool notFirst = true, float distanceAfter = 0)
     {
-        float newX = (   spawnerType.DistanceBeforeMin + (float)( (spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble() )    )
+        //float newX = (   spawnerType.DistanceBeforeMin + (float)( (spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble() )    )
+        //    * gameParametersManager.Multiplier;
+        //double dNewRND = random.NextDouble();
+        float newX = distanceAfter + (spawnerType.DistanceBeforeMin + (float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble()))
             * gameParametersManager.Multiplier;
-        arrSpawnedObstacleWScore.Enqueue(new SpawnedObstacleWScore(lastSpawnedObstacle, spawnerType.BaseScore * gameParametersManager.Level)); 
-        lastSpawnedObstacle.position = initRigidbodyWorldPosition + Vector3.right * newX;
+        //CountFrame.DebugLogFixedUpdate(this, $" newX={newX:F1} = {distanceAfter:f1} + {gameParametersManager.Multiplier:F1} * ({spawnerType.DistanceBeforeMin:F1}" +
+        //    $" + {(float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin)):F1}*{dNewRND:F1})");
+        arrSpawnedObstacleWScore.Enqueue(new SpawnedObstacleWScore(lastSpawnedObstacle, spawnerType.BaseScore * gameParametersManager.Level * gameParametersManager.JumpComplexityMultiplier));
+        if (notFirst)
+        {
+            lastSpawnedObstacle.position = initRigidbodyWorldPosition + Vector3.right * newX; 
+        }
+        else
+            lastSpawnedObstacle.position = initRigidbodyWorldPosition;
         lastSpawnedObstacle.name += $"[{arrSpawnedObstacleWScore.Count}]";
         lastSpawnedObstacle.velocity = currentVectorMoveWorld;
     }
@@ -107,7 +119,7 @@ public class MoveObstacleAndSpawn : MonoBehaviour
             if (_IamLastSpawner && IsLastObstaclePassSpawnPosition(lastSpawnedObstacle))
             {
                 //Debug.Log($"{lastObstacle.name} call SpawnNextObstacle() x={lastObstacle.transform.localPosition.x:F1} Rx={lastObstacle.position.x:F1}");
-                mainSpawner.SpawnNextObstacle();
+                mainSpawner.SpawnNextObstacle( distanceAfter: spawnerType.DistanceAfter);
             }
             SpawnedObstacleWScore firstObstacleInQueue = arrSpawnedObstacleWScore.Peek();
             Rigidbody rigidbodyFirstObstacle = firstObstacleInQueue.RigidbodyObstacle;

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: ForceJumpHard
   m_EditorClassIdentifier: 
   _complexity: {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
-  ForceJumpWalk: 350
-  ForceJumpRun: 450
+  _forceJumpWalk: 390
+  _forceJumpRun: 475
+  _jumpComplexityMultipler: 3

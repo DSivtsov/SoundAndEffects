@@ -24,24 +24,39 @@ public class PlayJukeBox : MonoBehaviour
     private bool initAudioSources = false;
     private AudioSource[] _audioSources = new AudioSource[2];
     private AudioControls _audioControls;
+    private bool _notSkipAudioControls;
     #endregion
 
     private void Awake()
     {
-        _audioControls = AudioControls.Instance;
+        if (AudioControls.Instance)
+        {
+            _audioControls = AudioControls.Instance;
+            _notSkipAudioControls = true;
+        }
+        else
+        {
+            Debug.LogError($"{this} not linked to AudioControls");
+            _notSkipAudioControls = false; 
+        }
     }
 
     private void OnEnable()
     {
-        _audioControls.MusicTurnOn += TurnOnButtonPressed;
-        _audioControls.MusicSwitchToNextClip += SwitchToNextClipButtonPressed;
-        Debug.Log($"{this} : OnEnable() all linked");
+        if (_notSkipAudioControls)
+        {
+            _audioControls.MusicTurnOn += TurnOnButtonPressed;
+            _audioControls.MusicSwitchToNextClip += SwitchToNextClipButtonPressed; 
+        }
     }
 
     private void OnDisable()
     {
-        _audioControls.MusicTurnOn -= TurnOnButtonPressed;
-        _audioControls.MusicSwitchToNextClip -= SwitchToNextClipButtonPressed;
+        if (_notSkipAudioControls)
+        {
+            _audioControls.MusicTurnOn -= TurnOnButtonPressed;
+            _audioControls.MusicSwitchToNextClip -= SwitchToNextClipButtonPressed; 
+        }
     }
 
     private void Start()

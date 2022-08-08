@@ -54,14 +54,14 @@ public class MainSpawner : MonoBehaviour
 #if UNITY_EDITOR
         if (!SingletonGame.Instance.IsTurnOffAllObstacle)
         {
-            SpawnNextObstacle();
+            SpawnNextObstacle(false);
         }
 #else
-        SpawnNextObstacle();
+        SpawnNextObstacle(false);
 #endif
     }
 
-    public void SpawnNextObstacle()
+    public void SpawnNextObstacle(bool notFirst = true, float distanceAfter = 0)
     {
         int idxCurrentSpawner = random.Next(arrSpawners.Length);
         if (idxPrevSpawner.HasValue)
@@ -71,7 +71,7 @@ public class MainSpawner : MonoBehaviour
         }
         idxPrevSpawner = idxCurrentSpawner;
         _gameParametersManager.CheckAndUpdateLevelGame();
-        arrSpawners[idxCurrentSpawner].SpawnObstacle();
+        arrSpawners[idxCurrentSpawner].SpawnObstacle(notFirst, distanceAfter);
         _gameParametersManager.AddNewSpawnedObstacle();
         arrSpawners[idxCurrentSpawner].SetIamLastSpawner(true);
     }

@@ -15,3 +15,4 @@ MonoBehaviour:
   _complexity: {fileID: 11400000, guid: 393e55977e1ab304eb0485e8407547e5, type: 2}
   _forceJumpWalk: 400
   _forceJumpRun: 500
+  _jumpComplexityMultipler: 2

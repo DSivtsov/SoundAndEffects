@@ -428,9 +428,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 23381201e1e709847a743724e2bcba2f, type: 2}
   - {fileID: 11400000, guid: f9f99f7d612f5c04db07f8dd00f012b2, type: 2}
   NumObstaclesUpLevel: 9
-  _maxMultiplier: 4
-  _minMultiplier: 1
-  _levelMinMultiplier: 6
+  _maxMultiplier: 5
+  _minMultiplier: 0.7
+  _levelMinMultiplier: 8
   FPS: 30
 --- !u!4 &160868796
 Transform:

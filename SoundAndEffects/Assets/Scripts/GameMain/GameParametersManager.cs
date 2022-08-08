@@ -16,9 +16,9 @@ public class GameParametersManager : MonoBehaviour
     [Tooltip("Level up after this number of obstacles was spawned")]
     [SerializeField] private int NumObstaclesUpLevel = 10;
     [Tooltip("The maximum spacing Obstacles at Game start at Level = 1")]
-    [SerializeField] private int _maxMultiplier = 5;
+    [SerializeField] private float _maxMultiplier = 5;
     [Tooltip("The minimum spacing Obstacles at Selected Level and nexts")]
-    [SerializeField] private int _minMultiplier = 1;
+    [SerializeField] private float _minMultiplier = 1;
     [Tooltip("The Selected Level with the minimal spacing Obstacles. At previous Level the value = min + (max - min) * 0,01")]
     [SerializeField] private int _levelMinMultiplier = 6;
 
@@ -32,7 +32,7 @@ public class GameParametersManager : MonoBehaviour
 
     public float Multiplier { get; private set; }
     public int Level { get; private set; }
-
+    public int JumpComplexityMultiplier { get; private set; }
 
     private CharacterManager characterController;
 
@@ -111,8 +111,10 @@ public class GameParametersManager : MonoBehaviour
             if (item.ItemForComplexity(JumpComplexity))
             {
                 characterController.SetForceJumpSO(item);
+                JumpComplexityMultiplier = item.JumpComplexityMultipler;
             }
         }
+        
     }
 
 
