@@ -16,6 +16,10 @@ public enum SceneState
 
 public class GameMainManager : SingletonController<GameMainManager>
 {
+    [Header("Demo Options")]
+    [Tooltip("If value not zerro, the CharacterHealth will be override by it, works only in Editor")]
+    [SerializeField] private int _characterHealth;
+
     private LoaderSceneManager _loaderSceneManager;
     private MainMenusSceneManager _menuSceneManager;
     private GameSceneManager _gameSceneManager;
@@ -23,22 +27,15 @@ public class GameMainManager : SingletonController<GameMainManager>
     protected override void Awake()
     {
         base.Awake();
+#if !UNITY_EDITOR
+        _characterHealth = 0;
+#endif
+
     }
 
     public void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
     public void LinkLoaderSceneManager(LoaderSceneManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
     public void LinkGameSceneManager(GameSceneManager gameSceneManager) => _gameSceneManager = gameSceneManager;
-
-    public void FromMenusToStartGame()
-    {
-        CountFrame.DebugLogUpdate(this,$"FromMenusToStartGame()");
-        _gameSceneManager.ActivateGameCamera(true);
-        SetActiveScene(SceneName.Game);
-        //_gameSceneManager.SelectGameObjectFromScene();
-        _gameSceneManager.StartNewGame();
-        _menuSceneManager.ActivateMainMenusCamera(false);
-        //_menuSceneManager.TurnOffMusicMenus();
-    }
 
     public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
         => _gameSceneManager.GetParametersToInitGameComplexityOption();
@@ -53,9 +50,19 @@ public class GameMainManager : SingletonController<GameMainManager>
         FromLoaderToMenus();
     }
 
+    public void FromMenusToStartGame(string playerName)
+    {
+        CountFrame.DebugLogUpdate(this, $"FromMenusToStartGame()");
+        _gameSceneManager.ActivateGameCamera(true);
+        SetActiveScene(SceneName.Game);
+        _gameSceneManager.StartNewGame(playerName, _characterHealth);
+        _menuSceneManager.ActivateMainMenusCamera(false);
+    }
+
     public void FromLoaderToMenus()
     {
         _menuSceneManager.ActivateMainMenusCamera(true);
+        SwitchMusicTo(SceneName.Menus);
         SetActiveScene(SceneName.Menus);
         _gameSceneManager.ActivateGameCamera(false);
         _loaderSceneManager.ActivateLoaderCamera(false);
@@ -74,12 +81,12 @@ public class GameMainManager : SingletonController<GameMainManager>
         switch (scene)
         {
             case SceneName.Menus:
-                _menuSceneManager.TurnOnMusicMenus();
-                _gameSceneManager.TurnOnMusic(false);
+                _menuSceneManager.ActivateMusicMainMenus();
+                _gameSceneManager.ActivateGameMusic(false);
                 break;
             case SceneName.Game:
-                _gameSceneManager.TurnOnMusic();
-                _menuSceneManager.TurnOnMusicMenus(false);
+                _gameSceneManager.ActivateGameMusic();
+                _menuSceneManager.ActivateMusicMainMenus(false);
                 break;
             default:
                 Debug.LogError("{this} SwitchMusicTo() can't switch to {scene} Scene");
@@ -87,7 +94,7 @@ public class GameMainManager : SingletonController<GameMainManager>
         }
     }
 
-    public void AddNewCharacterData(CharacterData newCharacterData)
+    public void AddNewCharacterData(PlayerData newCharacterData)
     {
         _menuSceneManager.AddNewCharacterData(newCharacterData);
     }

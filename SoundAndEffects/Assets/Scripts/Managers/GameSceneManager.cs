@@ -22,6 +22,7 @@ public class GameSceneManager : MonoBehaviour
     private PlayJukeBoxCollection _playJukeBoxGameCollection;
 
     private const int DecreaseAmmountLife = -1;
+    private string _nameCurrentPlayer;
     public bool GameMainManagerLinked { get; private set; }
 
     private void Awake()
@@ -42,14 +43,17 @@ public class GameSceneManager : MonoBehaviour
             _gameMainManager.LinkGameSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateGameCamera(false);
+            //Initially the GameController must be off
+            _characterObject.SetActive(false);
         }
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             GameMainManagerLinked = false;
+            _characterObject.SetActive(true);
             ActivateGameCamera(true);
             //TurnOnMusic();
-            Debug.LogWarning($"Music at Awake not TurnOn because in build will be used Music from Menu Scene");
+            Debug.LogWarning($"Music at Awake not TurnOn because in build will be used Music from Menu Scene before game was started");
         }
     }
 
@@ -70,14 +74,15 @@ public class GameSceneManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(gameObject);
     }
 
-    public void StartNewGame()
+    public void StartNewGame(string playerName, int _overrideCharacterHealth = 0)
     {
+        _nameCurrentPlayer = playerName;
         ActivateButtonLocalRestart(false);
         _gameParametersManager.ReInitParameters();
         //The Character GameObject will be Turn off at EndGame to reinit the Character Animator
         _characterObject.SetActive(true);
         SelectGameObjectFromScene(_characterObject);
-        _characterDataCtrl.ResetHealth();
+        _characterDataCtrl.ResetHealth(_overrideCharacterHealth);
         //WaitState before restart Game
         if (_characterManager.WaitState == TypeWaitMsg.waitEndGame)
             _characterDataCtrl.ResetScoreDistance();
@@ -85,15 +90,17 @@ public class GameSceneManager : MonoBehaviour
         _characterManager.StartNewAttemptGame();
     }
 
-    public void TurnOnMusic(bool turnOn = true)
+    public void ActivateGameMusic(bool activate = true)
     {
-        if (turnOn)
+        if (activate)
         {
+            _playJukeBoxGameCollection.SetJukeBoxActive(true);
             _playJukeBoxGameCollection.TurnOn(true);
         }
         else
         {
-            _playJukeBoxGameCollection.TurnOn(false); 
+            _playJukeBoxGameCollection.TurnOn(false);
+            _playJukeBoxGameCollection.SetJukeBoxActive(false);
         }
     }
 
@@ -123,7 +130,7 @@ public class GameSceneManager : MonoBehaviour
     public void CharacterDied()
     {
         _mainSpawner.RemoveAllObstacles();
-        _graveStoneControl.ActivateGraveStoneGroupAndFocusInputField();
+        _graveStoneControl.ActivateGraveStoneGroupAndFocusInputField(_nameCurrentPlayer);
     }
 
     public void ClearSceneAfterEndGame()
@@ -144,12 +151,13 @@ public class GameSceneManager : MonoBehaviour
         if (GameMainManagerLinked)
             GameMainManager.Instance.SwitchMusicTo(SceneName.Game);
         else
-            TurnOnMusic();
+            ActivateGameMusic();
     }
 
     public void StoreResultAndSwitchGameToMainMenus()
     {
-        CharacterData newCharacterData = new CharacterData(_graveStoneControl.GetUserName(), _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
+        //PlayerData newCharacterData = new PlayerData(_graveStoneControl.GetUserName(), _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
+        PlayerData newCharacterData = new PlayerData(_nameCurrentPlayer, _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
         if (GameMainManagerLinked)
         {//It's end Game and Scene linked to GameMainManager
             GameMainManager.Instance.FromGameToMenus();

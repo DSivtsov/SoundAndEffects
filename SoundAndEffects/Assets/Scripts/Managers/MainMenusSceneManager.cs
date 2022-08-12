@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Menu;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class MainMenusSceneManager : MonoBehaviour
 {
@@ -11,6 +13,14 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private GameObject cameraMainMenus;
     [SerializeField] private PlayJukeBox playJukeBoxMainMenus;
     [SerializeField] private TopListController _topListController;
+    [SerializeField] private TopListController _remoteTopListController;
+    [SerializeField] private LootLockerController _lootLockerController;
+    [SerializeField] private PlayerDataController _playerDataController;
+    [SerializeField] private Button _buttonStart;
+    [Header("Demo Options")]
+    [SerializeField] private bool _useStartCanvas;
+    [SerializeField] private CanvasName _startCanvasName;
+    [SerializeField] private bool _startAlwaysActive;
 
     private GameMainManager _mainManager;
     public Func<bool> FuncGetStatusLoadingScenes;
@@ -25,7 +35,6 @@ public class MainMenusSceneManager : MonoBehaviour
         ButtonActions.LinkMenuSceneManager(this);
         if (_mainManager)
         {
-            //ButtonActions.LinkMenuSceneManager(this);
             _mainManager.LinkMenuSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
@@ -39,13 +48,36 @@ public class MainMenusSceneManager : MonoBehaviour
             StartCoroutine(EmulatorGetStatusLoadingScenes());
             FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
+        _buttonStart.interactable = false;
+#if UNITY_EDITOR
+        if (_startAlwaysActive)
+        {
+            _buttonStart.interactable = true;
+        }
+#endif
+    }
+
+    //public void SetPlayerName(string newPlayerName) => _playerDataController.PlayerName = newPlayerName;
+
+    public void CreateNewPlayerLootLocker(string playerName)
+    {
+        StartCoroutine(_lootLockerController.CreateNewPlayerRecord(playerName));
+        Debug.Log($"CreateNewPlayerLootLocker({playerName})");
     }
 
     private void Start()
     {
         _topListController.InitialLoadTopList();
-        //TempSwitchToCanvsa(CanvasName.Options);
+        _remoteTopListController.InitialLoadTopList();
+#if UNITY_EDITOR
+        if (_useStartCanvas)
+        {
+            TempSwitchToCanvsa(_startCanvasName);
+        }
+#endif
     }
+
+    public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
 
     public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption() => FuncGetParametersToInitGameComplexityOption();
 
@@ -77,20 +109,21 @@ public class MainMenusSceneManager : MonoBehaviour
         FindObjectOfType<CanvasManager>().SwitchCanvas(canvasName);
     }
 
-    public void StartGame() => _mainManager?.FromMenusToStartGame();
+    public void StartGame(string playerName) => _mainManager?.FromMenusToStartGame(playerName);
 
     public void ResetTopList() => _topListController.ResetTopList();
 
-    public void TurnOnMusicMenus(bool turnOn = true)
+    public void ActivateMusicMainMenus(bool activate = true)
     {
-        if (turnOn)
+        if (activate)
         {
+            playJukeBoxMainMenus.SetJukeBoxActive(true);
             playJukeBoxMainMenus.TurnOn(true);
-
         }
         else
         {
             playJukeBoxMainMenus.TurnOn(false);
+            playJukeBoxMainMenus.SetJukeBoxActive(false);
         }
     }
 
@@ -99,8 +132,11 @@ public class MainMenusSceneManager : MonoBehaviour
         cameraMainMenus.SetActive(activate);
     }
 
-    public void AddNewCharacterData(CharacterData newCharacterData)
+    public void AddNewCharacterData(PlayerData newCharacterData)
     {
+        Debug.Log(newCharacterData);
         _topListController.AddNewCharacterData(newCharacterData);
+        _remoteTopListController.AddNewCharacterData(newCharacterData);
+        //_lootLockerController.StartSendScoreToLeaderBoard(newCharacterData);
     }
 }

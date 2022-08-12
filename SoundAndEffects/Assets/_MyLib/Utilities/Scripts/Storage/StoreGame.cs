@@ -76,6 +76,11 @@ namespace GMTools.Manager
 
         public void QuickLoad()
         {
+            if (!File.Exists(nameFile))
+            {
+                Debug.LogWarning($"{this} : file [{nameFile}] which stores the local TopList, not found will be created new");
+                return;
+            }
             TypeDataRead currentMode = TypeDataRead.GUID;
             using (StreamReader sr = new StreamReader(nameFile, Encoding.UTF8, false, 1024))
             {

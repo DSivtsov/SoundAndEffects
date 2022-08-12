@@ -26,7 +26,7 @@ public class CharacterDataController : MonoBehaviour
     private float _summaryDistance;
     private int _summaryScore;
 
-    private PlayerCollisionGround _checkPlayer;
+    private CharacterCollisionGround _checkPlayer;
     private GameParametersManager _gameParametersManager;
     private bool _characterInAir;
     private Stack<PassedObstacleWScore> passedObstaclesWScore = new Stack<PassedObstacleWScore>(10);
@@ -56,7 +56,7 @@ public class CharacterDataController : MonoBehaviour
     public int SummaryDistance
     {
         get => Mathf.RoundToInt(_summaryDistance);
-    } 
+    }
 
     private void Awake()
     {
@@ -87,9 +87,12 @@ public class CharacterDataController : MonoBehaviour
             return;
         }
     }
-    public void ResetHealth()
+    public void ResetHealth(int _overrideCharacterHealth = 0)
     {
-        Health = _maxHealth;
+        if (_overrideCharacterHealth != 0)
+            Health = _overrideCharacterHealth; 
+        else
+            Health = _maxHealth;
         HealthChanged?.Invoke(Health);
     }
     public void ResetScoreDistance()

@@ -556,6 +556,7 @@ MonoBehaviour:
   dirtSplatter: {fileID: 1326964120}
   ReactForceAtCollision: 40
   gameSceneManager: {fileID: 1415545850}
+  gameCanvasTurnOffPressEnter: {fileID: 844286562}
 --- !u!1 &250114422
 GameObject:
   m_ObjectHideFlags: 0

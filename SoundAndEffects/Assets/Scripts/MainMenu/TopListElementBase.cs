@@ -7,7 +7,7 @@ public abstract class TopListElementBase
 {
     protected Transform _rootRecords;
     public const int MaxNumShowRecords = 10;
-    protected List<CharacterData> _topList;
+    protected List<PlayerData> _topList;
 
     private RectTransform[] _rectRecords = new RectTransform[MaxNumShowRecords];
     private Transform _recordTemplate;
@@ -32,7 +32,7 @@ public abstract class TopListElementBase
             _rootRecords = rootRecords;
             SetInstantiationParameters();
             InstantiateTopList();
-            Debug.Log($"CreateTableTopList() : Table for TopList created");
+            Debug.Log($"CreateTableTopList() : Table for {rootRecords.parent.name} created");
             TopListElementInited = true; 
         }
     }
@@ -90,7 +90,7 @@ public abstract class TopListElementBase
     /// Link the corespoding List<CharacterData> which will be a source data for methods of TopListElementBase class
     /// </summary>
     /// <param name="topList"></param>
-    public void SetUsedTopList(List<CharacterData> topList) => _topList = topList;
+    public void SetUsedTopList(List<PlayerData> topList) => _topList = topList;
 
     /// <summary>
     /// Get the Template Type which will be used to create the TopList

@@ -21,7 +21,7 @@ public class TopListControllerEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Update and Show TopList"))
         {
-            topListCtrl.UpdateAndShowTopList();
+            topListCtrl.InitUpdateAndShowTopList();
         }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.Space();

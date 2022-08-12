@@ -22,10 +22,14 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     [SerializeField] private GameObject dirtSplatter;
     [SerializeField] private int ReactForceAtCollision = 2;
     [SerializeField] private GameSceneManager gameSceneManager;
+    /// <summary>
+    /// Link to Text in Canvas
+    /// </summary>
+    [SerializeField] private TurnOffPressEnter gameCanvasTurnOffPressEnter;
     #endregion
 
     #region NonSerializedFields
-    private PlayerCollisionGround checkPlayer;
+    private CharacterCollisionGround checkPlayer;
     private bool WasPressedJump;
     //The current selected the difficulty level 
     private ForceJumpSO forceJumpSO;
@@ -54,10 +58,6 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     /// React on First Collision only
     /// </summary>
     private bool isWasCollision;
-    /// <summary>
-    /// Link to Text in Canvas
-    /// </summary>
-    private TurnOffPressEnter textTurnOffPressEnter;
     private PlayerState _currentState;
     private bool _inAir;
     private bool keyChangeSpeedPressed;
@@ -108,7 +108,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         gameSound = FindObjectOfType<PlaySetAudio>();
 
         characterInitWordPos = transform.position;
-        textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
+        //textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
     }
 
     private void OnEnable()
@@ -162,7 +162,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     {
         //CountFrame.DebugLog(this, "WasPressedEnter()");
         //The button Start will affect if current state = Stop
-        textTurnOffPressEnter.Active(false);
+        gameCanvasTurnOffPressEnter.Active(false);
         if (WaitState != TypeWaitMsg.waitEndGame)
         {//It's Start or Restart Game
             CharacterGo();
@@ -190,7 +190,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
         //Later can turn off by OnStart
         
-        textTurnOffPressEnter.Active(true, WaitState);
+        gameCanvasTurnOffPressEnter.Active(true, WaitState);
     }
 
     private void Update()

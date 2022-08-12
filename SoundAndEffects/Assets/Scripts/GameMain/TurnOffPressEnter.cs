@@ -15,7 +15,7 @@ public enum TypeWaitMsg
 /// </summary>
 public class TurnOffPressEnter : MonoBehaviour
 {
-    public GameObject textPreesEnter;
+    [SerializeField] private GameObject textPreesEnter;
 
     private const string strStart = "Press Enter to Start";
     private const string strContinue = "Press Enter to Continue";
@@ -28,9 +28,9 @@ public class TurnOffPressEnter : MonoBehaviour
         textMesh = textPreesEnter.GetComponent<TextMeshProUGUI>();
     }
 
-    public void Active(bool value, TypeWaitMsg typeMsg = TypeWaitMsg.waitStart)
+    public void Active(bool activate, TypeWaitMsg typeMsg = TypeWaitMsg.waitStart)
     {
-        if (value)
+        if (activate)
         {
             switch (typeMsg)
             {

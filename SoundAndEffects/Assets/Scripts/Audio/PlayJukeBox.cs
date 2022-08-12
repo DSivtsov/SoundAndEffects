@@ -21,6 +21,7 @@ public class PlayJukeBox : MonoBehaviour
 
     #region NonSerializedFields
     public bool JukeBoxPlaying { get; private set; } = false;
+    public bool _jukeBoxActive = false;
     private bool initAudioSources = false;
     private AudioSource[] _audioSources = new AudioSource[2];
     private AudioControls _audioControls;
@@ -75,6 +76,8 @@ public class PlayJukeBox : MonoBehaviour
         }
     }
 
+    public void SetJukeBoxActive(bool active) => _jukeBoxActive = active;
+
     private void SwitchToNextClipButtonPressed()
     {
         if (JukeBoxPlaying)
@@ -83,10 +86,13 @@ public class PlayJukeBox : MonoBehaviour
 
     private void TurnOnButtonPressed()
     {
-        if (JukeBoxPlaying)
-            TurnOn(false);
-        else
-            TurnOn(true);
+        if (_jukeBoxActive)
+        {
+            if (JukeBoxPlaying)
+                TurnOn(false);
+            else
+                TurnOn(true); 
+        }
     }
 
     public virtual SequenceType GetInitialSeqenceType() => _jukeBox.CurrentSeqenceType;

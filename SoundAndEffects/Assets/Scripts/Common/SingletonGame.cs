@@ -17,7 +17,7 @@ public class SingletonGame : SingletonController<SingletonGame>
     [SerializeField] private GameSceneManager _gameSceneManager;
     [SerializeField] private GameParametersManager _gameParametersManager;
     [SerializeField] private PlayJukeBoxCollection _playJukeBoxCollection;
-    [SerializeField] private PlayerCollisionGround _playerCollisionGround;
+    [SerializeField] private CharacterCollisionGround _playerCollisionGround;
     [Space()]
     [Header("For Testing purpose only, used in Editor only")]
     [SerializeField] private bool isWalkingAfterStart;
@@ -32,7 +32,7 @@ public class SingletonGame : SingletonController<SingletonGame>
     public GameSceneManager GetGameSceneManager() => _gameSceneManager;
     public GameParametersManager GetGameParametersManager() => _gameParametersManager;
     public PlayJukeBoxCollection GetPlayJukeBox() => _playJukeBoxCollection;
-    public PlayerCollisionGround GetPlayerCollisionGround() => _playerCollisionGround;
+    public CharacterCollisionGround GetPlayerCollisionGround() => _playerCollisionGround;
 
     public bool IsWalkingAfterStart { get => isWalkingAfterStart; }
 

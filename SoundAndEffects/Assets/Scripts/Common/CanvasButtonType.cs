@@ -13,7 +13,9 @@ public enum SectionName
 {
     Game,
     Audio,
-    Video
+    Video,
+    Global,
+    Local
 }
 
 public enum CanvasName
@@ -25,23 +27,28 @@ public enum CanvasName
     Help
 }
 
-
 public enum ButtonType
 {
     StartGame,
     QuitGame,
     ResetTopList,
-    ResetDefault
+    ResetDefault,
+    NewPlayer
 }
 
 public static class ButtonActions
 {
     private static MainMenusSceneManager _menuSceneManager;
-    //private static SectionManager _sectionManagerOptions;
+    private static PlayerDataController _playerDataController;
 
     public static void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager)
     {
         _menuSceneManager = menuSceneManager;
+    }
+
+    public static void LinkPlayerDataController(PlayerDataController playerDataController)
+    {
+        _playerDataController = playerDataController;
     }
 
     public static void ButtonPressed(this ButtonType buttonType)
@@ -51,7 +58,7 @@ public static class ButtonActions
             switch (buttonType)
             {
                 case ButtonType.StartGame:
-                    _menuSceneManager.StartGame();
+                    _menuSceneManager.StartGame(_playerDataController.PlayerName);
                     break;
                 case ButtonType.QuitGame:
 #if UNITY_EDITOR
@@ -67,6 +74,9 @@ public static class ButtonActions
                 case ButtonType.ResetDefault:
                     ((SectionManagerOptions)SectionManager.ActiveSectionManager).ResetDefault();
                     //Debug.Log("End ButtonType.ResetDefault");
+                    break;
+                case ButtonType.NewPlayer:
+                    _playerDataController.CreateNewPlayer();
                     break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");

@@ -29,7 +29,7 @@ public class GraveStoneControl : MonoBehaviour
     //private int ConvertToDisplayUnitSystemDistance(int distanceInMeters) =>
     //    (_currentDisplayUnitSystemDistance == UnitSystemDistance.ft) ? Mathf.RoundToInt( distanceInMeters / OneFootInMeter) : distanceInMeters;
 
-    public void ActivateGraveStoneGroupAndFocusInputField()
+    public void ActivateGraveStoneGroupAndFocusInputField(string _nameCurrentPlayer)
     {
         //Template "Distance: 9999 ft"
         _textDistance.text = $"Distance: {UnitSystem.Convert(_characterDataCtrl.SummaryDistance)} {UnitSystem.Current}";
@@ -38,6 +38,9 @@ public class GraveStoneControl : MonoBehaviour
         //Template "Score: 999 999"
         _textScore.text = $"Score: {_characterDataCtrl.SummaryScores:000 000}";
         _graveStoneGroup.SetActive(true);
+        _inputName.text = _nameCurrentPlayer;
+        Debug.LogError("Time Solution : InputField was made readOnly = true");
+        _inputName.readOnly = true;
         _inputName.ActivateInputField();
         //Debug.Log("ActivategraveStoneGroupAndFocusInputField()");
     }

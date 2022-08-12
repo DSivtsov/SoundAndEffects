@@ -7,7 +7,7 @@ using UnityEngine;
 /// Physics set the Collider matrix - Layer Ground Can have collisions with Player Layer only
 ///  Therefore not demanding to check the collision object at PlayerGrounded
 /// </summary>
-public class PlayerCollisionGround : MonoBehaviour
+public class CharacterCollisionGround : MonoBehaviour
 {
     public bool IsGrounded { get; private set; } = true;
 

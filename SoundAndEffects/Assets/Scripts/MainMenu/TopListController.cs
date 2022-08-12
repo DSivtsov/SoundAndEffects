@@ -4,49 +4,51 @@ using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Manager;
 
+public enum TopListSource
+{
+    Demo,
+    Local,
+    Remote
+}
+
 public class TopListController : MonoBehaviour
 {
     [SerializeField] private Transform _rootRecords;
-    [SerializeField] StoreGame _storeGame;
+    [SerializeField] private StoreGame _storeGame;
+    [SerializeField] private TopListSource _usedTopListSource = TopListSource.Local;
     [Header("Demo Options TopList")]
-    [SerializeField] bool _useDemoData = false;
     /// <summary>
     /// Use the IComparable<T> from CharacterData
     /// </summary>
-    [SerializeField] bool _autoSortByScore = true;
+    [SerializeField] protected bool _autoSortByScore = true;
     [SerializeField] bool _loadAndShowAtStart = true;
 
-    private List<CharacterData> _topList;
-    private TopListElementBase topListElement;
-    private StoreObjectT<CharacterData> _storeObjectT;
+    private List<PlayerData> _topList;
+    protected TopListElementBase _topListElement;
+    private StoreObjectT<PlayerData> _storeObjectT;
 
-    public bool InitCharacterData { get; private set; }
+    public bool InitCharacterData { get; protected set; }
 
-    public bool UseDemoData => _useDemoData;
-
-    private void Awake()
+    protected void Awake()
     {
-        topListElement = new TopListGroupElement();
+        _topListElement = new TopListGroupElement();
         InitCharacterData = false;
-        _storeObjectT = GetComponent<StoreObjectT<CharacterData>>();
-        Init();
-    }
-
-    private void Init()
-    {
-        _topList = new List<CharacterData>();
-        topListElement.SetUsedTopList(_topList);
-        InitCharacterData = true;
+        _storeObjectT = GetComponent<StoreObjectT<PlayerData>>();
     }
 
     public void InitialLoadTopList()
     {
-        topListElement.CreateTableTopList(_rootRecords);
+        _topListElement.CreateTableTopList(_rootRecords);
         if (_loadAndShowAtStart)
         {
-            LoadTopList();
-            UpdateAndShowTopList(); 
+            LoadAndShow();
         }
+    }
+
+    protected virtual void LoadAndShow()
+    {
+        LoadTopList();
+        InitUpdateAndShowTopList();
     }
 
     /// <summary>
@@ -63,36 +65,47 @@ public class TopListController : MonoBehaviour
         Debug.Log("ButtonType.ResetTopList");
         _topList.Clear();
         SaveTopList();
-        UpdateAndShowTopList();
+        InitUpdateAndShowTopList();
         ActivateAndCheckTopList(false);
     }
 
-    public void AddNewCharacterData(CharacterData newCharacterData)
+    public virtual void AddNewCharacterData(PlayerData newCharacterData)
     {
-        Debug.Log("AddAndSaveNewCharacterData()");
-        _topList.Add(newCharacterData);
         //Because Initialy the TopList can be Empty and not Active
-        ActivateAndCheckTopList();
-        Debug.Log(newCharacterData);
+        if (_topList == null || _topList.Count == 0)
+            InitTopLis();
+        _topList.Add(newCharacterData);
         SaveTopList();
-        UpdateAndShowTopList();
+        InitUpdateAndShowTopList();
+    }
+
+    private void InitTopLis()
+    {
+        _topList = new List<PlayerData>();
+        _topListElement.SetUsedTopList(_topList);
+        InitCharacterData = true;
     }
 
     /// <summary>
     /// ReSort, Update and Show records of _toplist
     /// </summary>
-    public void UpdateAndShowTopList()
+    public void InitUpdateAndShowTopList()
     {
         Debug.Log("TopListController : UpdateAndShowTopList()");
-        if (topListElement != null)
+        if (_topListElement != null)
         {
-            if (InitCharacterData)
-                topListElement.UpdateTopList(_autoSortByScore);
-            else
-                Debug.LogWarning($"{this.GetType().Name} : TopList is Empty");
+            UpdateAndShowTopList();
         }
         else
             Debug.LogError("TopListElementBase == null");
+    }
+
+    protected virtual void UpdateAndShowTopList()
+    {
+        if (InitCharacterData)
+            _topListElement.UpdateTopList(_autoSortByScore);
+        else
+            Debug.LogWarning($"{this.GetType().Name} : TopList is Empty");
     }
 
     /// <summary>
@@ -101,25 +114,46 @@ public class TopListController : MonoBehaviour
     public void LoadTopList()
     {
         Debug.Log("TopListController : LoadTopList()");
-        if (_useDemoData)
+        switch (_usedTopListSource)
         {
-            LoadDemoData(TopListElementBase.MaxNumShowRecords);
+            case TopListSource.Demo:
+                LoadDemoData(TopListElementBase.MaxNumShowRecords);
+                break;
+            case TopListSource.Local:
+                _storeGame.QuickLoad();
+                _topList = new List<PlayerData>(_storeObjectT.GetLoadedObjects());
+                //Debug.Log($"_topList=null[{_topList == null} _topList?.Count={_topList?.Count}");
+                break;
+            case TopListSource.Remote:
+                InitCharacterData = false;
+                _topList = new List<PlayerData>();
+                StartCoroutine(GetRemoteTopList(_topList));
+                return;
         }
-        else
-        {
-            _storeGame.QuickLoad();
-            _topList = new List<CharacterData>(_storeObjectT.GetLoadedObjects());
-        }
+        //if (_usedTopListSource)
+        //{
+        //    LoadDemoData(TopListElementBase.MaxNumShowRecords);
+        //}
+        //else
+        //{
+        //    _storeGame.QuickLoad();
+        //    _topList = new List<PlayerData>(_storeObjectT.GetLoadedObjects());
+        //}
         ActivateAndCheckTopList();
-        //topListElement.SetUsedTopList(_topList);
-        //InitCharacterData = true;
     }
 
-    private void ActivateAndCheckTopList(bool activate = true)
+
+
+    protected virtual IEnumerator GetRemoteTopList(List<PlayerData> remoteTopList)
+    {
+        throw new NotImplementedException("Use RemoteTopListController : TopListController class");
+    }
+
+    protected void ActivateAndCheckTopList(bool activate = true)
     {
         if (activate && _topList.Count != 0)
         {
-            topListElement.SetUsedTopList(_topList);
+            _topListElement.SetUsedTopList(_topList);
             InitCharacterData = true;
         }
         else
@@ -135,7 +169,7 @@ public class TopListController : MonoBehaviour
     {
         System.Random random = new System.Random();
         Debug.Log("CreateDemoData()");
-        _topList = new List<CharacterData>(TopListElementBase.MaxNumShowRecords);
+        _topList = new List<PlayerData>(TopListElementBase.MaxNumShowRecords);
         int distance;
         int score;
         string timstr;
@@ -151,7 +185,7 @@ public class TopListController : MonoBehaviour
             timstr = (i % 2 == 1) ? "abhgjhgjhgjhgjhgj".ToUpper() : "abhgjhgjhgjhgjhgj";
             if (i == 0)
                 timstr = "01234567890123456";
-            _topList.Add(new CharacterData(timstr, distance, score));
+            _topList.Add(new PlayerData(timstr, distance, score));
         }
     }
 }
