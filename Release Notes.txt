@@ -1,18 +1,19 @@
-Features
+​Current Features
 1. In current Time it's a possibile to have the different setting the SequentType for different JukeBox (at "Initial Load" only)
 2. All Options after changing is stored in assets until next change if it change in Play Editor mode. !!! In Build Play Mode the SO Assets not save the changes at the end Game.
 3. The ResetDeafult for Option working only for active Section of Options.
 
-BUGs
+Current BUGs
+<not detected>
 
-Additional Checks
-1. At First Start especialy "Check spacing for Spawning after restart Game (problem occur time to times)"
+Additional Checks (Please inform)
+1. At First Start especially please check the spacing between spawning Obstacles after restart Game (problem occur time to times), if it occur again please inform me (send the screenshots if it will be possible.
 
-Proposals
+Current Proposals (Road Map)
 1. Add to Video Option TurnOff Additional Animation at Collision
 2. Customization Character
 3. Save Setting from Options to file
-4. Add the possibility to set different SequentType for different JukeBox 
+4. Add the possibility to set different Music order for different JukeBox
 5. (--)Add the possibility to set different Volumes for different Scenes
 
 ===============================================================================
