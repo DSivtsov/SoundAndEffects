@@ -6,27 +6,19 @@ using UnityEngine.Audio;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using GMTools;
+using GMTools.Menu;
 
-public enum MixerAudio
-{
-    Master,
-    Music,
-    Effects
-}
+
 
 public class AudioOptionsController : MonoBehaviour, IButtonAction
 {
     [SerializeField] private SectionManagerOptions _sectionManagerOptions;
-    [SerializeField] private SectionName _sectionName;
-    [SerializeField] private Transform _audioGroupOptions;
+    //[SerializeField] private SectionName _sectionName;
+    //[SerializeField] private Transform _audioGroupOptions;
+    [SerializeField] private SectionObject _audioSection;
     [SerializeField] private AudioMixer _mixerMain;
     [SerializeField] private JukeBoxSO _jukeBoxSO;
-    //[Tooltip("Set the same initial SequenceType for all JukeBox")]
-    //[SerializeField] private SequenceType _initialSequenceType;
 
-
-    private TMP_Dropdown _dropdownMusicOrder;
     private AudioVolumeOptions _audioVolumeOptions;
     private AudioMusicOrderOption _audioMusicOrderOption;
     private MainMenusSceneManager _mainMenusSceneManager;
@@ -35,34 +27,17 @@ public class AudioOptionsController : MonoBehaviour, IButtonAction
 
     private void Awake()
     {
-        Debug.Log($"_audioGroupOptions{_audioGroupOptions}");
         _audioVolumeOptions = new AudioVolumeOptions(new string[] { "MasterVolume/Slider", "MusicVolume/Slider", "EffectsVolume/Slider" },
-                                        new string[] { "VolMaster", "VolMusic", "VolEffects" }, _audioGroupOptions, _mixerMain, this);
+                                        new string[] { "VolMaster", "VolMusic", "VolEffects" }, _audioSection.TransformSection, _mixerMain, this);
+        _audioMusicOrderOption = new AudioMusicOrderOption("MusicOrder", _audioSection.TransformSection, this);
         IsAudioOptionsChanged = false;
-
-        _audioMusicOrderOption = new AudioMusicOrderOption("MusicOrder", _audioGroupOptions, this);
-        _dropdownMusicOrder = _audioGroupOptions.Find("MusicOrder").GetComponent<TMP_Dropdown>();
-
         _mainMenusSceneManager = FindObjectOfType<MainMenusSceneManager>();
     }
-
-    //private void Show(int t = 0)
-    //{
-    //    Debug.Log($"_dropdownMusicOrder.value = {_dropdownMusicOrder.value}");
-    //    Debug.Log($"_dropdownMusicOrder.itemText = {_dropdownMusicOrder.itemText.text}");
-    //    Debug.Log($"_dropdownMusicOrder.captionText = {_dropdownMusicOrder.captionText.text}");
-    //    Debug.Log($"_dropdownMusicOrder.options[].text = {_dropdownMusicOrder.options[t].text}");
-    //}
-
-    ///         //Keep the current index of the Dropdown in a variable
-    ///         m_DropdownValue = m_Dropdown.value;
-    ///         //Change the message to say the name of the current Dropdown selection using the value
-    ///         m_Message = m_Dropdown.options[m_DropdownValue].text;
 
     private void Start()
     {
         _audioVolumeOptions.InitVolumeControls();
-        _sectionManagerOptions.LinkToButtonActions(_sectionName, this);
+        _sectionManagerOptions.LinkToButtonActions(_audioSection.NameSection, this);
         StartCoroutine(InitMusicOrderOptionCoroutine());
     }
     /// <summary>
@@ -74,11 +49,9 @@ public class AudioOptionsController : MonoBehaviour, IButtonAction
         _audioMusicOrderOption.InitMusicOrderOption();
         do
         {
-            //Debug.Log($"GetStatusLoadingScenes={GameMainManager.Instance.GetStatusLoadingScenes()}");
             yield return null;
         } while (!_mainMenusSceneManager.GetStatusLoadingScenes());
         _audioMusicOrderOption.FillArrPlayJukeBox();
-        Debug.Log($"GetStatusLoadingScenes={_mainMenusSceneManager.GetStatusLoadingScenes()}");
     }
     /// <summary>
     /// Seting values to default for VolumeOptions & MusicOrderOption are generating will set IsAudioOptionsChanged to true. This variable block this.

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -51,6 +52,16 @@ public class GameSceneManager : MonoBehaviour
             Debug.LogWarning($"Music at Awake not TurnOn because in build will be used Music from Menu Scene");
         }
     }
+
+    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
+        => (_gameParametersManager.GetListGameComplexityValues(), _gameParametersManager.GetActionOnValueChanged(), _gameParametersManager.GetInitialValueGameComplexity());
+    //{
+    //    List<string> values = _gameParametersManager.GetListGameComplexityValues();
+    //    UnityAction<int> actionOnValueChanged = _gameParametersManager.GetActionOnValueChanged();
+    //    int initialValue = _gameParametersManager.GetInitialValueGameComplexity();
+    //    return (values, actionOnValueChanged, initialValue);
+    //}
+
     /// <summary>
     /// Move EventSystem focus from any buttons to GameObject on current scene, to give possibility to catch the Enter press vs repeat "Button click"
     /// </summary>

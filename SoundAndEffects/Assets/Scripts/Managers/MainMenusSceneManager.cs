@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Menu;
+using UnityEngine.Events;
 
 public class MainMenusSceneManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private GameMainManager _mainManager;
     public Func<bool> FuncGetStatusLoadingScenes;
+
+    public Func<(List<string> values, UnityAction<int> actionOnValueChanged, int initialValue)> FuncGetParametersToInitGameComplexityOption;
 
     private void Awake()
     {
@@ -27,12 +30,14 @@ public class MainMenusSceneManager : MonoBehaviour
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
             FuncGetStatusLoadingScenes = _mainManager.GetStatusLoadingScenes;
+            FuncGetParametersToInitGameComplexityOption = _mainManager.GetParametersToInitGameComplexityOption;
         }
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
             StartCoroutine(EmulatorGetStatusLoadingScenes());
+            FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
     }
 
@@ -41,6 +46,8 @@ public class MainMenusSceneManager : MonoBehaviour
         _topListController.InitialLoadTopList();
         //TempSwitchToCanvsa(CanvasName.Options);
     }
+
+    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption() => FuncGetParametersToInitGameComplexityOption();
 
     public bool GetStatusLoadingScenes() => FuncGetStatusLoadingScenes();
 
@@ -52,6 +59,18 @@ public class MainMenusSceneManager : MonoBehaviour
         FuncGetStatusLoadingScenes = () => { return true; };
     }
 
+    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) EmulatorGetParametersToInitGameComplexityOption()
+        => (new List<string>() { "E", "N", "H" }, (int value) => Debug.Log($"new GameComplexity value = {value}"), 0);
+    //{
+    //    return (new List<string>() {"E","N","H"}, (int value) => Debug.Log($"new GameComplexity value = {value}"), 0);
+    //}
+
+    /// <summary>
+    /// Method used for spped Testing of some Menu sections
+    /// </summary>
+    /// <param name="values"></param>
+    /// <param name="actionOnValueChanged"></param>
+    /// <param name="initialValue"></param>
     private static void TempSwitchToCanvsa(CanvasName canvasName)
     {
         Debug.LogError("Temporary Switched on TopList");

@@ -4,6 +4,13 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 using GMTools.Menu;
 
+//public enum MixerAudio
+//{
+//    Master,
+//    Music,
+//    Effects
+//}
+
 public class AudioVolumeOptions
 {
     private class VolumeCtrl
@@ -18,7 +25,7 @@ public class AudioVolumeOptions
         }
     }
     private int _numberElements;
-    private Type _enumType = typeof(MixerAudio);
+    //private Type _enumType = typeof(MixerAudio);
     private AudioMixer _mixerMain;
     private VolumeCtrl[] _mixerVolSliders;
     private AudioOptionsController _audioMixerController;
@@ -28,8 +35,8 @@ public class AudioVolumeOptions
         _numberElements = transformName.Length;
         if (_numberElements != paramName.Length)
             throw new Exception($"AudioOptions.ctor the number of parameters are not correlated each other transformName[{_numberElements}] != paramName[{paramName.Length}]");
-        if (_numberElements != Enum.GetValues(_enumType).Length)
-            throw new Exception($"AudioOptions.ctor the number of parameters not correlated with {_enumType.Name} Enum");
+        //if (_numberElements != Enum.GetValues(_enumType).Length)
+        //    throw new Exception($"AudioOptions.ctor the number of parameters not correlated with {_enumType.Name} Enum");
         _mixerMain = mixerMain;
         _audioMixerController = audioMixerController;
         _mixerVolSliders = new VolumeCtrl[_numberElements];
@@ -40,11 +47,11 @@ public class AudioVolumeOptions
         Debug.Log($"AudioOptions.ctor : Created");
     }
 
-    private VolumeCtrl this[MixerAudio index]
-    {
-        get => _mixerVolSliders[(int)index];
-        set => _mixerVolSliders[(int)index] = value;
-    }
+    //private VolumeCtrl this[MixerAudio index]
+    //{
+    //    get => _mixerVolSliders[(int)index];
+    //    set => _mixerVolSliders[(int)index] = value;
+    //}
 
     public void InitVolumeControls()
     {

@@ -13,6 +13,9 @@ namespace GMTools.Menu
         private SectionManager _sectionManager;
         private Button _menuButton;
 
+        public SectionName NameSection => _sectionName;
+        public Transform TransformSection => _sectionBody;
+
         private void Awake()
         {
             //Debug.Log($"SectionObject : [{this}] Awake");

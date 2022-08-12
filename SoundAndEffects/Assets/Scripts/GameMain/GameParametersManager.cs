@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 /// <summary>
 /// Manage Game parameters (Complexity and FPS)
 /// </summary>
@@ -29,16 +31,29 @@ public class GameParametersManager : MonoBehaviour
 
     public event Action<int> LevelChanged;
     private int countSpawnedAtThisLivel;
-
     public float Multiplier { get; private set; }
     public int Level { get; private set; }
     public int JumpComplexityMultiplier { get; private set; }
 
     private CharacterManager characterController;
+    /// <summary>
+    /// Tha Base collection which used to create the _orderGameComplexityValues and the "ListGameComplexityValues", which will have the same order as this collection,
+    /// becuase create by LINQ.Select() and therefore it can be used to get the ComplexitySO based on the position of the selected value in the ListGameComplexityValues in DropBox
+    /// </summary>
+    private List<ComplexitySO> _listGameComplexityValues;
+    /// <summary>
+    /// The collection which used to get the index of the ComplexitySO in _listGameComplexityValues which will be the same as index of arrForceJump record which contains the same ComplexitySO value
+    /// </summary>
+    private Dictionary<ComplexitySO, int> _idxGameComplexityValues = new Dictionary<ComplexitySO, int>();
 
     void Awake()
     {
         Application.targetFrameRate = FPS;
+        _listGameComplexityValues = arrForceJump.Select((ForceJumpSO record) => record.Complexity).ToList();
+        for (int i = 0; i < _listGameComplexityValues.Count; i++)
+        {
+            _idxGameComplexityValues.Add(_listGameComplexityValues[i], i);
+        }
     }
 
     private void Start()
@@ -66,6 +81,16 @@ public class GameParametersManager : MonoBehaviour
         countSpawnedAtThisLivel = 0;
         UpdateLevelComplexity();
     }
+
+    public UnityAction<int> GetActionOnValueChanged() => (int newValue) =>
+    {
+        //Debug.Log($"_listGameComplexityValues[newValue]={_listGameComplexityValues[newValue].name}");
+        ChangeJumpComplexity(_listGameComplexityValues[newValue]);
+    };
+
+    public int GetInitialValueGameComplexity() => _idxGameComplexityValues[JumpComplexity];
+
+    public List<string> GetListGameComplexityValues() => _listGameComplexityValues.Select(record => record.name).ToList();
 
     public void ChangeJumpComplexity(ComplexitySO complexitySO)
     {
@@ -106,16 +131,13 @@ public class GameParametersManager : MonoBehaviour
     /// </summary>
     private void UpdateForceJumpForCurrentComplexity()
     {
-        foreach (ForceJumpSO item in arrForceJump)
+        ForceJumpSO item = arrForceJump[_idxGameComplexityValues[JumpComplexity]];
+        //Debug.Log($"nameComplexity={JumpComplexity.name} [{_orderGameComplexityValues[JumpComplexity]}]" +
+        //    $" {arrForceJump[_orderGameComplexityValues[JumpComplexity]].name}");
+        if (item.ItemForComplexity(JumpComplexity))
         {
-            if (item.ItemForComplexity(JumpComplexity))
-            {
-                characterController.SetForceJumpSO(item);
-                JumpComplexityMultiplier = item.JumpComplexityMultipler;
-            }
+            characterController.SetForceJumpSO(item);
+            JumpComplexityMultiplier = item.JumpComplexityMultipler;
         }
-        
     }
-
-
 }

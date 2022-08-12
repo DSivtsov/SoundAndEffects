@@ -1,8 +1,12 @@
+Features
+1. In current Time it's a possibile to have the different setting the SequentType for different JukeBox (at "Initial Load" only)
+2. All Options after changing is stored in assets until next change if it change in Play Editor mode. !!! In Build Play Mode the SO Assets not save the changes at the end Game.
+3. The ResetDeafult for Option working only for active Section of Options.
+
 BUGs
 
-
 Additional Checks
-1. Add management of GameComplexety to Options and info to Help
+1. At First Start especialy "Check spacing for Spawning after restart Game (problem occur time to times)"
 
 Proposals
 1. Add to Video Option TurnOff Additional Animation at Collision
@@ -11,9 +15,7 @@ Proposals
 4. Add the possibility to set different SequentType for different JukeBox 
 5. (--)Add the possibility to set different Volumes for different Scenes
 
-Features
-1. In current Time it's a possibile to have the different setting the SequentType for different JukeBox (at "Initial Load" only)
-2. The SequentType after changing is stored in assets until next change if it change in Play Editor mode. !!! In Build Play Mode the SO Assets not save the changes at the end Game.
+===============================================================================
 
 Fix 0.1
 "3. PlayJukeBox & PlayJukeBoxCollection can use in one time the Update() cycle to manager Input as result the input command can repeats twice (use the workaround directly turn off the coresponded GameObject when Music not played)"
@@ -31,3 +33,12 @@ Refactoring Spawning - now min distance after added after obstacle mandadory, al
 Additionally the GameComplexety began affect on the Score
 Corrected the start of Game scene if it will start alone
 Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly corrected the restore of the initial transfrom rotation transfrom rotation of Obstacles (vs use the Quaternion.Identity that is wrong)
+
+Fix 0.4
+"Add management of GameComplexety to Options and info to Help"
+Refactoring ComplexitySO (use the standart field name)
+Refactoring *Managers related to add the management of GameComplexety to Options
+Refactoring MainMenus Scene for "Help fpr GameComplexity"
+Add the GameOptionControleer and DropDownOption (preparation to make it as the Generic)
+Refactoring AudiuOptionControleer and AudioOptionVolume
+

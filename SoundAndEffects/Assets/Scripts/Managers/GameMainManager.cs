@@ -5,6 +5,7 @@ using System;
 using GMTools;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public enum SceneState
 {
@@ -38,6 +39,9 @@ public class GameMainManager : SingletonController<GameMainManager>
         _menuSceneManager.ActivateMainMenusCamera(false);
         //_menuSceneManager.TurnOffMusicMenus();
     }
+
+    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
+        => _gameSceneManager.GetParametersToInitGameComplexityOption();
 
     public bool GetStatusLoadingScenes() => _loaderSceneManager.AllScenesLoaded;
 
