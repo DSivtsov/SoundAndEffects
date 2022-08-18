@@ -9,7 +9,9 @@ public class PlayerDataController : MonoBehaviour
     [SerializeField] TMP_InputField _inputFieldPlayerName;
     [SerializeField] MainMenusSceneManager _mainMenusSceneManager;
     [SerializeField] TurnOffPressEnter _mainMenuCanvasTurnOffPressEnter;
-
+    /// <summary>
+    /// The Key used for temporary store a PlayerName in Offline mode
+    /// </summary>
     private const string _localCopyPlayerName = "LocalCopyPlayerName";
     private const int MaxLenghtPlayerName = 16;
     private string _playerName;
@@ -17,8 +19,6 @@ public class PlayerDataController : MonoBehaviour
     private void Awake()
     {
         ButtonActions.LinkPlayerDataController(this);
-        //Debug.Log($"_inputFieldPlayerName=[{_inputFieldPlayerName.text}] == null is {_inputFieldPlayerName.text == null} but Lenght={_inputFieldPlayerName.text.Length}");
-        //result "_inputFieldPlayerName=[] == null is False but Lenght=0"
     }
 
     public string PlayerName
@@ -39,7 +39,6 @@ public class PlayerDataController : MonoBehaviour
 
     public void CreateNewPlayer()
     {
-        //SetDemoData();
         Debug.Log("CreateNewPlayer()");
         _mainMenusSceneManager.ActivateButtonStart(false);
         _inputFieldPlayerName.readOnly = false;
@@ -56,17 +55,16 @@ public class PlayerDataController : MonoBehaviour
 
     private void EnteredNewPlayerName(string newPlayerName)
     {
-        //if (newPlayerName.Length == 0)
-        //{
-        //    Debug.LogWarning($"{this} : PlayerName can't be Empty");
-        //    _inputFieldPlayerName.ActivateInputField();
-        //    return; 
-        //}
+        if (newPlayerName.Length == 0)
+        {
+            Debug.LogWarning($"{this} : PlayerName can't be Empty");
+            _inputFieldPlayerName.ActivateInputField();
+            return;
+        }
         PlayerName = newPlayerName;
         //Will  Save to PlayerPref directly for case playing Offlline
         PlayerPrefs.SetString(_localCopyPlayerName, PlayerName);
         _mainMenusSceneManager.CreateNewPlayerLootLocker(PlayerName);
-        Debug.Log($"[{newPlayerName}] Lenght={newPlayerName.Length}");
         _mainMenuCanvasTurnOffPressEnter.Active(activate: false);
     }
 

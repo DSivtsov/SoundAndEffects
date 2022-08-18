@@ -60,13 +60,13 @@ public class PlayJukeBox : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        if (_playAtAwake)
-        {
-            TurnOn();
-        }
-    }
+    //private void Start()
+    //{
+    //    if (_playAtAwake)
+    //    {
+    //        TurnOn();
+    //    }
+    //}
 
     private void Update()
     {

@@ -11,10 +11,10 @@ public class LoaderSceneManager : MonoBehaviour
     [SerializeField] private bool _makePauseBeforeStartLoad = true;
     [SerializeField] private float _pauseTime = 1f;
 
-    private GameMainManager _gameMainManager;
+    private MainManager _gameMainManager;
     private void Awake()
     {
-        _gameMainManager = GameMainManager.Instance;
+        _gameMainManager = MainManager.Instance;
         if (_gameMainManager)
         {
             _gameMainManager.LinkLoaderSceneManager(this);

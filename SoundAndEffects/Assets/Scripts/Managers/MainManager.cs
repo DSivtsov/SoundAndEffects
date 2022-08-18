@@ -14,7 +14,7 @@ public enum SceneState
     Game
 }
 
-public class GameMainManager : SingletonController<GameMainManager>
+public class MainManager : SingletonController<MainManager>
 {
     [Header("Demo Options")]
     [Tooltip("If value not zerro, the CharacterHealth will be override by it, works only in Editor")]
@@ -50,15 +50,6 @@ public class GameMainManager : SingletonController<GameMainManager>
         FromLoaderToMenus();
     }
 
-    public void FromMenusToStartGame(string playerName)
-    {
-        CountFrame.DebugLogUpdate(this, $"FromMenusToStartGame()");
-        _gameSceneManager.ActivateGameCamera(true);
-        SetActiveScene(SceneName.Game);
-        _gameSceneManager.StartNewGame(playerName, _characterHealth);
-        _menuSceneManager.ActivateMainMenusCamera(false);
-    }
-
     public void FromLoaderToMenus()
     {
         _menuSceneManager.ActivateMainMenusCamera(true);
@@ -66,6 +57,15 @@ public class GameMainManager : SingletonController<GameMainManager>
         SetActiveScene(SceneName.Menus);
         _gameSceneManager.ActivateGameCamera(false);
         _loaderSceneManager.ActivateLoaderCamera(false);
+    }
+
+    public void FromMenusToStartGame(string playerName)
+    {
+        CountFrame.DebugLogUpdate(this, $"FromMenusToStartGame()");
+        _gameSceneManager.ActivateGameCamera(true);
+        SetActiveScene(SceneName.Game);
+        _gameSceneManager.StartNewGame(playerName, _characterHealth);
+        _menuSceneManager.ActivateMainMenusCamera(false);
     }
 
     public void FromGameToMenus()

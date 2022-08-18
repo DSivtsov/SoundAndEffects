@@ -29,7 +29,6 @@ public class DropdownOption<T> where T : IOptionChanged
     {
         _dropdownOption = parentTransformOptions.Find(paramName).GetComponent<TMP_Dropdown>();
         _optionController = optionController;
-        Debug.Log($"{typeof(T)}.ctor : Created");
     }
 
     public void InitOption(List<string> dropdownOptions, UnityAction<int> fieldValueChanged, int initialValue)

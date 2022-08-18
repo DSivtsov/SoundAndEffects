@@ -44,14 +44,7 @@ public class AudioVolumeOptions
         {
             _mixerVolSliders[i] = new VolumeCtrl(audioGroupOptions.Find(transformName[i]).GetComponent<Slider>(), paramName[i]);
         }
-        Debug.Log($"AudioOptions.ctor : Created");
     }
-
-    //private VolumeCtrl this[MixerAudio index]
-    //{
-    //    get => _mixerVolSliders[(int)index];
-    //    set => _mixerVolSliders[(int)index] = value;
-    //}
 
     public void InitVolumeControls()
     {

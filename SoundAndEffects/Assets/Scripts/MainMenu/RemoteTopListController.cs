@@ -6,8 +6,9 @@ using UnityEngine;
 public class RemoteTopListController : TopListController
 {
     private const int MaximumIterationForGetRemoteTopList = 500;
-    [Header("Remote Source")]
-    [SerializeField] protected LootLockerController _lootLockerController;
+    [Header("Acces to Remote Source")]
+    [SerializeField] private LootLockerController _lootLockerController;
+    [SerializeField] private ConnectingToServer _connectingToServer;
 
     private new void Awake()
     {
@@ -15,80 +16,61 @@ public class RemoteTopListController : TopListController
         _topListElement = new TopListRemoteGroupElement();
     }
 
-    protected override IEnumerator GetRemoteTopList(List<PlayerData> remoteTopList)
+    protected override void LoadAndShow(bool multiAsyncOperations = true)
     {
-        //CountFrame.DebugLogUpdate(this, $"GetRemoteTopList Begin");
-        yield return _lootLockerController.CoroutineGetScoreFromLeaderBoard(remoteTopList);
-        ActivateAndCheckTopList();
-        CountFrame.DebugLogUpdate(this, $"GetRemoteTopList Finished _topList[{remoteTopList.Count}] InitCharacterData = true [{InitCharacterData == true}]");
+        StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
+        CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started");
     }
 
-    protected override void UpdateAndShowTopList()
+    private IEnumerator CoroutineLoadAndShow(bool multiAsyncOperations = true)
     {
-        StartCoroutine(WainInitCharacterData());
-        //CountFrame.DebugLogUpdate(this, $"UpdateAndShowTopListBase StartCoroutine(WainInitCharacterData()) started");
-    }
-
-    private IEnumerator WainInitCharacterData()
-    {
-        int count = 0;
-        while (!InitCharacterData)
+        while (!_lootLockerController.GuestSessionInited && _connectingToServer.Connecting)
         {
-            count++;
-            if (count > MaximumIterationForGetRemoteTopList)
-                break;
-            else
-                yield return null; 
+            yield return null;
         }
-        
-        if (InitCharacterData)
+        if (_lootLockerController.GuestSessionInited)
         {
-            Debug.Log($"{this} : Remote TopList Loaded at {count} count");
-            _topListElement.UpdateTopList(_autoSortByScore); 
-        }
-        else
-            Debug.LogError($"{this} : Remote TopList can't Load at {count} count");
-        CountFrame.DebugLogUpdate(this, $"UpdateAndShowTopList Finished");
-    }
+            Debug.Log("RemoteTopListController : LoadTopList()");
+            InitCharacterData = false;
+            _topList = new List<PlayerData>();
+            yield return _lootLockerController.CoroutineGetScoreFromLeaderBoard(_topList);
+            ActivateAndCheckTopList();
 
-    protected override void LoadAndShow()
-    {
-        StartCoroutine(WaitIniSession());
-        CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WainIniSession()) started");
-    }
-
-    private IEnumerator WaitIniSession()
-    {
-        int count = 0;
-        while (!_lootLockerController.GuestSessionInited)
-        {
-            count++;
-            if (count > 200)
+            if (InitCharacterData)
             {
-                Debug.LogError($"{this} : LootLocker Session not inited");
-                yield break;
+                Debug.Log($"{this} : Remote TopList Loaded");
+                //The Sorting of TopList by Score did remotely
+                _topListElement.UpdateTopList(false);
+                //In case reload after save result doing only one operation simultenoius
+                if (multiAsyncOperations)
+                    _lootLockerController.FinishOneConnectionToServer(MultiOperation.LoadedTopList);
+                else
+                    _lootLockerController.FinalizeAllServerOperations(resultOK: true);
             }
             else
-                yield return null;
+            {
+                _lootLockerController.FinalizeAllServerOperations(resultOK: false, ErrorConnecting.TopListNotLoaded);
+                Debug.LogError($"{this} : Remote TopList was not Loaded"); 
+            }
+            CountFrame.DebugLogUpdate(this, $"CoroutineLoadAndShow Finished");
         }
-        LoadTopList();
-        InitUpdateAndShowTopList();
-        CountFrame.DebugLogUpdate(this, $"LoadAndShow Finished");
+        else
+            CountFrame.DebugLogUpdate(this, $"LoadAndShow Canceled - GuestSession not inited");
     }
 
-    public override void AddNewCharacterData(PlayerData newCharacterData)
+    public override void AddCharacterResult(PlayerData newCharacterData)
     {
-        //SaveTopList();
-        StartCoroutine(WaitSaveScoreToLeaderBoard(newCharacterData));
-        //InitCharacterData = false;
-        //InitUpdateAndShowTopList();
+        StartCoroutine(CoroutineSaveScoreToLeaderBoard(newCharacterData));
     }
 
-    private IEnumerator WaitSaveScoreToLeaderBoard(PlayerData newCharacterData)
+    private IEnumerator CoroutineSaveScoreToLeaderBoard(PlayerData newCharacterData)
     {
         yield return _lootLockerController.SendScoreToLeaderBoard(newCharacterData.GetScoreValue());
-        InitCharacterData = false;
-        CountFrame.DebugLogUpdate(this, $"SaveGameResult Finished");
-        LoadAndShow();
+        if (_lootLockerController.NewResultWasSaved)
+        {
+            LoadAndShow(multiAsyncOperations: false);
+        }
+        else
+            _lootLockerController.FinalizeAllServerOperations(resultOK: false, ErrorConnecting.NewResultNotSaved);
     }
 }

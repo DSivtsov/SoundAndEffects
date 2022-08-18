@@ -22,7 +22,6 @@ public class AudioMusicOrderOption
     {
         _dropdownMusicOrder = audioGroupOptions.Find(paramName).GetComponent<TMP_Dropdown>();
         _audioMixerController = audioMixerController;
-        Debug.Log($"AudioMusicOrderOption.ctor : Created");
     }
 
     public void InitMusicOrderOption()

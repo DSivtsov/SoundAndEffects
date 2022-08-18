@@ -10,7 +10,9 @@ Additional Checks (Please inform)
 1. At First Start especially please check the spacing between spawning Obstacles after restart Game (problem occur time to times), if it occur again please inform me (send the screenshots if it will be possible.
 
 Current Proposals (Road Map)
-0. Refactoring Menu (enum -> SO) to make the Menu Librarry fully separated from Assembly-CSharp
+0. Add Options - Offline and OnLine mode to Game
+00. Refactoring Menu (enum -> SO) to make the Menu Librarry fully separated from Assembly-CSharp
+00. Start PlayJukeBox at begin Load
 1. Add to Video Option TurnOff Additional Animation at Collision
 2. Customization Character
 3. Save Setting from Options to file

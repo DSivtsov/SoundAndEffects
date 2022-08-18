@@ -22,15 +22,15 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private CanvasName _startCanvasName;
     [SerializeField] private bool _startAlwaysActive;
 
-    private GameMainManager _mainManager;
+    private MainManager _mainManager;
     public Func<bool> FuncGetStatusLoadingScenes;
 
     public Func<(List<string> values, UnityAction<int> actionOnValueChanged, int initialValue)> FuncGetParametersToInitGameComplexityOption;
 
     private void Awake()
     {
-        CountFrame.DebugLogUpdate(this, $"Awake()");
-        _mainManager = GameMainManager.Instance;
+        //CountFrame.DebugLogUpdate(this, $"Awake()");
+        _mainManager = MainManager.Instance;
         //Not extensively tested
         ButtonActions.LinkMenuSceneManager(this);
         if (_mainManager)
@@ -45,6 +45,7 @@ public class MainMenusSceneManager : MonoBehaviour
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
+            ActivateMusicMainMenus(true);
             StartCoroutine(EmulatorGetStatusLoadingScenes());
             FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
@@ -57,13 +58,7 @@ public class MainMenusSceneManager : MonoBehaviour
 #endif
     }
 
-    //public void SetPlayerName(string newPlayerName) => _playerDataController.PlayerName = newPlayerName;
-
-    public void CreateNewPlayerLootLocker(string playerName)
-    {
-        StartCoroutine(_lootLockerController.CreateNewPlayerRecord(playerName));
-        Debug.Log($"CreateNewPlayerLootLocker({playerName})");
-    }
+    public void CreateNewPlayerLootLocker(string playerName) => _lootLockerController.CreateNewPlayerRecord(playerName);
 
     private void Start()
     {
@@ -135,8 +130,7 @@ public class MainMenusSceneManager : MonoBehaviour
     public void AddNewCharacterData(PlayerData newCharacterData)
     {
         Debug.Log(newCharacterData);
-        _topListController.AddNewCharacterData(newCharacterData);
-        _remoteTopListController.AddNewCharacterData(newCharacterData);
-        //_lootLockerController.StartSendScoreToLeaderBoard(newCharacterData);
+        _topListController.AddCharacterResult(newCharacterData);
+        _remoteTopListController.AddCharacterResult(newCharacterData);
     }
 }

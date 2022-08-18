@@ -12,7 +12,7 @@ public class GameSceneManager : MonoBehaviour
     [Header("For Testing purpose only, used in Editor only")]
     [SerializeField] private GameObject buttonRestart;
 
-    private GameMainManager _gameMainManager;
+    private MainManager _gameMainManager;
     private CharacterDataController _characterDataCtrl;
     private MainSpawner _mainSpawner;
     private GraveStoneControl _graveStoneControl;
@@ -32,7 +32,7 @@ public class GameSceneManager : MonoBehaviour
         _mainSpawner = SingletonGame.Instance.GetMainSpawner();
         _graveStoneControl = SingletonGame.Instance.GetGraveStoneControl();
         _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
-        _gameMainManager = GameMainManager.Instance;
+        _gameMainManager = MainManager.Instance;
         _characterManager = SingletonGame.Instance.GetCharacterController();
         _characterObject = _characterManager.gameObject;
         _playJukeBoxGameCollection = SingletonGame.Instance.GetPlayJukeBox();
@@ -149,7 +149,7 @@ public class GameSceneManager : MonoBehaviour
     public void SwitchMusicToGameScene()
     {
         if (GameMainManagerLinked)
-            GameMainManager.Instance.SwitchMusicTo(SceneName.Game);
+            MainManager.Instance.SwitchMusicTo(SceneName.Game);
         else
             ActivateGameMusic();
     }
@@ -160,8 +160,8 @@ public class GameSceneManager : MonoBehaviour
         PlayerData newCharacterData = new PlayerData(_nameCurrentPlayer, _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
         if (GameMainManagerLinked)
         {//It's end Game and Scene linked to GameMainManager
-            GameMainManager.Instance.FromGameToMenus();
-            GameMainManager.Instance.AddNewCharacterData(newCharacterData);
+            MainManager.Instance.FromGameToMenus();
+            MainManager.Instance.AddNewCharacterData(newCharacterData);
         }
         else
         {

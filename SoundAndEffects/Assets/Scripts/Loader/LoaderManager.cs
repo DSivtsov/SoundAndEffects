@@ -202,6 +202,6 @@ public class LoaderManager : MonoBehaviour
     private void LoadingFinished()
     {
         AllScenesLoaded = true;
-        GameMainManager.Instance.AllScenesLoaded();
+        MainManager.Instance.AllScenesLoaded();
     }
 }
