@@ -33,7 +33,8 @@ namespace GMTools.Manager
             {
                 Debug.Log($"StoreCharacterController : Start() - ObjectPool.AddObject({this.name})");
                 gameObjectLoadData.ILoadData += LoadDataToGameObject;
-                ObjectPool.AddObject(guid, this);
+                //ObjectsPool.AddObject(guid, this);
+                objectsPool.AddObject(guid, this);
                 _isStoreObjectsInitialized = true;
             }
             else

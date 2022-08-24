@@ -1,3 +1,9 @@
+Ver.3.0
+Changes:
+- Every objects using the class derived from Store must select the certain StoreGame object
+- Every StoreGame object have own file (field nameFile) to store data from related "Store" objects
+Therefore, it makes it possible to separate storages of different data by using different files.
+
 for all "objects" which must be saved added special classes,
 the base for these classes
 - public abstract class Store : MonoBehaviour, IStore 

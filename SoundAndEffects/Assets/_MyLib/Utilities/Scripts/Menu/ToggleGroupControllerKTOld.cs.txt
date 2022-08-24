@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using TMPro;
+
+namespace GMTools.Menu
+{
+    /// <summary>
+    /// The common class for use the DropdownOption (TMP_Dropdown) in Sections of Menus
+    /// </summary>
+    /// <typeparam name="T">The class which will be controller for this Options</typeparam>
+    public class ToggleGroupEnumControllerOld<K, T> where T : IOptionChanged where K : Enum
+    {
+        private ToggleGroup<K> _toggleGroup;
+        private T _optionController;
+        private Action<K> _actionAtFieldValueChanged;
+        /// <summary>
+        /// Initial value will be used at ResetDefault
+        /// </summary>
+        private int _initialValue;
+
+        public ToggleGroupEnumControllerOld(string paramName, Transform parentTransformOptions, T optionController)
+        {
+            try
+            {
+                //Debug.Log($"parentTransformOptions.Find(paramName)={parentTransformOptions.Find(paramName)}");
+                _toggleGroup = parentTransformOptions.Find(paramName).GetComponentInChildren<ToggleGroup<K>>();
+                _optionController = optionController;
+                if (!_toggleGroup) throw new Exception();
+            }
+            catch (Exception)
+            {
+                throw new NotImplementedException($"ToggleGroup<{typeof(K)}> : not found in the {paramName} GameObject at {parentTransformOptions.name} Transform");
+            }
+            //Debug.Log($"_toggleGroup.ElementIsInitialized={_toggleGroup.ElementIsInitialized}");
+        }
+
+        public void Test()
+        {
+            Toggle toggle = _toggleGroup.GetFirstActiveToggle();
+            Debug.Log($"toggle==null [{toggle == null}]");
+        }
+
+        public void InitToggleGroup(Action<K> toggleGroupValueChanged, K initialEnumValue)
+        {
+            _toggleGroup.SetValueWithoutNotify(initialEnumValue);
+            _actionAtFieldValueChanged = toggleGroupValueChanged;
+            //_toggleGroup.eventActivatedToggle += ToggleGroupValueChanged;
+        }
+
+        public bool TogglesGroupInitialized => _toggleGroup != null && _toggleGroup.ElementIsInit;
+
+        private void ToggleGroupValueChanged(K value)
+        {
+            _actionAtFieldValueChanged.Invoke(value);
+            _optionController.OptionsChanged(true);
+        }
+
+        public void ChangeValue(K value)
+        {
+            _toggleGroup.SetValueWithoutNotify(value);
+        }
+
+        //Not checked Inited because it can be called w/o _inited = true
+        //public void ResetDefaultValue() => FieldSetValue(_initialValue);
+    }
+
+}

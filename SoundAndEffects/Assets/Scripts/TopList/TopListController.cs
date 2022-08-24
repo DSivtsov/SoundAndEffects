@@ -116,11 +116,31 @@ public class TopListController : MonoBehaviour
                 LoadDemoData(TopListElementBase.MaxNumShowRecords);
                 break;
             case TopListSource.Local:
-                _storeGame.QuickLoad();
-                _topList = new List<PlayerData>(_storeObjectT.GetLoadedObjects());
+                IOError error = _storeGame.QuickLoad();
+                if (error == IOError.NoError)
+                {
+                    _topList = new List<PlayerData>(_storeObjectT.GetLoadedObjects()); 
+                }
+                else
+                {
+                    ErrorLoadTopList(error);
+                }
                 break;
         }
         ActivateAndCheckTopList();
+    }
+
+    private void ErrorLoadTopList(IOError error)
+    {
+        switch (error)
+        {
+            case IOError.FileNotFound:
+                Debug.LogWarning($"{this} : [{_storeGame.GetNameFile()}] file which stores the local TopList, not found will be created new at first Save");
+                break;
+            case IOError.WrongFormat:
+                Debug.LogError($"{this} : QuickLoad() - Format of the [{_storeGame.GetNameFile()}] file is wrong. Restore interrupted");
+                break;
+        }
     }
 
     protected void ActivateAndCheckTopList(bool activate = true)

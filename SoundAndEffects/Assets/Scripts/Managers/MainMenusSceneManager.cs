@@ -16,10 +16,12 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private TopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
+    [SerializeField] private GameSettingsController _gameSettingsController;
     [SerializeField] private Button _buttonStart;
     [Header("Demo Options")]
     [SerializeField] private bool _useStartCanvas;
     [SerializeField] private CanvasName _startCanvasName;
+    [Tooltip("Button Start is always Active")]
     [SerializeField] private bool _startAlwaysActive;
 
     private MainManager _mainManager;
@@ -57,11 +59,25 @@ public class MainMenusSceneManager : MonoBehaviour
         }
 #endif
     }
-
-    public void CreateNewPlayerLootLocker(string playerName) => _lootLockerController.CreateNewPlayerRecord(playerName);
+    /// <summary>
+    /// If Online mode is active will be create a new Player in the LootLocker
+    /// </summary>
+    /// <param name="playerName"></param>
+    public void CreateNewPlayerLootLocker(string playerName)
+    {
+        if (_lootLockerController.SelectedPlayMode == PlayMode.Online)
+        {
+            _lootLockerController.CreateNewPlayerRecord(playerName); 
+        }
+        else
+        {
+            CountFrame.DebugLogUpdate(this, $" : CreateNewPlayerLootLocker skipped");
+        }
+    }
 
     private void Start()
     {
+        _gameSettingsController.InitGameSettings();
         _topListController.InitialLoadTopList();
         _remoteTopListController.InitialLoadTopList();
 #if UNITY_EDITOR
@@ -100,7 +116,7 @@ public class MainMenusSceneManager : MonoBehaviour
     /// <param name="initialValue"></param>
     private static void TempSwitchToCanvsa(CanvasName canvasName)
     {
-        Debug.LogError("Temporary Switched on TopList");
+        Debug.LogError($"Temporary Switched on [{canvasName}] Canvas");
         FindObjectOfType<CanvasManager>().SwitchCanvas(canvasName);
     }
 

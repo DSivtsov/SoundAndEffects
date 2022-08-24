@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Manager;
 
-public class StorageObjectTCharacterData : StoreObjectT<PlayerData>
+public class StorageObjectTGameSettings : StoreObjectT<GameSettings>
 {
 
 }

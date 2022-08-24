@@ -16,12 +16,14 @@ namespace GMTools.Manager
     [ExecuteInEditMode]
     public abstract class Store : MonoBehaviour, IStore
     {
+        [SerializeField] private StoreGame storeGame;
         [ReadOnly]
         [SerializeField] protected string guid;
 
         protected bool _isStoreObjectsInitialized = false;
         protected string[] streamArr;
-
+        protected ObjectsPool objectsPool;
+        public StoreGame GetStoreGameObject() => storeGame;
 #if UNITY_EDITOR
         /// <summary>
         /// Create a new unique ID for this object when it's created
@@ -34,10 +36,12 @@ namespace GMTools.Manager
                 guid = Guid.NewGuid().ToString();
                 PrefabUtility.RecordPrefabInstancePropertyModifications(this);
             }
+            
         }
 #endif
         protected void Start()
         {
+            objectsPool = storeGame.GetObjectsPool();
             if (Application.isPlaying)
             {
                 InitStoreObjects();
@@ -47,8 +51,9 @@ namespace GMTools.Manager
         //Add the StoreObjects to pool objects which will be backuped
         protected virtual void InitStoreObjects()
         {
-            Debug.Log($"StoreObjects : Start() - ObjectPool.AddObject({this.name})");
-            ObjectPool.AddObject(guid, this);
+            Debug.Log($"StoreObjects : Start() - ObjectPool.AddObject({this.name}) for {storeGame.name} StoreGame object");
+            //ObjectsPool.AddObject(guid, this);
+            objectsPool.AddObject(guid, this);
             //The reserved for more complex procedures to restore and backup values
             _isStoreObjectsInitialized = true;
         }

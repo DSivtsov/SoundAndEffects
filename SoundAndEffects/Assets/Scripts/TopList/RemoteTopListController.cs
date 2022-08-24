@@ -18,8 +18,13 @@ public class RemoteTopListController : TopListController
 
     protected override void LoadAndShow(bool multiAsyncOperations = true)
     {
-        StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
-        CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started");
+        if (_lootLockerController.CurrentPlayMode != PlayMode.Offline)
+        {
+            StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
+            CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started"); 
+        }
+        else
+            CountFrame.DebugLogUpdate(this, $"LoadAndShow skipped");
     }
 
     private IEnumerator CoroutineLoadAndShow(bool multiAsyncOperations = true)
@@ -60,7 +65,14 @@ public class RemoteTopListController : TopListController
 
     public override void AddCharacterResult(PlayerData newCharacterData)
     {
-        StartCoroutine(CoroutineSaveScoreToLeaderBoard(newCharacterData));
+        if (_lootLockerController.CurrentPlayMode == PlayMode.Online)
+        {
+            StartCoroutine(CoroutineSaveScoreToLeaderBoard(newCharacterData)); 
+        }
+        else
+        {
+            CountFrame.DebugLogUpdate(this, $" : AddCharacterResult skipped");
+        }
     }
 
     private IEnumerator CoroutineSaveScoreToLeaderBoard(PlayerData newCharacterData)

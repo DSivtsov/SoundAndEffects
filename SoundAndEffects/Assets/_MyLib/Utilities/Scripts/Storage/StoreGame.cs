@@ -7,17 +7,24 @@ using System.Text;
 
 namespace GMTools.Manager
 {
+    [Flags]
+    public enum IOError : byte
+    {
+        NoError = 0b0,
+        FileNotFound = 0b1,
+        WrongFormat = 0b10
+    }
     public interface IStore
     {
         public string[] Save();
         public void Load(string[] streamArr);
     }
 
-    public static class ObjectPool
+    public class ObjectsPool
     {
-        public static Dictionary<string, IStore> storeObjectsPool = new Dictionary<string, IStore>(StringComparer.Ordinal);
+        public Dictionary<string, IStore> storeObjectsPool = new Dictionary<string, IStore>(StringComparer.Ordinal);
 
-        public static void AddObject(string guid, IStore obj)
+        public void AddObject(string guid, IStore obj)
         {
             try
             {
@@ -36,13 +43,26 @@ namespace GMTools.Manager
     /// </summary>
     public class StoreGame : MonoBehaviour
     {
-        const string nameFile = "TopList.txt";
+        [SerializeField] private string nameFile = "TopList.txt";
+        private ObjectsPool objectsPool;
+        //const string nameFile = "TopList.txt";
+
+        public ObjectsPool GetObjectsPool() => objectsPool;
+        public string GetNameFile() => nameFile;
+
+        private void Awake()
+        {
+            objectsPool = new ObjectsPool();
+        }
+
         public void QuickSave()
         {
-            Debug.Log($"StoreGame : QuickSave({ObjectPool.storeObjectsPool.Count} objects)");
+            //Debug.Log($"StoreGame : QuickSave({ObjectsPool.storeObjectsPool.Count} objects)");
+            Debug.Log($"StoreGame : QuickSave({objectsPool.storeObjectsPool.Count} objects)");
             using (StreamWriter sw = new StreamWriter(nameFile, false, Encoding.UTF8, 1024))
             {
-                foreach (var item in ObjectPool.storeObjectsPool)
+                //foreach (var item in ObjectsPool.storeObjectsPool)
+                foreach (var item in objectsPool.storeObjectsPool)
                 {
                     string[] jsonArray = item.Value.Save();
                     //if (jsonArray == null || jsonArray.Length == 0)
@@ -74,12 +94,12 @@ namespace GMTools.Manager
             Elements
         }
 
-        public void QuickLoad()
+        public IOError QuickLoad()
         {
             if (!File.Exists(nameFile))
             {
-                Debug.LogWarning($"{this} : file [{nameFile}] which stores the local TopList, not found will be created new");
-                return;
+                //Debug.LogWarning($"{this} : file [{nameFile}] which stores the local TopList, not found will be created new");
+                return IOError.FileNotFound;
             }
             TypeDataRead currentMode = TypeDataRead.GUID;
             using (StreamReader sr = new StreamReader(nameFile, Encoding.UTF8, false, 1024))
@@ -114,9 +134,9 @@ namespace GMTools.Manager
                             }
                             else
                             {
-                                Debug.LogError($"StoreGame : QuickLoad() - Format of the saved file ({nameFile}) is wrong. Restore interrupted");
+                                //Debug.LogError($"StoreGame : QuickLoad() - Format of the saved file ({nameFile}) is wrong. Restore interrupted");
                                 sr.Close();
-                                return;
+                                return IOError.WrongFormat;
                             }
                             break;
                         case TypeDataRead.Elements:
@@ -125,7 +145,8 @@ namespace GMTools.Manager
                             {
                                 try
                                 {
-                                    ObjectPool.storeObjectsPool[guid].Load(jsonArray);
+                                    //ObjectsPool.storeObjectsPool[guid].Load(jsonArray);
+                                    objectsPool.storeObjectsPool[guid].Load(jsonArray);
                                 }
                                 catch (KeyNotFoundException e)
                                 {
@@ -141,9 +162,10 @@ namespace GMTools.Manager
                 }
                 if (currentMode != TypeDataRead.GUID)
                 {
-                    Debug.LogWarning($"StoreGame : QuickLoad() - EOF of the saved file ({nameFile}) is wrong. ");
+                    //Debug.LogWarning($"StoreGame : QuickLoad() - EOF of the saved file ({nameFile}) is wrong. ");
+                    return IOError.WrongFormat;
                 }
-
+                return IOError.NoError;
             }
         }
     }

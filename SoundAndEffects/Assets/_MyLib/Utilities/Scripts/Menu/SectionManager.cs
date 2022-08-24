@@ -9,23 +9,25 @@ namespace GMTools.Menu
     //Can be used multi times in Project, every SectionManager will be have own environment, related Sections are linked through the LinkToSectionManager(this)
     public class SectionManager : MonoBehaviour
     {
-        [SerializeField] private Transform _groupsSections;
+        [SerializeField] private Transform _sectionsNames;
         [SerializeField] private bool _useInitialStartSection = true;
         [SerializeField] private SectionName _initialStartSection;
 
+        protected Dictionary<(SectionName, Type), ISectionControllerAction> SectionControllers = new Dictionary<(SectionName, Type), ISectionControllerAction>();
+
         public static SectionManager ActiveSectionManager { get; private set; }
 
-        private SectionObject _lastActiveSection;
-        public SectionObject GetLastActiveSection => _lastActiveSection;
+        public static ISectionControllerAction SectionController { get; private set; }
+
+        private SectionObject _selectedSection;
+        public SectionObject GetSelectedSection => _selectedSection;
         private Dictionary<SectionName, SectionObject> _dictSections = new Dictionary<SectionName, SectionObject>();
 
         //Initialization of dictSections must be made only after finishing of all Awakes of SectionObject
         //Start will call only after the CanvasOption will be activated
         private void Start()
         {
-            //Debug.Log("SectionManager : Start()");
-            //ButtonActions.InitButtonActions(this);
-            foreach (SectionObject section in _groupsSections.GetComponentsInChildren<SectionObject>(includeInactive: true))
+            foreach (SectionObject section in _sectionsNames.GetComponentsInChildren<SectionObject>(includeInactive: true))
             {
                 //Debug.Log(section.name);
                 _dictSections.Add(section.SectionName, section);
@@ -41,13 +43,25 @@ namespace GMTools.Menu
 
         public void SwitchSection(SectionName selectedSection)
         {
-            if (_lastActiveSection != null)
-                ActivateSelectedSession(_lastActiveSection, false);
+            if (_selectedSection != null)
+                ActivateSelectedSession(_selectedSection, false);
             SectionObject desiredSection = _dictSections[selectedSection];
             if (desiredSection != null)
             {
-                ActivateSelectedSession(desiredSection); ;
-                _lastActiveSection = desiredSection;
+                ActivateSelectedSession(desiredSection);
+                _selectedSection = desiredSection;
+                if (!(GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local))
+                {
+                    SectionController = SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())];
+                    //LoadValuesSelectedSession();
+                    Debug.Log($"LoadValuesSelectedSession()");
+                    SectionController.LoadSectionValues(); 
+                }
+                else
+                {
+                    Debug.LogError($"Temporary blocked : GetSelectedSection.SectionName={GetSelectedSection.SectionName}" +
+                        " GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local"); 
+                }
             }
             else
                 Debug.LogWarning($"The desired [{selectedSection}] Section was not found!");
@@ -59,6 +73,23 @@ namespace GMTools.Menu
             selectedSection.SetValueMenuButtonInteractable(!activate);
             selectedSection.SetVisibleSectionBody(activate);
         }
-    }
 
+        public void LinkToSectionActions(SectionName sectionName, ISectionControllerAction sectionController)
+        {
+            //SettingsSectionControllers.Add(sectionName, sectionController);
+            SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
+        }
+
+        //private void LoadValuesSelectedSession()
+        //{
+        //    Debug.Log($"LoadValuesSelectedSession()");
+        //    SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())].LoadSectionValues();
+        //}
+
+        //public void ResetSectionValuesToDefault()
+        //{
+        //    //SettingsSectionControllers[GetLastActiveSection.SectionName].ResetSectionValuesToDefault();
+        //    SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())].ResetSectionValuesToDefault();
+        //}
+    }
 }

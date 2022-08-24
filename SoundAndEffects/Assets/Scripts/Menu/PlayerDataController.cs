@@ -31,9 +31,9 @@ public class PlayerDataController : MonoBehaviour
                 value = value.Substring(0, MaxLenghtPlayerName);
             }
             _playerName = value;
-            _inputFieldPlayerName.text = value;
-            _inputFieldPlayerName.readOnly = true;
-            _mainMenusSceneManager.ActivateButtonStart(true);
+            //_inputFieldPlayerName.text = value;
+            //_inputFieldPlayerName.readOnly = true;
+            //_mainMenusSceneManager.ActivateButtonStart(true);
         }
     }
 
@@ -49,10 +49,13 @@ public class PlayerDataController : MonoBehaviour
 
     private void SetDemoData()
     {
-        PlayerName = "";
+        SetPlayerNameAndUpdateMenuScene("DemoData");
         Debug.Log($"_inputFieldPlayerName=[{_inputFieldPlayerName.text}] == null is {_inputFieldPlayerName.text == null} but Lenght={_inputFieldPlayerName.text.Length}");
     }
-
+    /// <summary>
+    /// Check New Player Name and store it
+    /// </summary>
+    /// <param name="newPlayerName"></param>
     private void EnteredNewPlayerName(string newPlayerName)
     {
         if (newPlayerName.Length == 0)
@@ -61,12 +64,29 @@ public class PlayerDataController : MonoBehaviour
             _inputFieldPlayerName.ActivateInputField();
             return;
         }
-        PlayerName = newPlayerName;
+        //PlayerName = newPlayerName;
+        SetPlayerNameAndUpdateMenuScene(newPlayerName);
         //Will  Save to PlayerPref directly for case playing Offlline
         PlayerPrefs.SetString(_localCopyPlayerName, PlayerName);
         _mainMenusSceneManager.CreateNewPlayerLootLocker(PlayerName);
         _mainMenuCanvasTurnOffPressEnter.Active(activate: false);
     }
-
-    public void SetPlayerName(string playerNameLootLocker) => PlayerName = playerNameLootLocker;
+    /// <summary>
+    /// Update Player Name and use it for update the objects in the Menu Scene
+    /// </summary>
+    /// <param name="playerName"></param>
+    public void SetPlayerNameAndUpdateMenuScene(string playerName)
+    {
+        PlayerName = playerName;
+        _inputFieldPlayerName.text = PlayerName;
+        _inputFieldPlayerName.readOnly = true;
+        _mainMenusSceneManager.ActivateButtonStart(true);
+    }
+    /// <summary>
+    /// Used Name from Storage to Set the current Player name
+    /// </summary>
+    public void GetPlayerNameFromLocalStorage()
+    {
+        SetPlayerNameAndUpdateMenuScene(PlayerPrefs.GetString(_localCopyPlayerName));
+    }
 }

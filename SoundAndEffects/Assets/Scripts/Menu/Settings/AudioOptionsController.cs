@@ -10,9 +10,9 @@ using GMTools.Menu;
 
 
 
-public class AudioOptionsController : MonoBehaviour, IButtonAction
+public class AudioOptionsController : MonoBehaviour, ISectionControllerAction
 {
-    [SerializeField] private SectionManagerOptions _sectionManagerOptions;
+    [SerializeField] private SettingsSectionManager _sectionManagerOptions;
     //[SerializeField] private SectionName _sectionName;
     //[SerializeField] private Transform _audioGroupOptions;
     [SerializeField] private SectionObject _audioSection;
@@ -37,7 +37,7 @@ public class AudioOptionsController : MonoBehaviour, IButtonAction
     private void Start()
     {
         _audioVolumeOptions.InitVolumeControls();
-        _sectionManagerOptions.LinkToButtonActions(_audioSection.NameSection, this);
+        _sectionManagerOptions.LinkToSectionActions(_audioSection.NameSection, this);
         StartCoroutine(InitMusicOrderOptionCoroutine());
     }
     /// <summary>
@@ -84,7 +84,7 @@ public class AudioOptionsController : MonoBehaviour, IButtonAction
     /// <summary>
     /// Actions on ResetDeafult pressing
     /// </summary>
-    public void ResetDefault()
+    public void ResetSectionValuesToDefault()
     {
         rezultResetDeafult = TransitionFinished.NotFinishedAny;
         StartCoroutine(ResetDefaultVolumeCoroutine());
@@ -106,5 +106,11 @@ public class AudioOptionsController : MonoBehaviour, IButtonAction
         _audioVolumeOptions.ResetVolumeSlidersToDefaul();
         rezultResetDeafult |= TransitionFinished.VolumeResetDefault;
         AudioOptionsChanged(false);
+    }
+
+    public void LoadSectionValues()
+    {
+        //throw new NotImplementedException();
+        Debug.LogWarning($"{this} : LoadSectionValues()");
     }
 }

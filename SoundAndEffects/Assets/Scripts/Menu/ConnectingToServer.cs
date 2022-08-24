@@ -13,8 +13,8 @@ public class ConnectingToServer : MonoBehaviour
     private StringBuilder strProcess = new StringBuilder();
     private const string DeltaStr = ".";
     private const string InitialMsg = "Connecting to Server";
-    private const string ModeOnline = "Online - Connected :";
-    private const string ModeOffline = "Offline - NotConnected";
+    private const string ModeOnline = "Online mode Activated :";
+    private const string ModeOffline = "Offline mode Activated";
     private const string FinMsg = "Connected :";
     private const string ConnectedOK = "OK";
     private const string ConnectedError = "Error";
@@ -77,9 +77,11 @@ public class ConnectingToServer : MonoBehaviour
         }
     }
 
-    private void OfflineMode()
+    public void OfflineMode()
     {
+        groupConnectingToServer.SetActive(true);
         currentStatus.text = ModeOffline;
+        currentStatus.color = Color.yellow;
         currentProcess.text = "";
     }
 }

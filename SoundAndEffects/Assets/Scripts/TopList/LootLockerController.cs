@@ -13,7 +13,7 @@ public enum MultiOperation: byte
     LoadedPlayerName = 0b10,
     LoadedAll = 0b11,
 }
-
+[Flags]
 public enum ErrorConnecting : byte
 {
     NoErrors = 0b00,
@@ -21,7 +21,15 @@ public enum ErrorConnecting : byte
     PlayerNameNotLoaded = 0b10,
     TopListNotLoaded = 0b100,
     NewNameNotSaved = 0b1000,
-    NewResultNotSaved = 0b1000
+    NewResultNotSaved = 0b1000,
+    PlayerNameIsEmpty = 0b10000
+}
+[Serializable]
+public enum PlayMode// : byte
+{
+    //NoInitialized = 0,
+    Online = 1,
+    Offline = 2
 }
 
 public class LootLockerController : MonoBehaviour
@@ -29,7 +37,7 @@ public class LootLockerController : MonoBehaviour
     [SerializeField] private ConnectingToServer _connectingToServer;
     [SerializeField] private PlayerDataController _playerDataController;
     [Header("Demo Options")]
-    [SerializeField] private bool _PlayOnline;
+    [SerializeField] private bool _tryPlayOnline;
     /// <summary>
     /// The standart key PlayerPref used by LootLocker
     /// </summary>
@@ -53,22 +61,43 @@ public class LootLockerController : MonoBehaviour
     private ErrorConnecting _statusErrorConnecting;
     private bool _newNameWasSaved;
     public bool NewResultWasSaved { get; private set; }
+    public PlayMode CurrentPlayMode { get; private set; }
+    public PlayMode SelectedPlayMode { get; private set; }
 
     private void Awake()
     {
+#if UNITY_EDITOR
+        if (_tryPlayOnline)
+            SelectedPlayMode = PlayMode.Online;
+        else
+            SelectedPlayMode = PlayMode.Offline;
+#else
+        SelectedPlayMode = PlayMode.Online;
+#endif
         GuestSessionInited = false;
+
+        if (SelectedPlayMode == PlayMode.Online)
+        {
+            //CurrentPlayMode = PlayMode.NoInitialized;
+        }
+        else
+        {
+            CurrentPlayMode = PlayMode.Offline;
+            _connectingToServer.OfflineMode();
+            CountFrame.DebugLogUpdate(this, $" Start() : _currentPlayMode set to Offline");
+        }
     }
 
     void Start()
     {
-#if UNITY_EDITOR
-        if (!_PlayOnline)
+        if (CurrentPlayMode == PlayMode.Offline)
+        {
+            _playerDataController.GetPlayerNameFromLocalStorage();
+        }
+        else
         {
             UseExistedPlayer();
         }
-#else
-        UseExistedPlayer();
-#endif
     }
 
     private void UseExistedPlayer()
@@ -81,7 +110,8 @@ public class LootLockerController : MonoBehaviour
         }
         else
         {
-            throw new NotImplementedException("PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
+            CountFrame.DebugLogUpdate(this, $"PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
+            //throw new NotImplementedException("PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
         }
     }
 
@@ -101,8 +131,13 @@ public class LootLockerController : MonoBehaviour
             //All players will have a nickname
             if (_playerNameLootLocker != null)
             {
-                FinishOneConnectionToServer(MultiOperation.LoadedPlayerName);
-                _playerDataController.SetPlayerName(_playerNameLootLocker); 
+                if ( _playerNameLootLocker.Length != 0)
+                {
+                    FinishOneConnectionToServer(MultiOperation.LoadedPlayerName);
+                    _playerDataController.SetPlayerNameAndUpdateMenuScene(_playerNameLootLocker);  
+                }
+                else
+                    FinalizeAllServerOperations(resultOK: false, ErrorConnecting.PlayerNameIsEmpty);
             }
             else
                 FinalizeAllServerOperations(resultOK: false, ErrorConnecting.PlayerNameNotLoaded);
@@ -113,12 +148,17 @@ public class LootLockerController : MonoBehaviour
 
     public void FinalizeAllServerOperations(bool resultOK, ErrorConnecting error = ErrorConnecting.NoErrors)
     {
-        if (!resultOK)
+        if (resultOK)
+            CurrentPlayMode = PlayMode.Online;
+        else
         {
             _statusErrorConnecting |= error;
+            CurrentPlayMode = PlayMode.Offline;
+            _connectingToServer.OfflineMode();
         }
         StopCoroutine(_coroutineProcessConnecting);
         _connectingToServer.Result(resultOK);
+
     }
 
     public void FinishOneConnectionToServer(MultiOperation result)
@@ -177,8 +217,8 @@ public class LootLockerController : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log($"{this} : Successfully get player name for {_playerIDLootLocker} playerIDLootLocker");
                 _playerNameLootLocker = response.name;
+                Debug.Log($"{this} : Successfully get [{_playerNameLootLocker}] Player name for {_playerIDLootLocker} playerIDLootLocker");
             }
             else
             {

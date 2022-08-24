@@ -4,9 +4,10 @@ using System.Linq;
 using UnityEngine;
 using GMTools.Menu;
 
-public interface IButtonAction
+public interface ISectionControllerAction
 {
-    public void ResetDefault();
+    public void ResetSectionValuesToDefault();
+    public void LoadSectionValues();
 }
 
 public enum SectionName
@@ -22,7 +23,7 @@ public enum CanvasName
 {
     MainMenu,
     TopList,
-    Options,
+    Settings,
     EndScreen,
     Help
 }
@@ -72,7 +73,7 @@ public static class ButtonActions
                     _menuSceneManager.ResetTopList();
                     break;
                 case ButtonType.ResetDefault:
-                    ((SectionManagerOptions)SectionManager.ActiveSectionManager).ResetDefault();
+                    SectionManager.SectionController.ResetSectionValuesToDefault();
                     //Debug.Log("End ButtonType.ResetDefault");
                     break;
                 case ButtonType.NewPlayer:
