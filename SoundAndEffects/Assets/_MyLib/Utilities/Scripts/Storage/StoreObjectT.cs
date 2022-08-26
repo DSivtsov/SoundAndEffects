@@ -57,6 +57,19 @@ namespace GMTools.Manager
                 {
                     _arrObjects[i] = JsonUtility.FromJson<T>(streamArr[i]);
                 }
+
+                //if (_arrObjects is UnityEngine.ScriptableObject[])
+                //{
+                //    ScriptableObject temp = ScriptableObject.CreateInstance(typeof(T));
+                //    //JsonUtility.FromJsonOverwrite(streamArr[i], _arrObjects[i]);
+                //    JsonUtility.FromJsonOverwrite(streamArr[i], temp);
+                //    _arrObjects[i] = (T)temp;
+                //}
+                //else
+                //{
+                //    _arrObjects[i] = JsonUtility.FromJson<T>(streamArr[i]);
+                //}
+
             }
             else
                 Debug.LogError("StoreObject : Load() {_isStoreObjectsInitialized && streamArr.Length != 0} != true");

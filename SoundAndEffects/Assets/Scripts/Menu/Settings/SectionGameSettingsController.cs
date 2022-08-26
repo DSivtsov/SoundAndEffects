@@ -8,7 +8,7 @@ public class SectionGameSettingsController : MonoBehaviour, ISectionControllerAc
 {
     [SerializeField] private SettingsSectionManager _sectionManagerOptions;
     [SerializeField] private SectionObject _gameSection;
-    [SerializeField] private GameSettingsController _gameSettingsController;
+    [SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
 
     private DropdownOption<SectionGameSettingsController> _gameComplexityField;
     private ToggleGroupEnumController<PlayMode, SectionGameSettingsController> _playModeToggleGroup;
@@ -50,14 +50,14 @@ public class SectionGameSettingsController : MonoBehaviour, ISectionControllerAc
     private IEnumerator InitPlayModeToggleGroupCoroutine()
     {
         int count = 0;
-        while (!(_playModeToggleGroup.Initialized && _gameSettingsController.GameSettingsInitialized))
+        while (!(_playModeToggleGroup.Initialized && _gameSettingsControllerSO.GameSettingsInitialized))
         {
             //Debug.Log($"_playModeToggleGroup={_playModeToggleGroup.Initialized } GameSettingsInitialized={_gameSettingsController.GameSettingsInitialized}");
             count++;
             yield return null;
         }
         Debug.Log($"InitPlayModeToggleGroupCoroutine : Count ={count}");
-        _playModeToggleGroup.Init((value) => Debug.Log($"SectionGameSettingsController : value={value}"), _gameSettingsController._currentGameSettings.UsedPlayMode);
+        _playModeToggleGroup.Init((value) => Debug.Log($"SectionGameSettingsController : value={value}"), _gameSettingsControllerSO._currentGameSettings.UsedPlayMode);
     }
 
     //public void SetValues(PlayMode usedPlayMode, GameSettings current)

@@ -1,0 +1,3 @@
+﻿79f5f91f-2d96-46bf-944f-5253329a49c5
+1
+{"_complexityGame":{"instanceID":18942},"_usedPlayMode":2,"_notCopyToGlobal":true,"_globalDefaultTopList":false,"_masterVolume":1.0,"_musicVolume":2.0,"_effectVolume":3.0,"_musicSequenceType":1}

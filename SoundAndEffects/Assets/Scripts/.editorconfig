@@ -1,0 +1,12 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+
+# All files
+[*]
+indent_style = space
+
+# Xml files
+[*.xml]
+indent_size = 2
+
+[*.cs]
+file_header_template =<copyright file="{fileName}">\n Copyright (c) 2022 Denis Sivtsov.\n Licensed under the Apache License, Version 2.0\n</copyright>

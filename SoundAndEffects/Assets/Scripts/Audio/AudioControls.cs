@@ -1,4 +1,4 @@
-#define OWNCONTROL  //use own input controller of InputSystem
+#define OWNCONTROL  //use own input controller of InputSystem temporary solution for simplicity
 using System;
 using System.Collections.Generic;
 using UnityEngine;

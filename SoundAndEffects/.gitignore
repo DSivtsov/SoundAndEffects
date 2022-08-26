@@ -80,4 +80,6 @@ crashlytics-build.properties
 /Assets/_MyLib/Prefab*
 
 /UserSettings/EditorUserSettings.asset
-/TopList.txt
+/*.txt
+
+#/Assets/OdinSerializer*

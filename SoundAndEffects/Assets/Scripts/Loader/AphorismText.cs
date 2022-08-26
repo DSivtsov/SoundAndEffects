@@ -24,7 +24,7 @@ public static class AphorismText
 
     private static bool InitAphorismText()
     {
-        string filename = @"H:\_Unity\Git_SoundAndEffects\SoundAndEffects\Assets\DataFiles\Text\AphorismEng.txt";
+        string filename = @"C:\Unity\Git_SoundAndEffects\SoundAndEffects\Assets\DataFiles\Text\AphorismEng.txt";
         List<string> tmpArray = new List<string>(50);
         using (StreamReader reader = File.OpenText(filename))
         {

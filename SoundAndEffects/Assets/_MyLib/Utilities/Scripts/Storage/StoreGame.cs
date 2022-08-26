@@ -78,7 +78,6 @@ namespace GMTools.Manager
                     sw.WriteLine(item.Key);
                     byte numValues = (byte)jsonArray.Length;
                     sw.WriteLine(numValues);
-                    Debug.Log($"numValues={numValues}");
                     for (byte i = 0; i < numValues; i++)
                     {
                         sw.WriteLine(jsonArray[i]);

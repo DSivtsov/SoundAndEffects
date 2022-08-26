@@ -1461,7 +1461,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &93867617
 GameObject:
@@ -3266,7 +3266,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &298108474
 GameObject:
@@ -4244,7 +4244,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &412519332
 GameObject:
@@ -4541,7 +4541,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &426463739
 GameObject:
@@ -5381,10 +5381,10 @@ RectTransform:
   m_Father: {fileID: 1908529145}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: 0}
-  m_SizeDelta: {x: 150, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &469824332
 MonoBehaviour:
@@ -5565,8 +5565,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1623145519}
-        m_TargetAssemblyTypeName: GameSettingsController, Assembly-CSharp
+      - m_Target: {fileID: 1781622918}
+        m_TargetAssemblyTypeName: GameSettingsControllerSO, Assembly-CSharp
         m_MethodName: SaveGameSettings
         m_Mode: 1
         m_Arguments:
@@ -5779,10 +5779,10 @@ RectTransform:
   m_Father: {fileID: 1908529145}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 165, y: 0}
-  m_SizeDelta: {x: 150, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &519909083
 MonoBehaviour:
@@ -7442,7 +7442,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &721950281
 GameObject:
@@ -10586,7 +10586,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1023308835
 GameObject:
@@ -12958,9 +12958,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1623145519}
+      - m_Target: {fileID: 1781622917}
         m_TargetAssemblyTypeName: GameSettingsController, Assembly-CSharp
-        m_MethodName: LoadGameSettings
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13611,7 +13611,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sectionManagerOptions: {fileID: 1581777201}
   _gameSection: {fileID: 1856997950}
-  _gameSettingsController: {fileID: 1623145519}
+  _gameSettingsControllerSO: {fileID: 0}
 --- !u!1 &1309533750
 GameObject:
   m_ObjectHideFlags: 0
@@ -16272,7 +16272,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1581777199
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17466,89 +17466,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 1
---- !u!1 &1623145518
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1623145520}
-  - component: {fileID: 1623145519}
-  - component: {fileID: 1623145521}
-  - component: {fileID: 1623145522}
-  m_Layer: 0
-  m_Name: GameSettingsController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1623145519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623145518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07b6e0af499cc944fb88576d383eb547, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sectionGameSettingsController: {fileID: 1305016543}
-  _defaultGameSettings:
-    _complexityGame: {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
-    _usedPlayMode: 2
-    _notCopyToGlobal: 0
-    _globalDefaultTopList: 1
-    _masterVolume: 0
-    _musicVolume: 0
-    _effectVolume: -25
-    _musicSequenceType: 1
---- !u!4 &1623145520
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623145518}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 485.12097, y: 508.6557, z: 243.66803}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1623145521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623145518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5264e3e8f5e55b4eb301efb6b6fddeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storeGame: {fileID: 1623145522}
-  guid: 1581c396-7c43-40d7-8507-96d39e81c3b6
-  TClass: GameSettings
---- !u!114 &1623145522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1623145518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1891a11cffedbed44b435329f6c7cda7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameFile: GameSettings.txt
 --- !u!1 &1625254010
 GameObject:
   m_ObjectHideFlags: 0
@@ -18673,6 +18590,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1773857082}
   m_CullTransparentMesh: 1
+--- !u!1 &1781622917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1781622919}
+  - component: {fileID: 1781622918}
+  - component: {fileID: 1781622921}
+  - component: {fileID: 1781622920}
+  m_Layer: 0
+  m_Name: GameSettingsControllerSO
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1781622918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781622917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4217c01cc6f2d60499ffede03ad53a17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultGameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
+  _storeGame: {fileID: 1781622920}
+--- !u!4 &1781622919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781622917}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1781622920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781622917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1891a11cffedbed44b435329f6c7cda7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameFile: SettingsSO.txt
+--- !u!114 &1781622921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781622917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0b3604b6a0717141b1ea2853d8288db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storeGame: {fileID: 1781622920}
+  guid: 79f5f91f-2d96-46bf-944f-5253329a49c5
+  storeScriptableObjectData: []
 --- !u!1 &1784316399
 GameObject:
   m_ObjectHideFlags: 0
@@ -19208,7 +19200,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1829886746
 MonoBehaviour:
@@ -19228,7 +19220,7 @@ MonoBehaviour:
   _remoteTopListController: {fileID: 1481363661}
   _lootLockerController: {fileID: 298108476}
   _playerDataController: {fileID: 1829886749}
-  _gameSettingsController: {fileID: 1623145519}
+  _gameSettingsControllerSO: {fileID: 1781622918}
   _buttonStart: {fileID: 979888446}
   _useStartCanvas: 0
   _startCanvasName: 2
@@ -19677,10 +19669,10 @@ RectTransform:
   m_Father: {fileID: 1908529145}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 30}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1856997950
 MonoBehaviour:
@@ -20187,7 +20179,7 @@ RectTransform:
   - {fileID: 188447014}
   - {fileID: 980659724}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -23939,7 +23931,7 @@ RectTransform:
   m_Children:
   - {fileID: 1221299915}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -23990,7 +23982,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1623145519}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameSettingsController, Assembly-CSharp
         m_MethodName: Test
         m_Mode: 1

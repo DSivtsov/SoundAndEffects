@@ -16,7 +16,7 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private TopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
-    [SerializeField] private GameSettingsController _gameSettingsController;
+    [SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
     [SerializeField] private Button _buttonStart;
     [Header("Demo Options")]
     [SerializeField] private bool _useStartCanvas;
@@ -77,7 +77,7 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private void Start()
     {
-        _gameSettingsController.InitGameSettings();
+        _gameSettingsControllerSO.InitGameSettings();
         _topListController.InitialLoadTopList();
         _remoteTopListController.InitialLoadTopList();
 #if UNITY_EDITOR
