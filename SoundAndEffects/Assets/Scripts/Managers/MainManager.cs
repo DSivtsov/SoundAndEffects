@@ -19,22 +19,33 @@ public class MainManager : SingletonController<MainManager>
     [Header("Demo Options")]
     [Tooltip("If value not zerro, the CharacterHealth will be override by it, works only in Editor")]
     [SerializeField] private int _characterHealth;
+    //[Tooltip("Trying Play Online")]
+    //[SerializeField] private bool _tryPlayOnline;
 
-    private LoaderSceneManager _loaderSceneManager;
+    private LoaderScenesManager _loaderSceneManager;
     private MainMenusSceneManager _menuSceneManager;
     private GameSceneManager _gameSceneManager;
+    private GameSettingsController _gameSettingsController;
+
+    //public bool TryPlayOnline => _tryPlayOnline;
 
     protected override void Awake()
     {
         base.Awake();
+        _gameSettingsController = FindObjectOfType<GameSettingsController>();
 #if !UNITY_EDITOR
         _characterHealth = 0;
 #endif
+    }
 
+    private void Start()
+    {
+        StartCoroutine(_loaderSceneManager.StartLoadScenes());
+        _gameSettingsController.InitGameSettings();
     }
 
     public void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
-    public void LinkLoaderSceneManager(LoaderSceneManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
+    public void LinkLoaderSceneManager(LoaderScenesManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
     public void LinkGameSceneManager(GameSceneManager gameSceneManager) => _gameSceneManager = gameSceneManager;
 
     public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
@@ -81,12 +92,12 @@ public class MainManager : SingletonController<MainManager>
         switch (scene)
         {
             case SceneName.Menus:
-                _menuSceneManager.ActivateMusicMainMenus();
+                _loaderSceneManager.ActivateMusicLoaderMenus();
                 _gameSceneManager.ActivateGameMusic(false);
                 break;
             case SceneName.Game:
                 _gameSceneManager.ActivateGameMusic();
-                _menuSceneManager.ActivateMusicMainMenus(false);
+                _loaderSceneManager.ActivateMusicLoaderMenus(false);
                 break;
             default:
                 Debug.LogError("{this} SwitchMusicTo() can't switch to {scene} Scene");

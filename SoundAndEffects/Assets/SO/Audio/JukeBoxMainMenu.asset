@@ -19,9 +19,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8f182527736129143887e259e0c90a7c, type: 3}
   sequenceType: 1
   initValue: 0
-  loadDelayTime: 3
+  loadDelayTime: 0.5
   crossDeltaTime: 0
-  startDelay: 1
+  startDelay: 0.6
   playMode: 0
   timeFromBegin: 0
   timeFromEnd: 0

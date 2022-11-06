@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -15,12 +16,12 @@ public class PlayJukeBox : MonoBehaviour
     [SerializeField] protected JukeBoxSO _jukeBox;
     [SerializeField] private AudioMixerGroup _mixerGroup;
     [SerializeField] private AudioMixerGroup _mixerGroup2;
-    [SerializeField] private bool _playAtAwake;
+    //[SerializeField] private bool _playAtAwake;
     [Range(0, 255)] [SerializeField] private int _sourcePriority;
     #endregion
 
     #region NonSerializedFields
-    public bool JukeBoxPlaying { get; private set; } = false;
+    public bool JukeBoxStateInited { get; private set; } = false;
     public bool _jukeBoxActive = false;
     private bool initAudioSources = false;
     private AudioSource[] _audioSources = new AudioSource[2];
@@ -46,7 +47,7 @@ public class PlayJukeBox : MonoBehaviour
     {
         if (_notSkipAudioControls)
         {
-            _audioControls.MusicTurnOn += TurnOnButtonPressed;
+            _audioControls.MusicTurnOnOFF += TurnOnOFFButtonPressed;
             _audioControls.MusicSwitchToNextClip += SwitchToNextClipButtonPressed; 
         }
     }
@@ -55,40 +56,38 @@ public class PlayJukeBox : MonoBehaviour
     {
         if (_notSkipAudioControls)
         {
-            _audioControls.MusicTurnOn -= TurnOnButtonPressed;
+            _audioControls.MusicTurnOnOFF -= TurnOnOFFButtonPressed;
             _audioControls.MusicSwitchToNextClip -= SwitchToNextClipButtonPressed; 
         }
     }
 
-    //private void Start()
-    //{
-    //    if (_playAtAwake)
-    //    {
-    //        TurnOn();
-    //    }
-    //}
-
     private void Update()
     {
-        if (JukeBoxPlaying && _jukeBox.IsTimeStartPreparing())
+        if (JukeBoxStateInited && _jukeBox.IsTimeStartPreparing())
         {
             _jukeBox.PlayScheduledNextClip();
         }
+    }
+
+    public bool GetIsJukeBoxPlaying()
+    {
+        //Debug.Log($"_audioSources[{String.Join(",",_audioSources.Select((source)=>$"({source.isPlaying}:{source.time})"))}]");
+        return JukeBoxStateInited && (_audioSources[0].isPlaying && _audioSources[0].time > 0 || _audioSources[1].isPlaying && _audioSources[1].time > 0);
     }
 
     public void SetJukeBoxActive(bool active) => _jukeBoxActive = active;
 
     private void SwitchToNextClipButtonPressed()
     {
-        if (JukeBoxPlaying)
+        if (JukeBoxStateInited)
             _jukeBox.SwitchToNextClip();
     }
 
-    private void TurnOnButtonPressed()
+    private void TurnOnOFFButtonPressed()
     {
         if (_jukeBoxActive)
         {
-            if (JukeBoxPlaying)
+            if (JukeBoxStateInited)
                 TurnOn(false);
             else
                 TurnOn(true); 
@@ -105,7 +104,7 @@ public class PlayJukeBox : MonoBehaviour
         if (_jukeBox.ClipsArrayEmpty())
         {
             Debug.LogError($"[{gameObject.name}] AudioEvent disabled because SO with Audio clips is Empty");
-            JukeBoxPlaying = false;
+            JukeBoxStateInited = false;
         }
         else
         {
@@ -123,7 +122,7 @@ public class PlayJukeBox : MonoBehaviour
                 initAudioSources = true;
             }
             _jukeBox.InitJukeBox(_audioSources);
-            JukeBoxPlaying = true;
+            JukeBoxStateInited = true;
         }
     }
     /// <summary>
@@ -132,7 +131,7 @@ public class PlayJukeBox : MonoBehaviour
     public void TurnOn(bool turnOn = true)
     {
         ///CountFrame.DebugLogUpdate(this, $"MusicPlaying[{JukeBoxPlaying}] turnOn = true[{turnOn}]");
-        if (JukeBoxPlaying)
+        if (JukeBoxStateInited)
         {
             if (!turnOn)
             {
@@ -140,7 +139,7 @@ public class PlayJukeBox : MonoBehaviour
                 {
                     _audioSources[i].Stop();
                 }
-                JukeBoxPlaying = false;
+                JukeBoxStateInited = false;
             }
         }
         else
@@ -148,7 +147,7 @@ public class PlayJukeBox : MonoBehaviour
             if (turnOn)
             {
                 CheckInitJukeBox();
-                if (JukeBoxPlaying)
+                if (JukeBoxStateInited)
                     _jukeBox.PlayClipNextInit();
             }
         }
@@ -157,7 +156,7 @@ public class PlayJukeBox : MonoBehaviour
     public void SwitchJukeBoxSequenceType(SequenceType newSequenceType)
     {
         //Debug.Log($"{this} : PlayJukeBox.SwitchJukeBoxSequenceType()");
-        bool initialMusicState = JukeBoxPlaying;
+        bool initialMusicState = JukeBoxStateInited;
         if (initialMusicState)
             TurnOn(false);
         foreach (JukeBoxSO item in GetUsedSequenceType())

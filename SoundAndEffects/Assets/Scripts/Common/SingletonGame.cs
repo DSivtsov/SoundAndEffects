@@ -9,7 +9,7 @@ using GMTools;
 /// </summary>
 public class SingletonGame : SingletonController<SingletonGame>
 {
-    [SerializeField] private CharacterManager _characterController;
+    [SerializeField] private CharacterManager _characterManager;
     [SerializeField] private MovingWorldSO _movingWorldSO;
     [SerializeField] private MainSpawner _mainSpawner;
     [SerializeField] private CharacterDataController _characterDataCtrl;
@@ -25,7 +25,7 @@ public class SingletonGame : SingletonController<SingletonGame>
     [SerializeField] private bool isPlayerNotCollide;
 
     public MovingWorldSO GetMovingWorld() => _movingWorldSO;
-    public CharacterManager GetCharacterController() => _characterController;
+    public CharacterManager GetCharacterManager() => _characterManager;
     public MainSpawner GetMainSpawner() => _mainSpawner;
     public CharacterDataController GetCharacterDataCtrl() => _characterDataCtrl;
     public GraveStoneControl GetGraveStoneControl() => _graveStoneControl;

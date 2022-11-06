@@ -13,9 +13,12 @@ public class GameSettingsSO : ScriptableObject
     [SerializeField] private bool _notCopyToGlobal;
     [SerializeField] private bool _globalDefaultTopList;
     [Header("Audio Options")]
-    [SerializeField] private float _masterVolume;
-    [SerializeField] private float _musicVolume;
-    [SerializeField] private float _effectVolume;
+    [Range(-80,20)]
+    [SerializeField] private int _masterVolume;
+    [Range(-80, 20)]
+    [SerializeField] private int _musicVolume;
+    [Range(-80, 20)]
+    [SerializeField] private int _effectVolume;
     [SerializeField] private SequenceType _musicSequenceType;
 
     public override string ToString() => JsonUtility.ToJson(this);

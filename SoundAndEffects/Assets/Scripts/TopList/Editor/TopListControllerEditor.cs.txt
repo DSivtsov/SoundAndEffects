@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(TopListController), true)]
+[CustomEditor(typeof(LocalTopListController), true)]
 public class TopListControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        TopListController topListCtrl = target as TopListController;
+        LocalTopListController topListCtrl = target as LocalTopListController;
         DrawDefaultInspector();
         EditorGUILayout.Space();
         //To exclude the possibility to create the temp GameObject in the process of run the Play mode

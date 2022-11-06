@@ -12,7 +12,7 @@ public class PlayerDataController : MonoBehaviour
     /// <summary>
     /// The Key used for temporary store a PlayerName in Offline mode
     /// </summary>
-    private const string _localCopyPlayerName = "LocalCopyPlayerName";
+    private const string LocalCopyPlayerName = "LocalCopyPlayerName";
     private const int MaxLenghtPlayerName = 16;
     private string _playerName;
 
@@ -67,7 +67,7 @@ public class PlayerDataController : MonoBehaviour
         //PlayerName = newPlayerName;
         SetPlayerNameAndUpdateMenuScene(newPlayerName);
         //Will  Save to PlayerPref directly for case playing Offlline
-        PlayerPrefs.SetString(_localCopyPlayerName, PlayerName);
+        PlayerPrefs.SetString(LocalCopyPlayerName, PlayerName);
         _mainMenusSceneManager.CreateNewPlayerLootLocker(PlayerName);
         _mainMenuCanvasTurnOffPressEnter.Active(activate: false);
     }
@@ -87,6 +87,6 @@ public class PlayerDataController : MonoBehaviour
     /// </summary>
     public void GetPlayerNameFromLocalStorage()
     {
-        SetPlayerNameAndUpdateMenuScene(PlayerPrefs.GetString(_localCopyPlayerName));
+        SetPlayerNameAndUpdateMenuScene(PlayerPrefs.GetString(LocalCopyPlayerName));
     }
 }

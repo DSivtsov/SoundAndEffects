@@ -36,8 +36,8 @@ public class LootLockerController : MonoBehaviour
 {
     [SerializeField] private ConnectingToServer _connectingToServer;
     [SerializeField] private PlayerDataController _playerDataController;
-    [Header("Demo Options")]
-    [SerializeField] private bool _tryPlayOnline;
+    [SerializeField] private GameSettingsSO _gameSettings;
+
     /// <summary>
     /// The standart key PlayerPref used by LootLocker
     /// </summary>
@@ -62,30 +62,27 @@ public class LootLockerController : MonoBehaviour
     private bool _newNameWasSaved;
     public bool NewResultWasSaved { get; private set; }
     public PlayMode CurrentPlayMode { get; private set; }
-    public PlayMode SelectedPlayMode { get; private set; }
+    //public PlayMode SelectedPlayMode { get; private set; }
 
     private void Awake()
     {
-#if UNITY_EDITOR
-        if (_tryPlayOnline)
-            SelectedPlayMode = PlayMode.Online;
-        else
-            SelectedPlayMode = PlayMode.Offline;
-#else
-        SelectedPlayMode = PlayMode.Online;
-#endif
+//#if UNITY_EDITOR
+//        if (_gameSettings.UsedPlayMode == PlayMode.Online)
+//            SelectedPlayMode = PlayMode.Online;
+//        else
+//            SelectedPlayMode = PlayMode.Offline;
+//#else
+//        SelectedPlayMode = PlayMode.Online;
+//#endif
         GuestSessionInited = false;
-
-        if (SelectedPlayMode == PlayMode.Online)
-        {
-            //CurrentPlayMode = PlayMode.NoInitialized;
-        }
-        else
+        if (_gameSettings.UsedPlayMode == PlayMode.Offline)
         {
             CurrentPlayMode = PlayMode.Offline;
             _connectingToServer.OfflineMode();
             CountFrame.DebugLogUpdate(this, $" Start() : _currentPlayMode set to Offline");
         }
+        else
+            CurrentPlayMode = PlayMode.Online;
     }
 
     void Start()
@@ -192,7 +189,7 @@ public class LootLockerController : MonoBehaviour
                 _sessionTokenLootLocker = response.session_token;
                 _playerIDLootLocker = response.player_id;
                 GuestSessionInited = true;
-                Debug.Log($"{this} : Successfully started LootLocker GuestSession with {_sessionTokenLootLocker} token");
+                //Debug.Log($"{this} : Successfully started LootLocker GuestSession with {_sessionTokenLootLocker} token");
             }
             else
             {
@@ -205,7 +202,6 @@ public class LootLockerController : MonoBehaviour
         else
             LootLockerSDKManager.StartGuestSession((response) => onComplete(response));
         yield return new WaitWhile(() => notGetResponse);
-        //CountFrame.DebugLogUpdate(this, $"Finished the InitGuestSession()");
     }
 
     private IEnumerator GetPlayerName()
@@ -218,7 +214,7 @@ public class LootLockerController : MonoBehaviour
             if (response.success)
             {
                 _playerNameLootLocker = response.name;
-                Debug.Log($"{this} : Successfully get [{_playerNameLootLocker}] Player name for {_playerIDLootLocker} playerIDLootLocker");
+                //Debug.Log($"{this} : Successfully get [{_playerNameLootLocker}] Player name for {_playerIDLootLocker} playerIDLootLocker");
             }
             else
             {
@@ -227,7 +223,6 @@ public class LootLockerController : MonoBehaviour
             notGetResponse = false;
         });
         yield return new WaitWhile(() => notGetResponse);
-        //CountFrame.DebugLogUpdate(this, $"Finished the GetPlayerName()");
     }
 
     public IEnumerator SendScoreToLeaderBoard(int score)
@@ -240,7 +235,7 @@ public class LootLockerController : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log($"{this} : Successful : Was writen [{score}] score for Player [{_playerIDLootLocker}]");
+                //Debug.Log($"{this} : Successful : Was writen [{score}] score for Player [{_playerIDLootLocker}]");
                 NewResultWasSaved = true;
             }
             else
@@ -250,7 +245,6 @@ public class LootLockerController : MonoBehaviour
             notGetResponse = false;
         });
         yield return new WaitWhile(() => notGetResponse);
-        //CountFrame.DebugLogUpdate(this, $"Finished the SendScoreToLeaderBoard()");
     }
 
     public IEnumerator SetPlayerName(string newName)
@@ -261,7 +255,7 @@ public class LootLockerController : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log($"{this} : Successfully set {response.name} player name");
+                //Debug.Log($"{this} : Successfully set {response.name} player name");
                 _newNameWasSaved = true;
             }
             else
@@ -271,7 +265,6 @@ public class LootLockerController : MonoBehaviour
             notGetResponse = false;
         });
         yield return new WaitWhile(() => notGetResponse);
-        //CountFrame.DebugLogUpdate(this, $"Finished the SetPlayerName() _newNameWasSaved[{_newNameWasSaved}]");
     }
 
     public IEnumerator CoroutineGetScoreFromLeaderBoard(List<PlayerData> playerDatas, int count = 10, int after = 0)
@@ -284,7 +277,7 @@ public class LootLockerController : MonoBehaviour
             if (response.statusCode == 200)
             {
                 table = response.items;
-                Debug.Log($"{this} : Successfuly get {table.Length} records from LootLocker");
+                //Debug.Log($"{this} : Successfuly get {table.Length} records from LootLocker");
             }
             else
             {
@@ -354,7 +347,7 @@ public class LootLockerController : MonoBehaviour
         {
             if (response.success)
             {
-                Debug.Log($"{this} : Successfully {_sessionTokenLootLocker} EndSession");
+                //Debug.Log($"{this} : Successfully {_sessionTokenLootLocker} EndSession");
             }
             else
             {
@@ -363,7 +356,6 @@ public class LootLockerController : MonoBehaviour
             notGetResponse = false;
         });
         yield return new WaitWhile(() => notGetResponse);
-        //CountFrame.DebugLogUpdate(this, $"Finished the StopCurrentSession()");
     }
 }
 

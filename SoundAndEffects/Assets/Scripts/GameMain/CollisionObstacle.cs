@@ -15,7 +15,7 @@ public class CollisionObstacle : MonoBehaviour
 
     private void Awake()
     {
-        characterController = SingletonGame.Instance.GetCharacterController();
+        characterController = SingletonGame.Instance.GetCharacterManager();
     }
 
     /// <summary>

@@ -11,12 +11,13 @@ public class AudioControls : SingletonController<AudioControls>
 {
     #region NonSerializedFields
     public event Action MusicSwitchToNextClip;
-    public event Action MusicTurnOn;
+    public event Action MusicTurnOnOFF;
     #endregion
 
     private void Start()
     {
 #if OWNCONTROL
+        //Audio control use separated controller from Assets/Controls/MyControls.inputactions
         Debug.LogWarning($"Was Activated the own Audio control in [{this}] at [{this.gameObject.scene.name}] Scene");
 #endif
     }
@@ -28,7 +29,7 @@ public class AudioControls : SingletonController<AudioControls>
             MusicSwitchToNextClip.Invoke();
 
         if (Mouse.current.middleButton.wasPressedThisFrame)
-            MusicTurnOn.Invoke();
+            MusicTurnOnOFF.Invoke();
 #endif
     }
 }

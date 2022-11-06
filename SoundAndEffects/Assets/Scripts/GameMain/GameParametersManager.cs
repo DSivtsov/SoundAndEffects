@@ -10,13 +10,15 @@ public class GameParametersManager : MonoBehaviour
 {
 
     [Header("Game Complexity Jumps")]
-    [SerializeField] private ComplexitySO JumpComplexity;
+    [SerializeField] private ComplexitySO _gameComplexity;
+    [Tooltip("The array of ComplexitySO")]
+    [SerializeField] private ComplexitySO[] _arrGameComplexity;
     [Tooltip("The array of ForceJumpSO")]
-    [SerializeField] private ForceJumpSO[] arrForceJump;
+    [SerializeField] private ForceJumpSO[] _arrForceJump;
 
     [Header("Game Complexity Spacing Obstacles")]
     [Tooltip("Level up after this number of obstacles was spawned")]
-    [SerializeField] private int NumObstaclesUpLevel = 10;
+    [SerializeField] private int _numObstaclesUpLevel = 10;
     [Tooltip("The maximum spacing Obstacles at Game start at Level = 1")]
     [SerializeField] private float _maxMultiplier = 5;
     [Tooltip("The minimum spacing Obstacles at Selected Level and nexts")]
@@ -30,39 +32,34 @@ public class GameParametersManager : MonoBehaviour
     [SerializeField] private int FPS = 30;
 
     public event Action<int> LevelChanged;
-    private int countSpawnedAtThisLivel;
+    private int _countSpawnedAtThisLivel;
     public float Multiplier { get; private set; }
     public int Level { get; private set; }
     public int JumpComplexityMultiplier { get; private set; }
 
-    private CharacterManager characterController;
+    private CharacterManager _characterManager;
     /// <summary>
     /// Tha Base collection which used to create the _orderGameComplexityValues and the "ListGameComplexityValues", which will have the same order as this collection,
     /// becuase create by LINQ.Select() and therefore it can be used to get the ComplexitySO based on the position of the selected value in the ListGameComplexityValues in DropBox
     /// </summary>
     private List<ComplexitySO> _listGameComplexityValues;
     /// <summary>
-    /// The collection which used to get the index of the ComplexitySO in _listGameComplexityValues which will be the same as index of arrForceJump record which contains the same ComplexitySO value
+    /// The collection which used to get the index of the ComplexitySO in _listGameComplexityValues which will be the same as index of arrForceJump record which contains
+    /// the same ComplexitySO value
     /// </summary>
     private Dictionary<ComplexitySO, int> _idxGameComplexityValues = new Dictionary<ComplexitySO, int>();
 
     void Awake()
     {
+        _characterManager = SingletonGame.Instance.GetCharacterManager();
+
         Application.targetFrameRate = FPS;
-        _listGameComplexityValues = arrForceJump.Select((ForceJumpSO record) => record.Complexity).ToList();
-        for (int i = 0; i < _listGameComplexityValues.Count; i++)
-        {
-            _idxGameComplexityValues.Add(_listGameComplexityValues[i], i);
-        }
+        InitCompexityParameters();
     }
 
     private void Start()
     {
-        characterController = SingletonGame.Instance.GetCharacterController();
-        if (!characterController)
-            Debug.LogError($"Script {this.name} in {this.gameObject.scene.name} Scene not initialized");
         UpdateForceJumpForCurrentComplexity();
-
         ReInitParameters();
     }
 
@@ -70,15 +67,24 @@ public class GameParametersManager : MonoBehaviour
     private void OnValidate()
     {
         //Debug.Log($"OnValidate() : SetForceJumpForCurrentComplexity({CurrentComplexity})");
-        if (characterController)
+        if (_characterManager)
             UpdateForceJumpForCurrentComplexity();
+    }
+
+    private void InitCompexityParameters()
+    {
+        _listGameComplexityValues = _arrForceJump.Select((ForceJumpSO record) => record.Complexity).ToList();
+        for (int i = 0; i < _listGameComplexityValues.Count; i++)
+        {
+            _idxGameComplexityValues.Add(_listGameComplexityValues[i], i);
+        }
     }
 
     public void ReInitParameters()
     {
         Level = 1;
         LevelChanged.Invoke(Level);
-        countSpawnedAtThisLivel = 0;
+        _countSpawnedAtThisLivel = 0;
         UpdateLevelComplexity();
     }
 
@@ -88,17 +94,17 @@ public class GameParametersManager : MonoBehaviour
         ChangeJumpComplexity(_listGameComplexityValues[newValue]);
     };
 
-    public int GetInitialValueGameComplexity() => _idxGameComplexityValues[JumpComplexity];
+    public int GetInitialValueGameComplexity() => _idxGameComplexityValues[_gameComplexity];
 
     public List<string> GetListGameComplexityValues() => _listGameComplexityValues.Select(record => record.name).ToList();
 
     public void ChangeJumpComplexity(ComplexitySO complexitySO)
     {
-        JumpComplexity = complexitySO;
+        _gameComplexity = complexitySO;
         UpdateForceJumpForCurrentComplexity();
     }
 
-    public void AddNewSpawnedObstacle() => countSpawnedAtThisLivel++;
+    public void AddNewSpawnedObstacle() => _countSpawnedAtThisLivel++;
     private void IncreaseLevel() => Level++;
 
     /// <summary>
@@ -106,12 +112,12 @@ public class GameParametersManager : MonoBehaviour
     /// </summary>
     public void CheckAndUpdateLevelGame()
     {
-        if (countSpawnedAtThisLivel == NumObstaclesUpLevel)
+        if (_countSpawnedAtThisLivel == _numObstaclesUpLevel)
         {
             IncreaseLevel();
             LevelChanged.Invoke(Level);
             UpdateLevelComplexity();
-            countSpawnedAtThisLivel = 0;
+            _countSpawnedAtThisLivel = 0;
         }
     }
 
@@ -131,12 +137,12 @@ public class GameParametersManager : MonoBehaviour
     /// </summary>
     private void UpdateForceJumpForCurrentComplexity()
     {
-        ForceJumpSO item = arrForceJump[_idxGameComplexityValues[JumpComplexity]];
+        ForceJumpSO item = _arrForceJump[_idxGameComplexityValues[_gameComplexity]];
         //Debug.Log($"nameComplexity={JumpComplexity.name} [{_orderGameComplexityValues[JumpComplexity]}]" +
         //    $" {arrForceJump[_orderGameComplexityValues[JumpComplexity]].name}");
-        if (item.ItemForComplexity(JumpComplexity))
+        if (item.ItemForComplexity(_gameComplexity))
         {
-            characterController.SetForceJumpSO(item);
+            _characterManager.SetForceJumpSO(item);
             JumpComplexityMultiplier = item.JumpComplexityMultipler;
         }
     }

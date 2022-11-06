@@ -33,7 +33,7 @@ public class GameSceneManager : MonoBehaviour
         _graveStoneControl = SingletonGame.Instance.GetGraveStoneControl();
         _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
         _gameMainManager = MainManager.Instance;
-        _characterManager = SingletonGame.Instance.GetCharacterController();
+        _characterManager = SingletonGame.Instance.GetCharacterManager();
         _characterObject = _characterManager.gameObject;
         _playJukeBoxGameCollection = SingletonGame.Instance.GetPlayJukeBox();
 

@@ -32,7 +32,7 @@ public abstract class TopListElementBase
             _rootRecords = rootRecords;
             SetInstantiationParameters();
             InstantiateTopList();
-            Debug.Log($"CreateTableTopList() : Table for {rootRecords.parent.name} created");
+            //Debug.Log($"CreateTableTopList() : Table for {rootRecords.parent.name} created");
             TopListElementInited = true; 
         }
     }

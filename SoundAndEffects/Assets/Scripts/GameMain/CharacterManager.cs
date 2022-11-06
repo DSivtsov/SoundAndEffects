@@ -21,7 +21,6 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     [SerializeField] private ParticleSystem explosionNotDied;
     [SerializeField] private GameObject dirtSplatter;
     [SerializeField] private int ReactForceAtCollision = 2;
-    [SerializeField] private GameSceneManager gameSceneManager;
     /// <summary>
     /// Link to Text in Canvas
     /// </summary>
@@ -29,6 +28,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     #endregion
 
     #region NonSerializedFields
+    private GameSceneManager gameSceneManager;
     private CharacterCollisionGround checkPlayer;
     private bool WasPressedJump;
     //The current selected the difficulty level 
@@ -76,12 +76,8 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
 
     private void Awake()
     {
-        if (!gameSceneManager)
-            Debug.LogError($"{this} not linked to GameSceneManager");
+        gameSceneManager = SingletonGame.Instance.GetGameSceneManager();
         checkPlayer = SingletonGame.Instance.GetPlayerCollisionGround();
-        if (checkPlayer == null)
-            Debug.LogError($"{this} absent the <PlayerCollisionGround> module");
-
         characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);

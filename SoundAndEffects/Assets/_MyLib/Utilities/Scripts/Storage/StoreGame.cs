@@ -7,24 +7,12 @@ using System.Text;
 
 namespace GMTools.Manager
 {
-    [Flags]
-    public enum IOError : byte
-    {
-        NoError = 0b0,
-        FileNotFound = 0b1,
-        WrongFormat = 0b10
-    }
-    public interface IStore
-    {
-        public string[] Save();
-        public void Load(string[] streamArr);
-    }
 
     public class ObjectsPool
     {
-        public Dictionary<string, IStore> storeObjectsPool = new Dictionary<string, IStore>(StringComparer.Ordinal);
+        public Dictionary<string, IStoredObject> storeObjectsPool = new Dictionary<string, IStoredObject>(StringComparer.Ordinal);
 
-        public void AddObject(string guid, IStore obj)
+        public void AddObject(string guid, IStoredObject obj)
         {
             try
             {
@@ -64,7 +52,7 @@ namespace GMTools.Manager
                 //foreach (var item in ObjectsPool.storeObjectsPool)
                 foreach (var item in objectsPool.storeObjectsPool)
                 {
-                    string[] jsonArray = item.Value.Save();
+                    string[] jsonArray = item.Value.ToJsonBeforeSave();
                     //if (jsonArray == null || jsonArray.Length == 0)
                     if (jsonArray == null)
                     {
@@ -145,7 +133,7 @@ namespace GMTools.Manager
                                 try
                                 {
                                     //ObjectsPool.storeObjectsPool[guid].Load(jsonArray);
-                                    objectsPool.storeObjectsPool[guid].Load(jsonArray);
+                                    objectsPool.storeObjectsPool[guid].FromJsonAfterLoad(jsonArray);
                                 }
                                 catch (KeyNotFoundException e)
                                 {

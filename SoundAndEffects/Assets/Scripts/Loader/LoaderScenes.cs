@@ -15,7 +15,7 @@ public enum SceneName
     Game = 2
 }
 
-public class LoaderManager : MonoBehaviour
+public class LoaderScenes : MonoBehaviour
 {
     [SerializeField] private Texture[] arrLoadPictures;
     [SerializeField] private RawImage imageLoadPicture;
@@ -42,12 +42,13 @@ public class LoaderManager : MonoBehaviour
         imageLoadPicture.texture = arrLoadPictures[random.Next(0, arrLoadPictures.Length)];
         sliderLoad.value = 0;
         textAphorism.text = AphorismText.GetStrRandomAphorismText();
+        numberOperations = loadOrder.Length;
+        asyncOperations = new AsyncOperation[numberOperations];
     }
 
     public void LoadScenes()
     {
-        numberOperations = loadOrder.Length;
-        asyncOperations = new AsyncOperation[numberOperations];
+
 
         if (loadedAllAfterStartFirst)
             LoadAllAfterStartFirst();
@@ -203,5 +204,34 @@ public class LoaderManager : MonoBehaviour
     {
         AllScenesLoaded = true;
         MainManager.Instance.AllScenesLoaded();
+    }
+
+    public IEnumerator UnLoadScenes()
+    {
+        CountFrame.DebugLogUpdate(this, $"UnLoadScenes()");
+        bool waitUnloadScene = false;
+        for (int i = 0; i < numberOperations; i++)
+        {
+            int sceneBuildIdx = (int)loadOrder[i];
+            //Debug.Log($"[{i}] [{loadOrder[i]}] loaded={SceneManager.GetSceneByBuildIndex(sceneBuildIdx).isLoaded}");
+            if (SceneManager.GetSceneByBuildIndex(sceneBuildIdx).isLoaded)
+            {
+                waitUnloadScene = true;
+                asyncOperations[i] = SceneManager.UnloadSceneAsync(sceneBuildIdx, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+            }
+        }
+        if (waitUnloadScene)
+        {
+            bool finish;
+            do
+            {
+                yield return null;
+                finish = true;
+                for (int i = 0; i < numberOperations; i++)
+                {
+                    finish &= asyncOperations[i].isDone;
+                }
+            } while (!finish);
+        }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class RemoteTopListController : TopListController
 {
     private const int MaximumIterationForGetRemoteTopList = 500;
-    [Header("Acces to Remote Source")]
+    [Header("RemoteTopList Options")]
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private ConnectingToServer _connectingToServer;
 
@@ -21,7 +21,7 @@ public class RemoteTopListController : TopListController
         if (_lootLockerController.CurrentPlayMode != PlayMode.Offline)
         {
             StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
-            CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started"); 
+            //CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started"); 
         }
         else
             CountFrame.DebugLogUpdate(this, $"LoadAndShow skipped");

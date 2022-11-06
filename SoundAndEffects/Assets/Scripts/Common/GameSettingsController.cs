@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Manager;
 
-public class GameSettingsControllerSO : MonoBehaviour
+public class GameSettingsController : MonoBehaviour
 {
     //[SerializeField] private SectionGameSettingsController _sectionGameSettingsController;
     [SerializeField] private GameSettingsSO _defaultGameSettings;
     [NonSerialized] public GameSettingsSO _currentGameSettings;
     //private StoreObjectT<GameSettingsSO> _storeObjectT;
-    [SerializeField] private StoreGame _storeGame;
+    [SerializeField] private StoreObjectController _storeGameSettings;
     public bool GameSettingsInitialized { get; private set; }
 
     private void Awake()
@@ -32,12 +32,14 @@ public class GameSettingsControllerSO : MonoBehaviour
     public void SaveGameSettings()
     {
         //_storeObjectT.SetObjectsToSave(new GameSettingsSO[] { _currentGameSettings });
-        _storeGame.QuickSave();
+        _storeGameSettings.Save();
     }
 
     public void InitGameSettings()
     {
-        IOError error = _storeGame.QuickLoad();
+        //IOError error = _storeGameSettings.Load();
+        IOError error;
+        Debug.LogError("IOError error = _storeGameSettings.Load();");
         //GameSettingsSO[] loadedGameSetting = _storeObjectT.GetLoadedObjects();
         //if (error == IOError.NoError && loadedGameSetting.Length != 0)
         if (true)
@@ -61,10 +63,10 @@ public class GameSettingsControllerSO : MonoBehaviour
         switch (error)
         {
             case IOError.FileNotFound:
-                Debug.LogWarning($"{this} : Couldn't load the {_storeGame.GetNameFile()} file, will use the default settings");
+                Debug.LogWarning($"{this} : Couldn't load the {_storeGameSettings.GetNameFile()} file, will use the default settings");
                 break;
             case IOError.WrongFormat:
-                Debug.LogError($"{this} : QuickLoad() - Format of the [{_storeGame.GetNameFile()}] file is wrong. Restore interrupted");
+                Debug.LogError($"{this} : QuickLoad() - Format of the [{_storeGameSettings.GetNameFile()}] file is wrong. Restore interrupted");
                 break;
         }
     }

@@ -11,12 +11,12 @@ public class MainMenusSceneManager : MonoBehaviour
 {
 
     [SerializeField] private GameObject cameraMainMenus;
-    [SerializeField] private PlayJukeBox playJukeBoxMainMenus;
-    [SerializeField] private TopListController _topListController;
-    [SerializeField] private TopListController _remoteTopListController;
+    //[SerializeField] private PlayJukeBox playJukeBoxMainMenus;
+    [SerializeField] private LocalTopListController _localTopListController;
+    [SerializeField] private RemoteTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
-    [SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
+    //[SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
     [SerializeField] private Button _buttonStart;
     [Header("Demo Options")]
     [SerializeField] private bool _useStartCanvas;
@@ -31,7 +31,7 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private void Awake()
     {
-        //CountFrame.DebugLogUpdate(this, $"Awake()");
+        CountFrame.DebugLogUpdate(this, $"Awake()");
         _mainManager = MainManager.Instance;
         //Not extensively tested
         ButtonActions.LinkMenuSceneManager(this);
@@ -47,7 +47,7 @@ public class MainMenusSceneManager : MonoBehaviour
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
-            ActivateMusicMainMenus(true);
+            //ActivateMusicMainMenus(true);
             StartCoroutine(EmulatorGetStatusLoadingScenes());
             FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
@@ -65,7 +65,7 @@ public class MainMenusSceneManager : MonoBehaviour
     /// <param name="playerName"></param>
     public void CreateNewPlayerLootLocker(string playerName)
     {
-        if (_lootLockerController.SelectedPlayMode == PlayMode.Online)
+        if (_lootLockerController.CurrentPlayMode == PlayMode.Online)
         {
             _lootLockerController.CreateNewPlayerRecord(playerName); 
         }
@@ -77,8 +77,8 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private void Start()
     {
-        _gameSettingsControllerSO.InitGameSettings();
-        _topListController.InitialLoadTopList();
+        //_gameSettingsControllerSO.InitGameSettings();
+        _localTopListController.InitialLoadTopList();
         _remoteTopListController.InitialLoadTopList();
 #if UNITY_EDITOR
         if (_useStartCanvas)
@@ -122,21 +122,21 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void StartGame(string playerName) => _mainManager?.FromMenusToStartGame(playerName);
 
-    public void ResetTopList() => _topListController.ResetTopList();
+    public void ResetTopList() => _localTopListController.ResetTopList();
 
-    public void ActivateMusicMainMenus(bool activate = true)
-    {
-        if (activate)
-        {
-            playJukeBoxMainMenus.SetJukeBoxActive(true);
-            playJukeBoxMainMenus.TurnOn(true);
-        }
-        else
-        {
-            playJukeBoxMainMenus.TurnOn(false);
-            playJukeBoxMainMenus.SetJukeBoxActive(false);
-        }
-    }
+    //public void ActivateMusicMainMenus(bool activate = true)
+    //{
+    //    if (activate)
+    //    {
+    //        playJukeBoxMainMenus.SetJukeBoxActive(true);
+    //        playJukeBoxMainMenus.TurnOn(true);
+    //    }
+    //    else
+    //    {
+    //        playJukeBoxMainMenus.TurnOn(false);
+    //        playJukeBoxMainMenus.SetJukeBoxActive(false);
+    //    }
+    //}
 
     public void ActivateMainMenusCamera(bool activate)
     {
@@ -146,7 +146,7 @@ public class MainMenusSceneManager : MonoBehaviour
     public void AddNewCharacterData(PlayerData newCharacterData)
     {
         Debug.Log(newCharacterData);
-        _topListController.AddCharacterResult(newCharacterData);
+        _localTopListController.AddCharacterResult(newCharacterData);
         _remoteTopListController.AddCharacterResult(newCharacterData);
     }
 }

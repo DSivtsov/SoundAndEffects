@@ -25,7 +25,7 @@ public class JukeBoxSO : AudioEvent
     [Tooltip("The time of mixing the end of the current with begin of the next audioclip")]
     [Range(0, 3), SerializeField] private float crossDeltaTime = 0;
     [Tooltip("Delay before start music for loading first audioclip")]
-    [Range(0, 5), SerializeField] private float startDelay = 2;
+    [Range(0, 15), SerializeField] private float startDelay = 2;
     [Header("JukeBoxMode")]
     [Tooltip("Begin - play only begin of clip, End - play only end of clip")]
     [SerializeField] private JukeBoxMode playMode = JukeBoxMode.Full;
@@ -168,7 +168,8 @@ public class JukeBoxSO : AudioEvent
             ShiftStartPosition(nextAudioSource, timeFromEnd);
         }
         nextAudioSource.PlayScheduled(timeScheduled);
-        //Debug.Log($"flip[{flip}] [{audioSources[flip].GetInstanceID()}]:PlayScheduled clipName[{audioSources[flip].clip.name} at dspTime{AudioSettings.dspTime:f3}]");
+        //Debug.Log($"DspTime={AudioSettings.dspTime:f0} flip[{flip}] [{audioSources[flip].GetInstanceID()}]:PlayScheduled clipName[{audioSources[flip].clip.name}" +
+        //    $" at dspTime={timeScheduled:f0}]");
         return ClipLenghtJukeBoxMode(nextAudioSource.clip);
     }
 

@@ -422,12 +422,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e733dbf6ff5f3644a5fb3ad9b8b7d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpComplexity: {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
-  arrForceJump:
+  _gameComplexity: {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
+  _arrGameComplexity:
+  - {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
+  - {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
+  - {fileID: 11400000, guid: 393e55977e1ab304eb0485e8407547e5, type: 2}
+  _arrForceJump:
   - {fileID: 11400000, guid: 155a3c8b877a86a4f9e4f0a77288fca4, type: 2}
-  - {fileID: 11400000, guid: 23381201e1e709847a743724e2bcba2f, type: 2}
   - {fileID: 11400000, guid: f9f99f7d612f5c04db07f8dd00f012b2, type: 2}
-  NumObstaclesUpLevel: 9
+  - {fileID: 11400000, guid: 23381201e1e709847a743724e2bcba2f, type: 2}
+  _numObstaclesUpLevel: 10
   _maxMultiplier: 5
   _minMultiplier: 0.7
   _levelMinMultiplier: 8
@@ -555,7 +559,6 @@ MonoBehaviour:
   explosionNotDied: {fileID: 6526246082315045664, guid: 36c19ec006b76894ba40afbf54c4c035, type: 3}
   dirtSplatter: {fileID: 1326964120}
   ReactForceAtCollision: 40
-  gameSceneManager: {fileID: 1415545850}
   gameCanvasTurnOffPressEnter: {fileID: 844286562}
 --- !u!1 &250114422
 GameObject:
@@ -3553,7 +3556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10d19160f1a30c40a287e6f0fdab0c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterController: {fileID: 209093118}
+  _characterManager: {fileID: 209093118}
   _movingWorldSO: {fileID: 11400000, guid: 77718c14ea80fcb46af3bc5ad99ac6fd, type: 2}
   _mainSpawner: {fileID: 2081359988}
   _characterDataCtrl: {fileID: 630604353}

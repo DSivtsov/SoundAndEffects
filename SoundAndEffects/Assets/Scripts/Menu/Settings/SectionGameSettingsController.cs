@@ -8,7 +8,7 @@ public class SectionGameSettingsController : MonoBehaviour, ISectionControllerAc
 {
     [SerializeField] private SettingsSectionManager _sectionManagerOptions;
     [SerializeField] private SectionObject _gameSection;
-    [SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
+    [SerializeField] private GameSettingsController _gameSettingsControllerSO;
 
     private DropdownOption<SectionGameSettingsController> _gameComplexityField;
     private ToggleGroupEnumController<PlayMode, SectionGameSettingsController> _playModeToggleGroup;

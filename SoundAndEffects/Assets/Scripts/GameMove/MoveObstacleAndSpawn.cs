@@ -64,7 +64,7 @@ public class MoveObstacleAndSpawn : MonoBehaviour
         //The all movement going toward by negative Axe X therefore the all values of positions is negative
         worldPositionXDistanceAfter = initRigidbodyWorldPositionX - spawnerType.DistanceAfter;
         //CountFrame.DebugLogFixedUpdate(this, $"worldPositionXDistanceAfter={worldPositionXDistanceAfter}={initRigidbodyWorldPositionX} - {spawnerType.DistanceAfter} ");
-        _characterInitLocPosX = SingletonGame.Instance.GetCharacterController().GetCharacterInitWordPosX() - initRigidbodyWorldPositionX;
+        _characterInitLocPosX = SingletonGame.Instance.GetCharacterManager().GetCharacterInitWordPosX() - initRigidbodyWorldPositionX;
     }
 
     private void Start()
