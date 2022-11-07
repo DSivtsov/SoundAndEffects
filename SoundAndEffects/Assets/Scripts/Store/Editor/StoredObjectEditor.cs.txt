@@ -1,0 +1,22 @@
+using UnityEngine;
+using UnityEditor;
+using GMTools.Manager;
+
+[CustomEditor(typeof(StoredObject), true)]
+public class StoredObjectEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        StoredObject storedObject = target as StoredObject;
+        DrawDefaultInspector();
+        EditorGUILayout.Space();
+        //To exclude the possibility to create the temp GameObject in the process of run the Play mode
+        //EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
+        EditorGUI.BeginDisabledGroup(false);
+        if (GUILayout.Button("Init StoreObjects"))
+        {
+            storedObject.InitStoreObjects();
+        }
+        EditorGUI.EndDisabledGroup();
+    }
+}

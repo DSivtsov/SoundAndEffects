@@ -1,23 +1,18 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class LoaderScenesManager : MonoBehaviour
+public class LoaderSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject _loaderCamera;
-    //[SerializeField] private LoaderScenes _loaderScenes;
-    //[SerializeField] private PlayJukeBox _playJukeBoxLoaderMenus;
+    [SerializeField] private LoaderScenes _loaderScenes;
+    [SerializeField] private PlayJukeBox _playJukeBoxLoaderMenus;
+    [SerializeField] private GameSettingsController _gameSettingsController;
 
-    private LoaderScenes _loaderScenes;
-    private PlayJukeBox _playJukeBoxLoaderMenus;
     private const bool MakePauseBeforeStartLoad = true;
 
     private void Awake()
     {
-        _loaderScenes = FindObjectOfType<LoaderScenes>();
-        _playJukeBoxLoaderMenus = FindObjectOfType<PlayJukeBox>();
         MainManager _gameMainManager = MainManager.Instance;
         if (_gameMainManager)
         {
@@ -27,6 +22,11 @@ public class LoaderScenesManager : MonoBehaviour
             Debug.LogError($"{this} not linked to GameMainManager");
         ActivateLoaderCamera(true);
         ActivateMusicLoaderMenus(true);
+    }
+    private void Start()
+    {
+        StartCoroutine(StartLoadScenes());
+        _gameSettingsController.InitGameSettings();
     }
 
     //Postpone the start of loading
@@ -41,7 +41,6 @@ public class LoaderScenesManager : MonoBehaviour
             do
             {
                 //CountFrame.DebugLogUpdate(this, $"IsJukeBoxPlaying [{_playJukeBoxLoaderMenus.GetIsJukeBoxPlaying()}]");
-                //yield return new WaitForSeconds(_pauseTime);
                 yield return null;
             } while (!_playJukeBoxLoaderMenus.GetIsJukeBoxPlaying());
         }

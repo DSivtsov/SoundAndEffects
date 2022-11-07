@@ -1,3 +1,0 @@
-﻿1581c396-7c43-40d7-8507-96d39e81c3b6
-1
-{"_complexityGame":{"instanceID":28924},"_usedPlayMode":2,"_notCopyToGlobal":false,"_globalDefaultTopList":true,"_masterVolume":0.0,"_musicVolume":0.0,"_effectVolume":-25.0,"_musicSequenceType":1}

@@ -13,7 +13,7 @@ namespace GMTools.Manager
         {
             if (storeScriptableObjectData != null)
             {
-                Debug.Log($"StoreMonoBehaviour : QuickLoad for [{gameObject.name}]");
+                Debug.Log($"StoreScriptableObject : FromJsonAfterLoad for [{gameObject.name}]");
                 for (int i = 0; i < storeScriptableObjectData.Length; i++)
                 {
                     JsonUtility.FromJsonOverwrite(streamArr[i], storeScriptableObjectData[i]);
@@ -29,7 +29,7 @@ namespace GMTools.Manager
         {
             if (storeScriptableObjectData != null)
             {
-                Debug.Log($"StoreMonoBehaviour : QuickSave for [{gameObject.name}]");
+                Debug.Log($"StoreScriptableObject : ToJsonBeforeSave for [{gameObject.name}]");
                 streamStringArr = new string[storeScriptableObjectData.Length];
                 for (int i = 0; i < storeScriptableObjectData.Length; i++)
                 {

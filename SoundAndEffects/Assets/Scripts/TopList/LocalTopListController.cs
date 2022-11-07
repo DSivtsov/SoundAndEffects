@@ -1,55 +1,23 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Manager;
 
-//public enum TopListSource
-//{
-//    Demo,
-//    Local,
-//    Remote
-//}
-
 public class LocalTopListController : TopListController
 {
-    //[SerializeField] private Transform _rootRecords;
-
-
     [Header("LocalTopList Options")]
     [SerializeField] private TopListSource _usedTopListSource = TopListSource.Local;
-    [SerializeField] private StoredPlainPlayerData _storePlayerData;
+    [SerializeField] private StoreObjectController _storeObjectController;
     ///// <summary>
     ///// Use the IComparable<T> from CharacterData
     ///// </summary>
     [SerializeField] protected bool _autoSortByScore = true;
-    //[SerializeField] bool _loadAndShowAtStart = true;
-
-    //protected List<PlayerData> _topList;
-    //protected TopListElementBase _topListElement;
-    private StoreObjectController _storeObjectController;
-
-    //public bool InitCharacterData { get; protected set; }
-
-    //protected void Awake()
-    //{
-    //    _topListElement = new TopListGroupElement();
-    //    InitCharacterData = false;
-    //}
+    
+    private StoredPlainClass<PlayerData> _storedPlainPlayerData;
 
     private void Start()
     {
-        _storeObjectController = _storePlayerData.GetStoreObjectController();
+        _storedPlainPlayerData = (StoredPlainClass<PlayerData>)_storeObjectController.GetStoredObject();
     }
-
-    //public void InitialLoadTopList()
-    //{
-    //    _topListElement.CreateTableTopList(_rootRecords);
-    //    if (_loadAndShowAtStart)
-    //    {
-    //        LoadAndShow();
-    //    }
-    //}
 
     protected override void LoadAndShow(bool multiAsyncOperations = true)
     {
@@ -62,7 +30,7 @@ public class LocalTopListController : TopListController
     /// </summary>
     public void SaveTopList()
     {
-        _storePlayerData.SetObjectsToSave(_topList.ToArray());
+        _storedPlainPlayerData.SetObjectsToSave(_topList.ToArray());
         IOError error = _storeObjectController.Save();
         if (error != IOError.NoError)
             Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()} Save breaked");
@@ -125,8 +93,7 @@ public class LocalTopListController : TopListController
                 IOError error = _storeObjectController.Load();
                 if (error == IOError.NoError)
                 {
-                    //Debug.Log($"GetLoadedObjects().Length=[{_storePlayerData}]");
-                    _topList = new List<PlayerData>(_storePlayerData.GetLoadedObjects()); 
+                    _topList = new List<PlayerData>(_storedPlainPlayerData.GetLoadedObjects()); 
                 }
                 else
                 {
@@ -136,35 +103,6 @@ public class LocalTopListController : TopListController
         }
         ActivateAndCheckTopList();
     }
-
-    //private void ErrorLoadTopList(IOError error)
-    //{
-    //    switch (error)
-    //    {
-    //        case IOError.FileNotFound:
-    //            Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()}] file which stores the local TopList, not found will be created new at first Save");
-    //            break;
-    //        case IOError.WrongFormat:
-    //            Debug.LogError($"{this} : [{_storeObjectController}] Load() - Format of the [{_storeObjectController.GetNameFile()}] file is wrong. Restore interrupted");
-    //            break;
-    //        case IOError.NotInitilized:
-    //            Debug.LogError($"{this} : [{_storeObjectController}] Load() - _isStoreObjectNotLinked ==  true");
-    //            break;
-    //    }
-    //}
-
-    //protected void ActivateAndCheckTopList(bool activate = true)
-    //{
-    //    if (activate && _topList.Count != 0)
-    //    {
-    //        _topListElement.SetUsedTopList(_topList);
-    //        InitCharacterData = true;
-    //    }
-    //    else
-    //    {
-    //        InitCharacterData = false;
-    //    }
-    //}
 
     /// <summary>
     /// Fill the _toplist from random generated a Demo data 
@@ -182,7 +120,6 @@ public class LocalTopListController : TopListController
             //Test Data for testing interface
             //distance = random.Next(1, 600);
             //score = random.Next(1,999999);
-
             //Test Data for testing Game Logic
             distance = random.Next(1, 300);
             score = random.Next(1, 75);

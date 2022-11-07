@@ -1,7 +1,0 @@
-﻿cce4e624-44af-40de-8ddd-c62fce7fff23
-5
-{"_userName":"Alfa23","_summaryDistance":279,"_summaryScore":95}
-{"_userName":"2252679","_summaryDistance":101,"_summaryScore":53}
-{"_userName":"Alfa23","_summaryDistance":94,"_summaryScore":34}
-{"_userName":"Deniss12346","_summaryDistance":21,"_summaryScore":0}
-{"_userName":"Deniss12346","_summaryDistance":162,"_summaryScore":32}

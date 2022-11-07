@@ -18,33 +18,11 @@ namespace GMTools.Manager
      * Requiments: The main class which manager a object positionin must implement the interface ILoadData
      * 
      */
-    [ExecuteInEditMode]
     public abstract class StoredObject : MonoBehaviour, IStoredObject
     {
-        private StoreObjectController _storeObjectController;
-
-        public StoreObjectController GetStoreObjectController() => _storeObjectController;
         protected string[] streamStringArr;
 
-        protected void Awake()
-        {
-            if (Application.isPlaying)
-            {
-                InitStoreObjects();
-            }
-        }
-
-        protected virtual void InitStoreObjects()
-        {
-            _storeObjectController = GetComponent<StoreObjectController>();
-            Debug.Log($"Store : Start() - SetStoreObject({this.name}) for {_storeObjectController.name}");
-            _storeObjectController.SetIStoreObject(this);
-        }
-
-        public override string ToString()
-        {
-            return gameObject.name;
-        }
+        public override string ToString() => gameObject.name;
 
         public abstract string[] ToJsonBeforeSave();
         public abstract void FromJsonAfterLoad(string[] streamStringArr);

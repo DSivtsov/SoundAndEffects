@@ -505,7 +505,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534669902
 GameObject:
@@ -695,7 +695,53 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &825053771
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 825053773}
+  - component: {fileID: 825053772}
+  m_Layer: 0
+  m_Name: DemoOptions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &825053772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825053771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75fb99c7790646449851f353f6a695e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _turnOffInBuild: 1
+  _activate: 1
+  _characterHealth: 1
+--- !u!4 &825053773
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825053771}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &867799154
 GameObject:
@@ -727,6 +773,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _loaderCamera: {fileID: 1423803072}
+  _loaderScenes: {fileID: 1816536148}
+  _playJukeBoxLoaderMenus: {fileID: 534669907}
+  _gameSettingsController: {fileID: 1781622918}
 --- !u!4 &867799156
 Transform:
   m_ObjectHideFlags: 0
@@ -782,7 +831,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1024631722
 GameObject:
@@ -812,7 +861,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1195926465
 GameObject:
@@ -855,7 +904,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1325481893
 GameObject:
@@ -989,7 +1038,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1740475988
 GameObject:
@@ -1034,7 +1083,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1781622917
 GameObject:
@@ -1046,10 +1095,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1781622919}
   - component: {fileID: 1781622918}
-  - component: {fileID: 1781622921}
-  - component: {fileID: 1781622920}
   m_Layer: 0
-  m_Name: GameSettingsControllerSO
+  m_Name: GameSettingsController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1067,8 +1114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4217c01cc6f2d60499ffede03ad53a17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultGameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
-  _storeGameSettings: {fileID: 1781622920}
+  _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
+  _nameFile: GameSettingsSO.txt
+  _nameFileDefault: GameSettingsSODefault.txt
 --- !u!4 &1781622919
 Transform:
   m_ObjectHideFlags: 0
@@ -1081,34 +1129,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1781622920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1781622917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4330735a4c7597445be463e7394d1053, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameFile: SettingsSO.txt
---- !u!114 &1781622921
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1781622917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0b3604b6a0717141b1ea2853d8288db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storeScriptableObjectData: []
 --- !u!1 &1816536147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,7 +1215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6eb223f6b4b1614da366aa3018ac2f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characterHealth: 1
 --- !u!4 &1877477807
 Transform:
   m_ObjectHideFlags: 0
@@ -1206,7 +1227,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8986764705456280606
 PrefabInstance:

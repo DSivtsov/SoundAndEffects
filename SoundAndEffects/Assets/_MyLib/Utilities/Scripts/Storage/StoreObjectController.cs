@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
@@ -27,10 +25,20 @@ namespace GMTools.Manager
         private IStoredObject _storedObject;
         private bool _storeObjectControllerNotLinked = true;
 
-        public void SetIStoreObject(IStoredObject storedObject)
+        public StoredObject GetStoredObject() => (StoredObject)_storedObject;
+
+        private void Awake()
         {
-            _storedObject = storedObject;
-            _storeObjectControllerNotLinked = false;
+            SetIStoreObject();
+        }
+
+        public void SetIStoreObject()
+        {
+            _storedObject = GetComponent<StoredObject>();
+            if (_storedObject != null)
+            {
+                _storeObjectControllerNotLinked = false; 
+            }
         }
 
         public string GetNameFile() => nameFile;
@@ -82,7 +90,6 @@ namespace GMTools.Manager
             using (StreamReader sr = new StreamReader(nameFile, Encoding.UTF8, false, 1024))
             {
                 string str = sr.ReadLine();
-                //string guid = "";
                 string[] jsonArray = default(string[]);
                 byte numElements = 0;
                 byte idx = 0;

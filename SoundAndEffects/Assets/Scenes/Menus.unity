@@ -2122,8 +2122,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rootRecords: {fileID: 1550253215}
   _loadAndShowAtStart: 1
-  _usedTopListSource: 0
-  _storePlayerData: {fileID: 1949199571}
+  _usedTopListSource: 1
+  _storeObjectController: {fileID: 1949199569}
   _autoSortByScore: 1
 --- !u!4 &177328801
 Transform:
@@ -18051,7 +18051,6 @@ MonoBehaviour:
   _remoteTopListController: {fileID: 1481363661}
   _lootLockerController: {fileID: 298108476}
   _playerDataController: {fileID: 1829886749}
-  _gameSettingsControllerSO: {fileID: 0}
   _buttonStart: {fileID: 979888446}
   _useStartCanvas: 0
   _startCanvasName: 2

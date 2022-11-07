@@ -11,12 +11,10 @@ public class MainMenusSceneManager : MonoBehaviour
 {
 
     [SerializeField] private GameObject cameraMainMenus;
-    //[SerializeField] private PlayJukeBox playJukeBoxMainMenus;
     [SerializeField] private LocalTopListController _localTopListController;
     [SerializeField] private RemoteTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
-    //[SerializeField] private GameSettingsControllerSO _gameSettingsControllerSO;
     [SerializeField] private Button _buttonStart;
     [Header("Demo Options")]
     [SerializeField] private bool _useStartCanvas;
@@ -77,7 +75,6 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private void Start()
     {
-        //_gameSettingsControllerSO.InitGameSettings();
         _localTopListController.InitialLoadTopList();
         _remoteTopListController.InitialLoadTopList();
 #if UNITY_EDITOR

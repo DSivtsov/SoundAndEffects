@@ -9,17 +9,12 @@ namespace GMTools.Manager
     /// Load and Save does to/from the local storage T[] _arrObjects. Use GetLoadedObjects() and SetObjectsToSave() to get/set data from this storage 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class StoredPlainClass<T> : StoredObject where T : class
     {
         protected T[] _arrObjects =  default(T[]);
         [ReadOnly]
-        [SerializeField] private string _storedClass;
-
-        private void Start()
-        {
-            _storedClass = typeof(T).Name;
-        }
+        [SerializeField] private string _storedClass = typeof(T).Name;
 
         public T[] GetLoadedObjects()
         {

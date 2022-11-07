@@ -81,5 +81,3 @@ crashlytics-build.properties
 
 /UserSettings/EditorUserSettings.asset
 /*.txt
-
-#/Assets/OdinSerializer*

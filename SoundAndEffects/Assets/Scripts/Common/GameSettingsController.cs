@@ -3,71 +3,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GMTools.Manager;
+using GMTools;
+using System.IO;
 
 public class GameSettingsController : MonoBehaviour
 {
-    //[SerializeField] private SectionGameSettingsController _sectionGameSettingsController;
-    [SerializeField] private GameSettingsSO _defaultGameSettings;
-    [NonSerialized] public GameSettingsSO _currentGameSettings;
-    //private StoreObjectT<GameSettingsSO> _storeObjectT;
-    [SerializeField] private StoreObjectController _storeGameSettings;
-    public bool GameSettingsInitialized { get; private set; }
-
-    private void Awake()
+    [SerializeField] private GameSettingsSO _gameSettings;
+    [SerializeField, ReadOnly] private string _nameFile = "GameSettingsSO.txt";
+    [SerializeField, ReadOnly] private string _nameFileDefault = "GameSettingsSODefault.txt";
+    public GameSettingsSO GameSettings => _gameSettings;
+    private bool _initGameSettings = false;
+    public void Load()
     {
-        _currentGameSettings = ScriptableObject.CreateInstance<GameSettingsSO>();
-        GameSettingsInitialized = false;
-        //_storeObjectT = GetComponent<StoreObjectT<GameSettingsSO>>();
-        //_storeGame = _storeObjectT.GetStoreGameObject();
+        if (!_initGameSettings)
+            return;
+        if (File.Exists(_nameFile))
+            OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFile);
+        else
+            Debug.LogWarning($"{this} : Load() : {_nameFile} not exists ");
     }
 
-    //public void Test()
-    //{
-    //    Debug.Log($"_defaultGameSettings.PlayMode={_defaultGameSettings.UsedPlayMode} {(int)_defaultGameSettings.UsedPlayMode}");
-    //    Debug.Log($"_currentGameSettings.PlayMode={_currentGameSettings.UsedPlayMode} {(int)_currentGameSettings.UsedPlayMode}");
-    //    //Debug.Log($"_currentGameSettings={_currentGameSettings}");
-    //    _sectionGameSettingsController.SetValues(_currentGameSettings.UsedPlayMode, _currentGameSettings);
-    //}
-
-    public void SaveGameSettings()
+    public void Save()
     {
-        //_storeObjectT.SetObjectsToSave(new GameSettingsSO[] { _currentGameSettings });
-        _storeGameSettings.Save();
+        if (_initGameSettings)
+            OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFile);
+        else
+            Debug.LogWarning($"{this} : Save() : _initGameSettings == false");
     }
 
     public void InitGameSettings()
     {
-        //IOError error = _storeGameSettings.Load();
-        IOError error;
-        Debug.LogError("IOError error = _storeGameSettings.Load();");
-        //GameSettingsSO[] loadedGameSetting = _storeObjectT.GetLoadedObjects();
-        //if (error == IOError.NoError && loadedGameSetting.Length != 0)
-        if (true)
+        if (_gameSettings)
         {
-            //_currentGameSettings = _storeObjectT.GetLoadedObjects()[0];
-            _currentGameSettings = _defaultGameSettings;
-            Debug.Log(_currentGameSettings);
+            OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFileDefault);
+            _initGameSettings = true;
+            Load();
+            CountFrame.DebugLogUpdate(this, "InitGameSettings() fnished");
         }
         else
-        {
-            ErrorLoadTopList(error);
-            _currentGameSettings = _defaultGameSettings;
-            Debug.Log(_currentGameSettings);
-        }
-        Debug.Log(_currentGameSettings.ComplexityGame);
-        GameSettingsInitialized = true;
+            Debug.LogError($"{this} : InitGameSettings() : _gameSettings == null");
     }
 
-    private void ErrorLoadTopList(IOError error)
+    public void Reset()
     {
-        switch (error)
-        {
-            case IOError.FileNotFound:
-                Debug.LogWarning($"{this} : Couldn't load the {_storeGameSettings.GetNameFile()} file, will use the default settings");
-                break;
-            case IOError.WrongFormat:
-                Debug.LogError($"{this} : QuickLoad() - Format of the [{_storeGameSettings.GetNameFile()}] file is wrong. Restore interrupted");
-                break;
-        }
+        if (_initGameSettings)
+            OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFileDefault);
+        else
+            Debug.LogWarning($"{this} : Reset() : _initGameSettings == false");
     }
 }
