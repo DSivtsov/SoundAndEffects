@@ -1,2 +1,2 @@
 ﻿using GMTools.Menu;
-public class ToggleGroupYesNo : ToggleGroup<YesNo> { }
+public class ToggleGroupYesNo : ToggleGroupEnum<YesNoToggleEnum> { }

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe46703a1278314daf8607386394dc6, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  _complexityGame: {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
+  _complexityGame: {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
   _usedPlayMode: 1
-  _notCopyToGlobal: 0
-  _globalDefaultTopList: 1
+  _notCopyToGlobal: 1
+  _byDefaultShowGlobalTopList: 1
   _masterVolume: 0
   _musicVolume: 0
   _effectVolume: -25

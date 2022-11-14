@@ -44,7 +44,7 @@ namespace GMTools.Manager
             if (streamStringArr.Length != 0)
             {
                 _arrObjects = new T[streamStringArr.Length];
-                Debug.Log($"StoreObjectT : Load() for [{gameObject.name}]");
+                //Debug.Log($"StoreObjectT : Load() for [{gameObject.name}]");
                 for (int i = 0; i < _arrObjects.Length; i++)
                 {
                     _arrObjects[i] = JsonUtility.FromJson<T>(streamStringArr[i]);

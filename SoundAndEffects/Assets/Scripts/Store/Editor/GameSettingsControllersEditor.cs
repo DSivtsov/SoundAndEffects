@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEditor;
 using GMTools.Manager;
 
-[CustomEditor(typeof(GameSettingsController), true)]
+[CustomEditor(typeof(GameSettingsSOController), true)]
 public class GameSettingsControllersEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        GameSettingsController gameSettingsController = target as GameSettingsController;
+        GameSettingsSOController gameSettingsController = target as GameSettingsSOController;
         DrawDefaultInspector();
 
         EditorGUILayout.Space();
@@ -40,7 +40,7 @@ public class GameSettingsControllersEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Reset data"))
         {
-            gameSettingsController.Reset();
+            gameSettingsController.LoadDefault();
         }
         EditorGUI.EndDisabledGroup();
 
@@ -48,7 +48,7 @@ public class GameSettingsControllersEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Show data"))
         {
-            Debug.Log(gameSettingsController.GameSettings.ToString());
+            gameSettingsController.ShowData();
         }
         EditorGUI.EndDisabledGroup();
     }

@@ -422,11 +422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e733dbf6ff5f3644a5fb3ad9b8b7d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
   _gameComplexity: {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
-  _arrGameComplexity:
-  - {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
-  - {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
-  - {fileID: 11400000, guid: 393e55977e1ab304eb0485e8407547e5, type: 2}
   _arrForceJump:
   - {fileID: 11400000, guid: 155a3c8b877a86a4f9e4f0a77288fca4, type: 2}
   - {fileID: 11400000, guid: f9f99f7d612f5c04db07f8dd00f012b2, type: 2}
@@ -3750,7 +3747,6 @@ MonoBehaviour:
   _jukeBox: {fileID: 11400000, guid: f0529c8dec6022b4bb7c80c96b766306, type: 2}
   _mixerGroup: {fileID: 1596362716689037745, guid: 02c9cfcf54be38642ae0fd325220bae6, type: 2}
   _mixerGroup2: {fileID: -1741744975057436312, guid: 02c9cfcf54be38642ae0fd325220bae6, type: 2}
-  _playAtAwake: 0
   _sourcePriority: 0
   _jukeBoxActive: 0
   jukeBoxCollections:

@@ -38,7 +38,8 @@ public class AudioOptionsController : MonoBehaviour, ISectionControllerAction
     {
         _audioVolumeOptions.InitVolumeControls();
         _sectionManagerOptions.LinkToSectionActions(_audioSection.NameSection, this);
-        StartCoroutine(InitMusicOrderOptionCoroutine());
+        Debug.LogError($"//StartCoroutine(InitMusicOrderOptionCoroutine());");
+        //StartCoroutine(InitMusicOrderOptionCoroutine());
     }
     /// <summary>
     /// InitMusicOrderOptionCoroutine() postpone the FillArrPlayJukeBox() till the all Scenes will loaded

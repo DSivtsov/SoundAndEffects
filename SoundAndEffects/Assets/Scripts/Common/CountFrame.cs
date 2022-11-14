@@ -44,7 +44,7 @@ public class CountFrame : MonoBehaviour
     /// </summary>
     /// <param name="_this"></param>
     /// <param name="str"></param>
-    /// <param name="UpdateFramePeriod">data output period</param>
+    /// <param name="UpdateFramePeriod">data output period by frame count</param>
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
     public static void DebugLogUpdate(MonoBehaviour _this, string str, int UpdateFramePeriod)
     {

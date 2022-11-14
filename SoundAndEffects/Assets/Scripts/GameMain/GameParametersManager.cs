@@ -8,11 +8,11 @@ using UnityEngine.Events;
 /// </summary>
 public class GameParametersManager : MonoBehaviour
 {
-
-    [Header("Game Complexity Jumps")]
-    [SerializeField] private ComplexitySO _gameComplexity;
-    [Tooltip("The array of ComplexitySO")]
-    [SerializeField] private ComplexitySO[] _arrGameComplexity;
+    [SerializeField] private GameSettingsSO _gameSettings;
+    //[Header("Game Complexity Jumps")]
+    //[SerializeField] private ComplexitySO _gameComplexity;
+    //[Tooltip("The array of ComplexitySO")]
+    //[SerializeField] private ComplexitySO[] _arrGameComplexity;
     [Tooltip("The array of ForceJumpSO")]
     [SerializeField] private ForceJumpSO[] _arrForceJump;
 
@@ -38,11 +38,12 @@ public class GameParametersManager : MonoBehaviour
     public int JumpComplexityMultiplier { get; private set; }
 
     private CharacterManager _characterManager;
+    private bool _checkedArrForceJump = false;
     /// <summary>
     /// Tha Base collection which used to create the _orderGameComplexityValues and the "ListGameComplexityValues", which will have the same order as this collection,
     /// becuase create by LINQ.Select() and therefore it can be used to get the ComplexitySO based on the position of the selected value in the ListGameComplexityValues in DropBox
     /// </summary>
-    private List<ComplexitySO> _listGameComplexityValues;
+    //private List<ComplexitySO> _listGameComplexityValues;
     /// <summary>
     /// The collection which used to get the index of the ComplexitySO in _listGameComplexityValues which will be the same as index of arrForceJump record which contains
     /// the same ComplexitySO value
@@ -54,12 +55,14 @@ public class GameParametersManager : MonoBehaviour
         _characterManager = SingletonGame.Instance.GetCharacterManager();
 
         Application.targetFrameRate = FPS;
-        InitCompexityParameters();
+        //InitCompexityParameters();
+        CheckArrForceJump();
     }
+
 
     private void Start()
     {
-        UpdateForceJumpForCurrentComplexity();
+        UpdateJumpComplexityMultiplie();
         ReInitParameters();
     }
 
@@ -68,17 +71,32 @@ public class GameParametersManager : MonoBehaviour
     {
         //Debug.Log($"OnValidate() : SetForceJumpForCurrentComplexity({CurrentComplexity})");
         if (_characterManager)
-            UpdateForceJumpForCurrentComplexity();
+            UpdateJumpComplexityMultiplie();
     }
 
-    private void InitCompexityParameters()
+    private void CheckArrForceJump()
     {
-        _listGameComplexityValues = _arrForceJump.Select((ForceJumpSO record) => record.Complexity).ToList();
-        for (int i = 0; i < _listGameComplexityValues.Count; i++)
+        if (_arrForceJump.Length == 0)
         {
-            _idxGameComplexityValues.Add(_listGameComplexityValues[i], i);
+            Debug.LogError($"{this}: array ForceJumpSO is Empty");
+        }
+        _checkedArrForceJump = true;
+        int numRepeatedComplexity = _arrForceJump.GroupBy((ForceJumpSO record) => record.Complexity).Select((groupComplexity) => groupComplexity.Count())
+            .Where((countInGroup) => countInGroup > 1).Count();
+        if (numRepeatedComplexity != 0)
+        {
+            Debug.LogWarning($"{this}: array ForceJumpSO contains elements with the same value of complexity, will be used the first element by order only");
         }
     }
+
+    //private void InitCompexityParameters()
+    //{
+    //    _listGameComplexityValues = _arrForceJump.Select((ForceJumpSO record) => record.Complexity).ToList();
+    //    for (int i = 0; i < _listGameComplexityValues.Count; i++)
+    //    {
+    //        _idxGameComplexityValues.Add(_listGameComplexityValues[i], i);
+    //    }
+    //}
 
     public void ReInitParameters()
     {
@@ -88,21 +106,20 @@ public class GameParametersManager : MonoBehaviour
         UpdateLevelComplexity();
     }
 
-    public UnityAction<int> GetActionOnValueChanged() => (int newValue) =>
-    {
-        //Debug.Log($"_listGameComplexityValues[newValue]={_listGameComplexityValues[newValue].name}");
-        ChangeJumpComplexity(_listGameComplexityValues[newValue]);
-    };
+    //public UnityAction<int> GetActionOnValueChanged() => (int newValue) =>
+    //{
+    //    ChangeJumpComplexity(_listGameComplexityValues[newValue]);
+    //};
 
-    public int GetInitialValueGameComplexity() => _idxGameComplexityValues[_gameComplexity];
+    //public int GetInitialValueGameComplexity() => _idxGameComplexityValues[_gameComplexity];
 
-    public List<string> GetListGameComplexityValues() => _listGameComplexityValues.Select(record => record.name).ToList();
+    //public List<string> GetListGameComplexityValues() => _listGameComplexityValues.Select(record => record.name).ToList();
 
-    public void ChangeJumpComplexity(ComplexitySO complexitySO)
-    {
-        _gameComplexity = complexitySO;
-        UpdateForceJumpForCurrentComplexity();
-    }
+    //public void ChangeJumpComplexity(ComplexitySO complexitySO)
+    //{
+    //    //_gameComplexity = complexitySO;
+    //    UpdateJumpComplexityMultiplie();
+    //}
 
     public void AddNewSpawnedObstacle() => _countSpawnedAtThisLivel++;
     private void IncreaseLevel() => Level++;
@@ -135,15 +152,29 @@ public class GameParametersManager : MonoBehaviour
     /// <summary>
     /// Update characterController.ForceJump related to CurrentComplexity
     /// </summary>
-    private void UpdateForceJumpForCurrentComplexity()
+    private void UpdateJumpComplexityMultiplie()
     {
-        ForceJumpSO item = _arrForceJump[_idxGameComplexityValues[_gameComplexity]];
-        //Debug.Log($"nameComplexity={JumpComplexity.name} [{_orderGameComplexityValues[JumpComplexity]}]" +
-        //    $" {arrForceJump[_orderGameComplexityValues[JumpComplexity]].name}");
-        if (item.ItemForComplexity(_gameComplexity))
-        {
-            _characterManager.SetForceJumpSO(item);
-            JumpComplexityMultiplier = item.JumpComplexityMultipler;
+        if (!_checkedArrForceJump) return;
+        ForceJumpSO item = GetForceJumpSO();
+        if (!item)
+        {       
+            Debug.LogWarning($"{this}: Using the first founded ForceJumpSO object");
+            item = _arrForceJump[0]; 
         }
+        //Debug.Log($"ComplexityGame={_gameSettings.ComplexityGame.name}");
+        _characterManager.SetForceJumpSO(item);
+        JumpComplexityMultiplier = item.JumpComplexityMultipler;
+    }
+
+    private ForceJumpSO GetForceJumpSO()
+    {
+        ComplexitySO currentComplexity = _gameSettings.ComplexityGame;
+        for (int i = 0; i < _arrForceJump.Length; i++)
+        {
+            if (_arrForceJump[i].Complexity == currentComplexity)
+                return _arrForceJump[i];
+        }
+        Debug.LogError($"{this}: absent ForceJumpSO for [{currentComplexity}] complexity");
+        return null;
     }
 }

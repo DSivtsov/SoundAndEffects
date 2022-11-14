@@ -7,7 +7,7 @@ public class LoaderSceneManager : MonoBehaviour
     [SerializeField] private GameObject _loaderCamera;
     [SerializeField] private LoaderScenes _loaderScenes;
     [SerializeField] private PlayJukeBox _playJukeBoxLoaderMenus;
-    [SerializeField] private GameSettingsController _gameSettingsController;
+    [SerializeField] private GameSettingsSOController _gameSettingsController;
 
     private const bool MakePauseBeforeStartLoad = true;
 
@@ -44,7 +44,7 @@ public class LoaderSceneManager : MonoBehaviour
                 yield return null;
             } while (!_playJukeBoxLoaderMenus.GetIsJukeBoxPlaying());
         }
-        CountFrame.DebugLogUpdate(this, $"_loaderScenes.LoadScenes()");
+        CountFrame.DebugLogUpdate(this, "Call _loaderScenes.LoadScenes()");
         _loaderScenes.LoadScenes();
     }
 

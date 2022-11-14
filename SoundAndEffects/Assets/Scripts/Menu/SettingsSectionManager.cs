@@ -6,15 +6,60 @@ using System;
 
 public class SettingsSectionManager : SectionManager
 {
-    [SerializeField] private GameObject _gameObjectResetButton;
+    //[SerializeField] private GameObject _gameObjectResetButton;
+    //[SerializeField] private GameSettingsSO _gameSettingsSO;
+    [Header("GameSettingsButton")]
+    [SerializeField] private GameObject _loadSaved;
+    [SerializeField] private GameObject _loadDef;
+    [SerializeField] private GameObject _saveChanges;
+
+    private GameSettingsSOController _gameSettingsSOController;
     /// <summary>
     /// Dictionary the SectionControllers which support the ISectionAction
     /// </summary>
     private Dictionary<SectionName, ISectionControllerAction> SettingsSectionControllers = new Dictionary<SectionName, ISectionControllerAction>();
 
+    private void Awake()
+    {
+        _gameSettingsSOController = GameSettingsSOController.Instance;
+        UpdateGameSettingsControlButtons();
+    }
+
+    private void OnEnable()
+    {
+        _gameSettingsSOController.UpdateGameSettingsControlButtons += UpdateGameSettingsControlButtons;
+    }
+
+    private void OnDisable()
+    {
+        _gameSettingsSOController.UpdateGameSettingsControlButtons -= UpdateGameSettingsControlButtons;
+    }
+
+    private void UpdateGameSettingsControlButtons()
+    {
+        if (_gameSettingsSOController.ExistNotSavedChanges)
+        {
+            _loadDef.SetActive(true);
+            _saveChanges.SetActive(true);
+            if (_gameSettingsSOController.ExistCustomSavedSettings)
+                _loadSaved.SetActive(true); 
+            else
+                _loadSaved.SetActive(false);
+        }
+        else
+        {
+            _saveChanges.SetActive(false);
+            _loadSaved.SetActive(false);
+            if (_gameSettingsSOController.UseCustomSavedSettings)
+                _loadDef.SetActive(true);
+            else
+                _loadDef.SetActive(false);
+        }
+    }
+
     public void ActivateResetButton(bool activate)
     {
-        _gameObjectResetButton.SetActive(activate);
+        //_gameObjectResetButton.SetActive(activate);
     }
 
     //public void ResetSectionValuesToDefault()

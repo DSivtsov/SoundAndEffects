@@ -292,7 +292,7 @@ public class LootLockerController : MonoBehaviour
             playerDatas.Add(new PlayerData(table[i].player.name, 0, table[i].score));
         }
         GlobalListLoaded = true;
-        CountFrame.DebugLogUpdate(this, $"Finished the GetScoreFromLeaderBoard()");
+        //CountFrame.DebugLogUpdate(this, $"Finished the GetScoreFromLeaderBoard()");
     }
 
     public void CreateNewPlayerRecord(string playerName)

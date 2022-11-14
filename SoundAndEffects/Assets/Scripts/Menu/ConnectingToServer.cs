@@ -61,7 +61,7 @@ public class ConnectingToServer : MonoBehaviour
 
     public void Result(bool resultOK)
     {
-        Debug.Log($"Loading data from Server={Time.time - _startTime}");
+        CountFrame.DebugLogUpdate(this, $"Loading data from Server={Time.time - _startTime}");
         _connecting = false;
         currentStatus.text = FinMsg;
         if (resultOK)

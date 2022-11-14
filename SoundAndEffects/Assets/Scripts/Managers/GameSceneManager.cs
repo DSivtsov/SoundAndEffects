@@ -57,8 +57,8 @@ public class GameSceneManager : MonoBehaviour
         }
     }
 
-    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
-        => (_gameParametersManager.GetListGameComplexityValues(), _gameParametersManager.GetActionOnValueChanged(), _gameParametersManager.GetInitialValueGameComplexity());
+    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
+    //    => (_gameParametersManager.GetListGameComplexityValues(), _gameParametersManager.GetActionOnValueChanged(), _gameParametersManager.GetInitialValueGameComplexity());
     //{
     //    List<string> values = _gameParametersManager.GetListGameComplexityValues();
     //    UnityAction<int> actionOnValueChanged = _gameParametersManager.GetActionOnValueChanged();

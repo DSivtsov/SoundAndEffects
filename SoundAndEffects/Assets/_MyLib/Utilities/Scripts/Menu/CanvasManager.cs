@@ -39,7 +39,7 @@ namespace GMTools.Menu
                 //Check the desiredCanvas that it has the SectionManager
                 if (sectionManager)
                 {
-                    Debug.Log($"SectionManager {sectionManager.name} is made Active");
+                    CountFrame.DebugLogUpdate(this, $"SectionManager {sectionManager.name} is made Active");
                     sectionManager.SetActiveSectionManager();
                 }
                 lastActiveCanvas = desiredCanvas;

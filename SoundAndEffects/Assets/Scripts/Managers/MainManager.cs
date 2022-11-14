@@ -28,8 +28,8 @@ public class MainManager : SingletonController<MainManager>
     public void LinkLoaderSceneManager(LoaderSceneManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
     public void LinkGameSceneManager(GameSceneManager gameSceneManager) => _gameSceneManager = gameSceneManager;
 
-    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
-        => _gameSceneManager.GetParametersToInitGameComplexityOption();
+    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
+    //    => _gameSceneManager.GetParametersToInitGameComplexityOption();
 
     public bool GetStatusLoadingScenes() => _loaderSceneManager.AllScenesLoaded;
 
@@ -37,7 +37,7 @@ public class MainManager : SingletonController<MainManager>
 
     public void AllScenesLoaded()
     {
-        CountFrame.DebugLogUpdate(this, $"AllScenesLoaded()");
+        CountFrame.DebugLogUpdate(this, $"AllScenesLoaded() started");
         FromLoaderToMenus();
     }
 

@@ -21,6 +21,7 @@ public class LocalTopListController : TopListController
 
     protected override void LoadAndShow(bool multiAsyncOperations = true)
     {
+        CountFrame.DebugLogUpdate(this, $"LoadAndShow() started");
         LoadTopList();
         UpdateAndShowTopList();
     }
@@ -57,6 +58,7 @@ public class LocalTopListController : TopListController
 
     private void InitTopLis()
     {
+        Debug.LogWarning($"{this} : InitTopLis() created new TopList");
         _topList = new List<PlayerData>();
         _topListElement.SetUsedTopList(_topList);
         InitCharacterData = true;
@@ -93,11 +95,19 @@ public class LocalTopListController : TopListController
                 IOError error = _storeObjectController.Load();
                 if (error == IOError.NoError)
                 {
-                    _topList = new List<PlayerData>(_storedPlainPlayerData.GetLoadedObjects()); 
+                    PlayerData[] loaded = _storedPlainPlayerData.GetLoadedObjects();
+                    if (loaded == null || loaded.Length == 0)
+                    {
+                        InitTopLis(); 
+                    }
+                    else
+                        _topList = new List<PlayerData>(loaded);
                 }
                 else
                 {
                     Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()} Load breaked");
+                    Debug.Log($"_topList=[{_topList}]");
+                    InitTopLis();
                 }
                 break;
         }

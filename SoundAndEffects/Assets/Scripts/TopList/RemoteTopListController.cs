@@ -20,8 +20,8 @@ public class RemoteTopListController : TopListController
     {
         if (_lootLockerController.CurrentPlayMode != PlayMode.Offline)
         {
+            CountFrame.DebugLogUpdate(this, $"LoadAndShow : Call  StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations))"); 
             StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
-            //CountFrame.DebugLogUpdate(this, $"LoadAndShow StartCoroutine(WaitIniSession()) started"); 
         }
         else
             CountFrame.DebugLogUpdate(this, $"LoadAndShow skipped");
@@ -35,15 +35,14 @@ public class RemoteTopListController : TopListController
         }
         if (_lootLockerController.GuestSessionInited)
         {
-            Debug.Log("RemoteTopListController : LoadTopList()");
+            //Debug.Log("RemoteTopListController : LoadTopList()");
             InitCharacterData = false;
             _topList = new List<PlayerData>();
             yield return _lootLockerController.CoroutineGetScoreFromLeaderBoard(_topList);
             ActivateAndCheckTopList();
-
             if (InitCharacterData)
             {
-                Debug.Log($"{this} : Remote TopList Loaded");
+                //Debug.Log($"{this} : Remote TopList Loaded");
                 //The Sorting of TopList by Score did remotely
                 _topListElement.UpdateTopList(false);
                 //In case reload after save result doing only one operation simultenoius

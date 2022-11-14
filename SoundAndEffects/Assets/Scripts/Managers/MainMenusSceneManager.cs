@@ -25,7 +25,7 @@ public class MainMenusSceneManager : MonoBehaviour
     private MainManager _mainManager;
     public Func<bool> FuncGetStatusLoadingScenes;
 
-    public Func<(List<string> values, UnityAction<int> actionOnValueChanged, int initialValue)> FuncGetParametersToInitGameComplexityOption;
+    //public Func<(List<string> values, UnityAction<int> actionOnValueChanged, int initialValue)> FuncGetParametersToInitGameComplexityOption;
 
     private void Awake()
     {
@@ -39,7 +39,7 @@ public class MainMenusSceneManager : MonoBehaviour
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
             FuncGetStatusLoadingScenes = _mainManager.GetStatusLoadingScenes;
-            FuncGetParametersToInitGameComplexityOption = _mainManager.GetParametersToInitGameComplexityOption;
+            //FuncGetParametersToInitGameComplexityOption = _mainManager.GetParametersToInitGameComplexityOption;
         }
         else
         {
@@ -47,7 +47,7 @@ public class MainMenusSceneManager : MonoBehaviour
             ActivateMainMenusCamera(true);
             //ActivateMusicMainMenus(true);
             StartCoroutine(EmulatorGetStatusLoadingScenes());
-            FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
+            //FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
         _buttonStart.interactable = false;
 #if UNITY_EDITOR
@@ -87,7 +87,7 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
 
-    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption() => FuncGetParametersToInitGameComplexityOption();
+    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption() => FuncGetParametersToInitGameComplexityOption();
 
     public bool GetStatusLoadingScenes() => FuncGetStatusLoadingScenes();
 

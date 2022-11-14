@@ -164,7 +164,7 @@ public class LoaderScenes : MonoBehaviour
 
     private void AllScenesLoadedActivated()
     {
-        CountFrame.DebugLogUpdate(this, $"AllScenesLoadedActivated()");
+        //CountFrame.DebugLogUpdate(this, $"AllScenesLoadedActivated()");
         if (loadedAllAfterStartFirst)
             StartCoroutine(WaitAfterLoad());
         else
@@ -191,6 +191,8 @@ public class LoaderScenes : MonoBehaviour
     {
         CountFrame.DebugLogUpdate(this, $"UnLoadScenes()");
         bool waitUnloadScene = false;
+        List<AsyncOperation> asyncUnLoadOperations = new List<AsyncOperation>(asyncOperations.Length);
+        
         for (int i = 0; i < numberOperations; i++)
         {
             int sceneBuildIdx = (int)loadOrder[i];
@@ -198,9 +200,10 @@ public class LoaderScenes : MonoBehaviour
             if (SceneManager.GetSceneByBuildIndex(sceneBuildIdx).isLoaded)
             {
                 waitUnloadScene = true;
-                asyncOperations[i] = SceneManager.UnloadSceneAsync(sceneBuildIdx, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+                asyncUnLoadOperations.Add(SceneManager.UnloadSceneAsync(sceneBuildIdx, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects));
             }
         }
+        //Debug.Log($"asyncUnLoadOperations.Count={asyncUnLoadOperations.Count}");
         if (waitUnloadScene)
         {
             bool finish;
@@ -208,9 +211,9 @@ public class LoaderScenes : MonoBehaviour
             {
                 yield return null;
                 finish = true;
-                for (int i = 0; i < numberOperations; i++)
+                for (int i = 0; i < asyncUnLoadOperations.Count; i++)
                 {
-                    finish &= asyncOperations[i].isDone;
+                    finish &= asyncUnLoadOperations[i].isDone;
                 }
             } while (!finish);
         }

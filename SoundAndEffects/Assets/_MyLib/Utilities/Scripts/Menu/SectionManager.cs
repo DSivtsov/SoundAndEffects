@@ -53,7 +53,6 @@ namespace GMTools.Menu
                 if (!(GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local))
                 {
                     SectionController = SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())];
-                    //LoadValuesSelectedSession();
                     Debug.Log($"LoadValuesSelectedSession()");
                     SectionController.LoadSectionValues(); 
                 }

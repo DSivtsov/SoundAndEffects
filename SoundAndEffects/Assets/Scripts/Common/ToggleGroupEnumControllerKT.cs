@@ -1,23 +1,23 @@
 ﻿using System;
 using UnityEngine;
 using GMTools.Menu;
-
-public class ToggleGroupEnumController<K, T> : IUIElement<K> where T : IOptionChanged where K : Enum
+/// <summary>
+/// Controller for toggle group UIElements based on ToggleGroupEnum<T>
+/// </summary>
+/// <typeparam name="K"></typeparam>
+/// <typeparam name="T"></typeparam>
+//public class ToggleGroupEnumController<K, T> : IUIElement<K> where T : IOptionChanged where K : Enum
+public class ToggleGroupEnumController<K, T> where T : IOptionChanged where K : Enum
 {
-    private ToggleGroup<K> _toggleGroup;
+    private ToggleGroupEnum<K> _toggleGroup;
     private T _optionController;
     private Action<K> _actionAtValueChanged;
-    //protected event Action<T> onChangeValue;
 
     public bool Initialized
     {
         get
         {
-            //if (_toggleGroup == null || !_toggleGroup.ElementIsInit)
-            //{
-            //    Debug.Log($"_toggleGroup == null[{_toggleGroup == null}] !_toggleGroup.ElementIsInitialized[{!_toggleGroup.ElementIsInit}]");
-            //}
-            return _toggleGroup != null && _toggleGroup.ElementIsInit;
+            return _toggleGroup != null && _toggleGroup.ToggleGroupIsInit;
         }
     }
 
@@ -27,8 +27,7 @@ public class ToggleGroupEnumController<K, T> : IUIElement<K> where T : IOptionCh
     {
         try
         {
-            //Debug.Log($"parentTransformOptions.Find(paramName)={parentTransformOptions.Find(paramName)}");
-            _toggleGroup = parentTransformOptions.Find(paramName).GetComponentInChildren<ToggleGroup<K>>();
+            _toggleGroup = parentTransformOptions.Find(paramName).GetComponentInChildren<ToggleGroupEnum<K>>();
             _optionController = optionController;
             if (!_toggleGroup) throw new Exception();
         }
@@ -36,12 +35,11 @@ public class ToggleGroupEnumController<K, T> : IUIElement<K> where T : IOptionCh
         {
             throw new NotImplementedException($"ToggleGroup<{typeof(K)}> : not found in the {paramName} GameObject at {parentTransformOptions.name} Transform");
         }
-        //Debug.Log($"_toggleGroup.ElementIsInitialized={_toggleGroup.ElementIsInitialized}");
     }
 
     public void Init(Action<K> toggleGroupValueChanged, K initialEnumValue)
     {
-        _toggleGroup.eventActivatedToggle += ValueChanged;
+        _toggleGroup.onNewValue += ValueChanged;
         _actionAtValueChanged = toggleGroupValueChanged;
         SetValueWithoutNotify(initialEnumValue);
     }
@@ -55,11 +53,11 @@ public class ToggleGroupEnumController<K, T> : IUIElement<K> where T : IOptionCh
 
     public void SetValueWithoutNotify(K value)
     {
-        _toggleGroup.SetValueWithoutNotify(value);
+        _toggleGroup.SetValue(value);
     }
 
-    public K GetValue()
-    {
-        return _toggleGroup.GetValue();
-    }
+    //public K GetValue()
+    //{
+    //    return _toggleGroup.GetValue();
+    //}
 }
