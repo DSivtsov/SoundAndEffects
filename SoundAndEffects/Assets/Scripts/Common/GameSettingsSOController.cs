@@ -25,7 +25,7 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
 
     private bool _initGameSettings = false;
 
-    public bool UseCustomSavedSettings { get; private set; } = false;
+    //public bool UseCustomSavedSettings { get; private set; } = false;
     public bool ExistCustomSavedSettings { get; private set; } = false;
     public bool ExistNotSavedChanges { get; private set; } = false;
 
@@ -67,11 +67,13 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         if (File.Exists(_nameFile))
         {
             OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFile);
-            UseCustomSavedSettings = true;
+            //UseCustomSavedSettings = true;
             ExistCustomSavedSettings = true;
         }
         else
-            Debug.LogWarning($"{this} : Load() : {_nameFile} not exists ");
+        {
+            Debug.LogWarning($"{this} : Load() : {_nameFile} not exists "); 
+        }
         UpdateElementFromFields?.Invoke();
         UpdateInitValues();
         _flagGameSettingChanges.SetNoChanges();
@@ -82,7 +84,7 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         if (_initGameSettings)
         {
             OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFile);
-            UseCustomSavedSettings = true;
+            //UseCustomSavedSettings = true;
             ExistCustomSavedSettings = true;
             UpdateInitValues();
             _flagGameSettingChanges.SetNoChanges();
@@ -97,7 +99,16 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         if (_initGameSettings)
         {
             OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFileDefault);
-            UseCustomSavedSettings = false;
+            try
+            {
+                File.Delete(_nameFile);
+            }
+            catch (Exception)
+            {
+                Debug.LogWarning($"{this} : LoadDefault() : Can't delete {_nameFile} file");
+            }
+            ExistCustomSavedSettings = false;
+            //UseCustomSavedSettings = false;
             UpdateElementFromFields?.Invoke();
             UpdateInitValues();
             _flagGameSettingChanges.SetNoChanges();

@@ -1,7 +1,6 @@
 ​Current Features
 1. In current Time it's a possibile to have the different setting the SequentType for different JukeBox (at "Initial Load" only)
 2. All Options after changing is stored in assets until next change if it change in Play Editor mode. !!! In Build Play Mode the SO Assets not save the changes at the end Game.
-3. The ResetDeafult for Option working only for active Section of Options.
 
 Current BUGs
 <not detected>
@@ -12,31 +11,19 @@ Additional Checks (Please inform)
 Current Proposals (Road Map)
 0. Add Options - Offline and OnLine mode to Game
 00. Refactoring Menu (enum -> SO) to make the Menu Librarry fully separated from Assembly-CSharp
-00. Start PlayJukeBox at begin Load
+00 Add the posibility to change the level of Trace information in logs
 1. Add to Video Option TurnOff Additional Animation at Collision
 2. Customization Character
-3. Save Setting from Options to file
 4. Add the possibility to set different Music order for different JukeBox
 5. (--)Add the possibility to set different Volumes for different Scenes
 
 ===============================================================================
+Fix 0.6
+PlayJukeBox starts at begin Load
+Save Setting from Options to file
 
-Fix 0.1
-"3. PlayJukeBox & PlayJukeBoxCollection can use in one time the Update() cycle to manager Input as result the input command can repeats twice (use the workaround directly turn off the coresponded GameObject when Music not played)"
-Made the separate AudioControls script which single point for Get Input, the PlayJukeBox & PlayJukeBoxCollection doesn't use the Update() any more for get Input actions
-
-Fix 0.2
-"1. At Start Game in the TopMenu Score 999 999"
-Refactoring Management Restart Game
-"2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times"
-Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly set the initial transfrom rotation of Obstacles
-
-Fix 0.3
-"Check spacing for Spawning after restart Game (problem occur time to times)"
-Refactoring Spawning - now min distance after added after obstacle mandadory, also corrected spawning first Obstacle and changed the spacing spawning parameters (from int to float)
-Additionally the GameComplexety began affect on the Score
-Corrected the start of Game scene if it will start alone
-Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly corrected the restore of the initial transfrom rotation transfrom rotation of Obstacles (vs use the Quaternion.Identity that is wrong)
+Fix 0.5
+Added posibiliy to play Online and store result in Global TopList
 
 Fix 0.4
 "Add management of GameComplexety to Options and info to Help"
@@ -45,4 +32,24 @@ Refactoring *Managers related to add the management of GameComplexety to Options
 Refactoring MainMenus Scene for "Help fpr GameComplexity"
 Add the GameOptionControleer and DropDownOption (preparation to make it as the Generic)
 Refactoring AudiuOptionControleer and AudioOptionVolume
+
+Fix 0.3
+"Check spacing for Spawning after restart Game (problem occur time to times)"
+Refactoring Spawning - now min distance after added after obstacle mandadory, also corrected spawning first Obstacle and changed the spacing spawning parameters (from int to float)
+Additionally the GameComplexety began affect on the Score
+Corrected the start of Game scene if it will start alone
+Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly corrected the restore of the initial transfrom rotation transfrom rotation of Obstacles (vs use the Quaternion.Identity that is wrong)
+
+Fix 0.2
+"1. At Start Game in the TopMenu Score 999 999"
+Refactoring Management Restart Game
+"2. After collision some Obstacle recieve Rotation and stay with it in other Spawned times"
+Refactoring "RestoreInitialParametersLastCollisedRigidbody()" additionaly set the initial transfrom rotation of Obstacles
+
+Fix 0.1
+"3. PlayJukeBox & PlayJukeBoxCollection can use in one time the Update() cycle to manager Input as result the input command can repeats twice (use the workaround directly turn off the coresponded GameObject when Music not played)"
+Made the separate AudioControls script which single point for Get Input, the PlayJukeBox & PlayJukeBoxCollection doesn't use the Update() any more for get Input actions
+
+
+
 

@@ -50,7 +50,7 @@ public class SettingsSectionManager : SectionManager
         {
             _saveChanges.SetActive(false);
             _loadSaved.SetActive(false);
-            if (_gameSettingsSOController.UseCustomSavedSettings)
+            if (_gameSettingsSOController.ExistCustomSavedSettings)
                 _loadDef.SetActive(true);
             else
                 _loadDef.SetActive(false);

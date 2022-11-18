@@ -847,6 +847,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AllowSwitchOff: 0
+  _true: 1
+  _false: 0
   _trueFirstToggle: 1
 --- !u!1 &56984347
 GameObject:
@@ -16083,7 +16085,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Easy
+  m_text: Hard
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -20120,9 +20122,9 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Easy
-      m_Image: {fileID: 0}
     - m_Text: Hard
+      m_Image: {fileID: 0}
+    - m_Text: Easy
       m_Image: {fileID: 0}
     - m_Text: Normal
       m_Image: {fileID: 0}
@@ -22919,6 +22921,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AllowSwitchOff: 0
+  _true: 1
+  _false: 0
   _trueFirstToggle: 1
 --- !u!222 &2478013894757665168
 CanvasRenderer:
