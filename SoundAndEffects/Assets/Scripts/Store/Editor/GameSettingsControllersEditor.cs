@@ -24,7 +24,7 @@ public class GameSettingsControllersEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Save data"))
         {
-            gameSettingsController.Save();
+            gameSettingsController.SaveCustomGameSettings();
         }
         EditorGUI.EndDisabledGroup();
 
@@ -32,7 +32,7 @@ public class GameSettingsControllersEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Load data"))
         {
-            gameSettingsController.Load();
+            gameSettingsController.LoadCustomGameSettings();
         }
         EditorGUI.EndDisabledGroup();
 
@@ -40,7 +40,7 @@ public class GameSettingsControllersEditor : Editor
         EditorGUI.BeginDisabledGroup(false);
         if (GUILayout.Button("Reset data"))
         {
-            gameSettingsController.LoadDefault();
+            gameSettingsController.LoadDefaultGameSettings();
         }
         EditorGUI.EndDisabledGroup();
 

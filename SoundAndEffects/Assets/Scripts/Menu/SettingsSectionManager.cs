@@ -17,12 +17,19 @@ public class SettingsSectionManager : SectionManager
     /// <summary>
     /// Dictionary the SectionControllers which support the ISectionAction
     /// </summary>
-    private Dictionary<SectionName, ISectionControllerAction> SettingsSectionControllers = new Dictionary<SectionName, ISectionControllerAction>();
+    //private Dictionary<SectionName, ISectionControllerAction> SettingsSectionControllers = new Dictionary<SectionName, ISectionControllerAction>();
 
     private void Awake()
     {
         _gameSettingsSOController = GameSettingsSOController.Instance;
-        UpdateGameSettingsControlButtons();
+        if (_gameSettingsSOController.GameSettingsInited)
+        {
+            //initial update after set all flags after load
+            UpdateGameSettingsControlButtons();
+        }
+        else
+            Debug.LogError($"{this} : Attempt to UpdateGameSettingsControlButtons() before GameSettingsInited==true");
+
     }
 
     private void OnEnable()
@@ -57,10 +64,10 @@ public class SettingsSectionManager : SectionManager
         }
     }
 
-    public void ActivateResetButton(bool activate)
-    {
-        //_gameObjectResetButton.SetActive(activate);
-    }
+    //public void ActivateResetButton(bool activate)
+    //{
+    //    //_gameObjectResetButton.SetActive(activate);
+    //}
 
     //public void ResetSectionValuesToDefault()
     //{
@@ -72,9 +79,9 @@ public class SettingsSectionManager : SectionManager
     /// </summary>
     /// <param name="sectionName"></param>
     /// <param name="sectionController"></param>
-    public new void LinkToSectionActions(SectionName sectionName, ISectionControllerAction sectionController)
-    {
-        SettingsSectionControllers.Add(sectionName, sectionController);
-        SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
-    }
+    //public new void LinkToSectionActions(SectionName sectionName, ISectionControllerAction sectionController)
+    //{
+    //    //SettingsSectionControllers.Add(sectionName, sectionController);
+    //    //SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
+    //}
 }

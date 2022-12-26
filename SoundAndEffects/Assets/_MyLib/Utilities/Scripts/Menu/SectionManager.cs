@@ -13,11 +13,11 @@ namespace GMTools.Menu
         [SerializeField] private bool _useInitialStartSection = true;
         [SerializeField] private SectionName _initialStartSection;
 
-        protected Dictionary<(SectionName, Type), ISectionControllerAction> SectionControllers = new Dictionary<(SectionName, Type), ISectionControllerAction>();
+        //protected Dictionary<(SectionName, Type), ISectionControllerAction> SectionControllers = new Dictionary<(SectionName, Type), ISectionControllerAction>();
 
         public static SectionManager ActiveSectionManager { get; private set; }
 
-        public static ISectionControllerAction SectionController { get; private set; }
+        //public static ISectionControllerAction SectionController { get; private set; }
 
         private SectionObject _selectedSection;
         public SectionObject GetSelectedSection => _selectedSection;
@@ -52,9 +52,9 @@ namespace GMTools.Menu
                 _selectedSection = desiredSection;
                 if (!(GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local))
                 {
-                    SectionController = SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())];
+                    //SectionController = SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())];
                     Debug.Log($"LoadValuesSelectedSession()");
-                    SectionController.LoadSectionValues(); 
+                    //SectionController.LoadSectionValues(); 
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace GMTools.Menu
         public void LinkToSectionActions(SectionName sectionName, ISectionControllerAction sectionController)
         {
             //SettingsSectionControllers.Add(sectionName, sectionController);
-            SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
+            //SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
         }
 
         //private void LoadValuesSelectedSession()

@@ -1,4 +1,4 @@
-using GMTools.Menu;
+using GMTools.Menu.Elements;
 
 public enum DefaultTopListToggleEnum : byte
 {

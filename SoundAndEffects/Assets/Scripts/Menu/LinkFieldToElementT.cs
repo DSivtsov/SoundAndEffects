@@ -1,19 +1,30 @@
-﻿interface IUpdateElementValue
-{
-    public void UpdateElementValue();
-}
+﻿using System;
+using System.Collections.Generic;
+using GMTools.Menu.Elements;
 
-public class LinkFieldToElement<T> : IUpdateElementValue
+public abstract class LinkFieldToElementBase
 {
-    ExposeField<T> fieldTolink;
-    IElement<T> element;
+    public static event Action UpdateElementValue;
 
-    public LinkFieldToElement(ExposeField<T> fieldTolink, IElement<T> element)
+    public static void UpdateElementsValues()
     {
-        this.fieldTolink = fieldTolink;
-        this.element = element;
-        element.onNewValue += fieldTolink.SetNewValue;
+        UpdateElementValue?.Invoke();
     }
 
-    public void UpdateElementValue() => element.SetValue(fieldTolink.GetCurrentValue());
+    public static void Link<T>(ExposeField<T> field, IElement<T> uiElement)
+    {
+        uiElement.InitElement();
+        uiElement.onNewValue += field.SetNewValue;
+        UpdateElementValue += () => uiElement.SetValue(field.GetCurrentValue());
+    }
 }
+
+//public class LinkFieldToElement<T> : LinkFieldToElementBase
+//{
+//    public LinkFieldToElement(ExposeField<T> field, IElement<T> uiElement)
+//    {
+//        uiElement.InitElement();
+//        uiElement.onNewValue += field.SetNewValue;
+//        UpdateElementValue += () => uiElement.SetValue(field.GetCurrentValue());
+//    }
+//}

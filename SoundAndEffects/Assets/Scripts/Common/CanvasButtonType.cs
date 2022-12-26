@@ -7,7 +7,6 @@ using System;
 
 public interface ISectionControllerAction
 {
-    public void ResetSectionValuesToDefault();
     public void LoadSectionValues();
 }
 
@@ -80,21 +79,21 @@ public static class ButtonActions
                 case ButtonType.ResetTopList:
                     _menuSceneManager.ResetTopList();
                     break;
-                case ButtonType.ResetDefault:
-                    SectionManager.SectionController.ResetSectionValuesToDefault();
+                //case ButtonType.ResetDefault:
+                //    SectionManager.SectionController.ResetSectionValuesToDefault();
                     //Debug.Log("End ButtonType.ResetDefault");
-                    break;
+                    //break;
                 case ButtonType.NewPlayer:
                     _playerDataController.CreateNewPlayer();
                     break;
                 case ButtonType.LoadDefSettings:
-                    _gameSettingsSOController.LoadDefault();
+                    _gameSettingsSOController.LoadDefaultGameSettings();
                     break;
                 case ButtonType.LoadSavedSettings:
-                    _gameSettingsSOController.Load();
+                    _gameSettingsSOController.LoadCustomGameSettings();
                     break;
                 case ButtonType.SaveNewSettings:
-                    _gameSettingsSOController.Save();
+                    _gameSettingsSOController.SaveCustomGameSettings();
                     break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");

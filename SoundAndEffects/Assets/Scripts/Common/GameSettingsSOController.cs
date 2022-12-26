@@ -5,6 +5,7 @@ using UnityEngine;
 using GMTools.Manager;
 using GMTools;
 using System.IO;
+using UnityEngine.Audio;
 
 [Flags]
 public enum GameSettingSOState
@@ -13,19 +14,24 @@ public enum GameSettingSOState
     ExistCustomSaved = 0b10,
     NotSavedChanges = 0b11,
 }
-
+/*
+ * Always load gamesettings from stored files
+ * Load Custom game setting if it exists or Load Default game setting in other case
+ * If absent the default game settings files it will create from GameSettingsSO
+ * The values in AudioMixer always override by game settings
+ */
 public class GameSettingsSOController : SingletonController<GameSettingsSOController>
 {
     [SerializeField] private GameSettingsSO _gameSettings;
+    [SerializeField] private AudioContoller _audioContoller;
     [SerializeField, ReadOnly] private string _nameFile = "GameSettingsSO.txt";
     [SerializeField, ReadOnly] private string _nameFileDefault = "GameSettingsSODefault.txt";
 
     public event Action UpdateElementFromFields;
     public event Action UpdateGameSettingsControlButtons;
 
-    private bool _initGameSettings = false;
+    public bool GameSettingsInited { get; private set; } = false;
 
-    //public bool UseCustomSavedSettings { get; private set; } = false;
     public bool ExistCustomSavedSettings { get; private set; } = false;
     public bool ExistNotSavedChanges { get; private set; } = false;
 
@@ -42,78 +48,65 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
             UpdateGameSettingsControlButtons?.Invoke();
         };
     }
-    public void UpdateInitValues() => ExposeFieldBase.UpdateInitValue();
+    public void UpdateInitValues()
+    {
+        ExposeFieldBase.UpdateInitValue();
+        _flagGameSettingChanges.SetNoChanges();
+    }
 
     public void InitGameSettings()
     {
-        if (_gameSettings)
+        if (_gameSettings && _audioContoller)
         {
-            OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFileDefault);
-            _initGameSettings = true;
-            Load();
-            _gameSettings.InitExposedFields(_flagGameSettingChanges);
+            SaveDefaultGameSettings();
+            _gameSettings.InitExposedFields(_flagGameSettingChanges, _audioContoller);
+            if (File.Exists(_nameFile))
+            {
+                LoadCustomGameSettings(); 
+            }
+            else
+            {
+                LoadDefaultGameSettings();
+            }
+            _audioContoller.InitAudioByValGameSettings();
+            GameSettingsInited = true;
             CountFrame.DebugLogUpdate(this, "InitGameSettings() finished");
         }
         else
-            Debug.LogError($"{this} : InitGameSettings() : _gameSettings == null");
+            Debug.LogError($"{this} : InitGameSettings() : _gameSettings == null or _audioContoller == null");
+    }
+
+    private void SaveDefaultGameSettings()
+    {
+        if (!File.Exists(_nameFileDefault))
+        {
+            OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFileDefault);
+        }
     }
 
     public void ShowData() => Debug.Log(_gameSettings);
 
-    public void Load()
+    public void LoadCustomGameSettings()
     {
-        if (!_initGameSettings)
-            return;
-        if (File.Exists(_nameFile))
-        {
-            OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFile);
-            //UseCustomSavedSettings = true;
-            ExistCustomSavedSettings = true;
-        }
-        else
-        {
-            Debug.LogWarning($"{this} : Load() : {_nameFile} not exists "); 
-        }
+        OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFile);
+        ExistCustomSavedSettings = true;
         UpdateElementFromFields?.Invoke();
         UpdateInitValues();
-        _flagGameSettingChanges.SetNoChanges();
     }
 
-    public void Save()
+    public void SaveCustomGameSettings()
     {
-        if (_initGameSettings)
-        {
-            OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFile);
-            //UseCustomSavedSettings = true;
-            ExistCustomSavedSettings = true;
-            UpdateInitValues();
-            _flagGameSettingChanges.SetNoChanges();
-        }
-        else
-            Debug.LogWarning($"{this} : Save() : _initGameSettings == false");
+        OdinSerializerCalls.SaveUnityObject(_gameSettings, _nameFile);
+        ExistCustomSavedSettings = true;
+        UpdateInitValues();
     }
 
-
-    public void LoadDefault()
+    public void LoadDefaultGameSettings()
     {
-        if (_initGameSettings)
-        {
-            OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFileDefault);
-            try
-            {
-                File.Delete(_nameFile);
-            }
-            catch (Exception)
-            {
-                Debug.LogWarning($"{this} : LoadDefault() : Can't delete {_nameFile} file");
-            }
-            ExistCustomSavedSettings = false;
-            //UseCustomSavedSettings = false;
-            UpdateElementFromFields?.Invoke();
-            UpdateInitValues();
-            _flagGameSettingChanges.SetNoChanges();
-        }
-        else
-            Debug.LogWarning($"{this} : LoadDefault() : _initGameSettings == false");
+        OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFileDefault);
+        if (File.Exists(_nameFile)) File.Delete(_nameFile);
+        ExistCustomSavedSettings = false;
+        UpdateElementFromFields?.Invoke();
+        UpdateInitValues();
     }
 }

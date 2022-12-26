@@ -2,14 +2,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
-using GMTools.Menu;
-
-//public enum MixerAudio
-//{
-//    Master,
-//    Music,
-//    Effects
-//}
 
 public class AudioVolumeOptions
 {
@@ -28,9 +20,9 @@ public class AudioVolumeOptions
     //private Type _enumType = typeof(MixerAudio);
     private AudioMixer _mixerMain;
     private VolumeCtrl[] _mixerVolSliders;
-    private AudioOptionsController _audioMixerController;
+    private SectionAudioOptionsController _audioMixerController;
 
-    public AudioVolumeOptions(string[] transformName, string[] paramName, Transform audioGroupOptions, AudioMixer mixerMain, AudioOptionsController audioMixerController)
+    public AudioVolumeOptions(string[] transformName, string[] paramName, Transform audioGroupOptions, AudioMixer mixerMain, SectionAudioOptionsController audioMixerController)
     {
         _numberElements = transformName.Length;
         if (_numberElements != paramName.Length)
@@ -60,7 +52,7 @@ public class AudioVolumeOptions
     public void VolumeChange(float newValue, int idxVolume)
     {
         _mixerMain.SetFloat(_mixerVolSliders[idxVolume].paramName, newValue);
-        _audioMixerController.AudioOptionsChanged(true);
+        //_audioMixerController.AudioOptionsChanged(true);
     }
 
     public void ResetMixerParamToDefaul()

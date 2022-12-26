@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-//using UnityEngine;
+using UnityEngine;
 
 namespace GMTools
 {
@@ -20,11 +20,11 @@ namespace GMTools
             {
                 listIndexes.Add(i);
             }
-            Random rnd;
+            System.Random rnd;
             if (seed == null)
-                rnd = new Random();
+                rnd = new System.Random();
             else
-                rnd = new Random(seed.Value);
+                rnd = new System.Random(seed.Value);
             for (int i = numElements; i >= 2; i--)
             {
                 int positioninList = rnd.Next(0, i);
@@ -49,6 +49,28 @@ namespace GMTools
             }
             return null;
         }
+        /// <summary>
+        /// The Underlaying type of enum may not be int
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="newInt"></param>
+        /// <returns></returns>
+        private static bool ConvertAnyEnumUnderlayingTypeToInt32(object obj, out int newInt)
+        {
+            newInt = 0;
+            bool result;
+            try
+            {
+                newInt = Convert.ToInt32(obj);
+                result = true;
+            }
+            catch (Exception)
+            {
+                Debug.LogError("ConvertAnyEnumUnderlayingTypeToInt32() : Cann't convert");
+                result = false;
+            }
+            return result;
+        }
 
-    } 
+    }
 }

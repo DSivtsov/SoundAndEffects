@@ -7,7 +7,7 @@ using TMPro;
 using System;
 using System.Linq;
 
-namespace GMTools.Menu
+namespace GMTools.Menu.Elements
 {
     /* 
  * Limitation:
@@ -19,7 +19,7 @@ namespace GMTools.Menu
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [ExecuteInEditMode]
-    public class DropdownList<T> : MonoBehaviour, IElement<T> where T : ScriptableObject
+    public class DropdownListSO<T> : MonoBehaviour, IElement<T> where T : ScriptableObject
     {
         private T[] _arrObjects;
         private TMP_Dropdown _dropdownOption;
@@ -31,40 +31,38 @@ namespace GMTools.Menu
 
         private void Awake()
         {
-            _dropdownOption = GetComponent<TMP_Dropdown>();
-            //_arrObjects = Resources.LoadAll<T>(pathResourceAssets);
-            _arrObjects = LoadArrObjects();
-
-            dictObjectByInt = _arrObjects.Select((SO,idx) => new { SO, idx }).ToDictionary((x)=>x.idx, (x) => x.SO);
-            dictIntByStr = dictObjectByInt.ToDictionary((keyPair) => keyPair.Value.name, (keyPair) => keyPair.Key);
-        }
-
-        private void OnEnable()
-        {
-            List<string> dropdownOptions = dictIntByStr.Keys.ToList();
-            InitDropdownList(dropdownOptions);
+            InitElement();
         }
 
         public event Action<T> onNewValue = delegate { };
-
-        private void InitDropdownList(List<string> dropdownOptions)
+        public void InitElement()
         {
             if (!DropdownListIsInit)
             {
-                Debug.LogError($"{this} : InitDropdownList()");
-                _dropdownOption.ClearOptions();
-                _dropdownOption.AddOptions(dropdownOptions);
-                _dropdownOption.onValueChanged.AddListener((selectedIdx) => { onNewValue.Invoke(dictObjectByInt[selectedIdx]); });
-                //_dropdownOption.value = _initialValue;
+                _dropdownOption = GetComponent<TMP_Dropdown>();
+                _arrObjects = LoadArrObjects();
+
+                dictObjectByInt = _arrObjects.Select((SO, idx) => new { SO, idx }).ToDictionary((x) => x.idx, (x) => x.SO);
+                dictIntByStr = dictObjectByInt.ToDictionary((keyPair) => keyPair.Value.name, (keyPair) => keyPair.Key);
+
+                List<string> dropdownOptions = dictIntByStr.Keys.ToList();
+                InitDropdownList(dropdownOptions);
                 DropdownListIsInit = true;
             }
+        }
+
+        private void InitDropdownList(List<string> dropdownOptions)
+        {
+            //Debug.LogError($"{this} : InitDropdownList()");
+            _dropdownOption.ClearOptions();
+            _dropdownOption.AddOptions(dropdownOptions);
+            _dropdownOption.onValueChanged.AddListener((selectedIdx) => { onNewValue.Invoke(dictObjectByInt[selectedIdx]); });
         }
 
         public void SetValue(T value)
         {
             if (DropdownListIsInit)
             {
-                //_dropdownOption.value = dictIntByStr[value.name];
                 _dropdownOption.SetValueWithoutNotify(dictIntByStr[value.name]);
             }
             else
@@ -81,6 +79,7 @@ namespace GMTools.Menu
             //Debug.LogError($"{this} : CountComplexitySO() ComplexitySO[].Count={arr.Length} ");
             return arr;
         }
+
 
     }
 }

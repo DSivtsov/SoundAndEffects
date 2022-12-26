@@ -10,7 +10,7 @@ using GMTools;
 public class AudioMusicOrderOption
 {
     private TMP_Dropdown _dropdownMusicOrder;
-    private AudioOptionsController _audioMixerController;
+    private SectionAudioOptionsController _audioMixerController;
     private Type enumType = typeof(SequenceType);
     private PlayJukeBox[] _arrPlayJukeBoxes;
     /// <summary>
@@ -18,7 +18,7 @@ public class AudioMusicOrderOption
     /// </summary>
     private SequenceType _initialSequenceType;
 
-    public AudioMusicOrderOption(string paramName, Transform audioGroupOptions, AudioOptionsController audioMixerController)
+    public AudioMusicOrderOption(string paramName, Transform audioGroupOptions, SectionAudioOptionsController audioMixerController)
     {
         _dropdownMusicOrder = audioGroupOptions.Find(paramName).GetComponent<TMP_Dropdown>();
         _audioMixerController = audioMixerController;
@@ -40,18 +40,19 @@ public class AudioMusicOrderOption
         {
             _initialSequenceType = _arrPlayJukeBoxes[0].GetInitialSeqenceType();
             //Set initial value to dropdown and then AddListener for onValueChanged event 
-            _dropdownMusicOrder.value = (int)_initialSequenceType;
-            _dropdownMusicOrder.onValueChanged.AddListener(MusicOrderValueChanged);
+            //_dropdownMusicOrder.value = (int)_initialSequenceType;
+            //_dropdownMusicOrder.onValueChanged.AddListener(MusicOrderValueChanged);
+            Debug.LogWarning($"FillArrPlayJukeBox() : _arrPlayJukeBoxes.Length={_arrPlayJukeBoxes.Length} _initialSequenceType={_initialSequenceType}");
         }
         else
             throw new Exception($"FillArrPlayJukeBox() : AudioMusicOrderOption can be Inited");
     }
 
-    private void MusicOrderValueChanged(int value)
-    {
-        MusicOrderSetValue((SequenceType)value);
-        _audioMixerController.AudioOptionsChanged(true);
-    }
+    //private void MusicOrderValueChanged(int value)
+    //{
+    //    MusicOrderSetValue((SequenceType)value);
+    //    //_audioMixerController.AudioOptionsChanged(true);
+    //}
 
     private void MusicOrderSetValue(SequenceType sequenceType)
     {
@@ -61,10 +62,10 @@ public class AudioMusicOrderOption
         }
     }
     //Not checked Inited because it can be called w/o _inited = true
-    public void ResetDefault()
-    {
-         MusicOrderSetValue(_initialSequenceType);
-        _dropdownMusicOrder.value = (int)_initialSequenceType;
-    }
+    //public void ResetDefault()
+    //{
+    //     MusicOrderSetValue(_initialSequenceType);
+    //    _dropdownMusicOrder.value = (int)_initialSequenceType;
+    //}
 }
 

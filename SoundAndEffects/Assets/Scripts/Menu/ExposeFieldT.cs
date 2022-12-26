@@ -24,7 +24,7 @@ public class FlagGameSettingChanged
     private void UpdateFlagExistChanges()
     {
         ExistChangesAfterFlagUpdated.Invoke(_gameSettingChanged != GameSettingChangedBit.NoChanges);
-        ShowChanges();
+        //ShowChanges();
     }
 
     public bool IsThisBitSet(GameSettingChangedBit bit) => _gameSettingChanged.HasFlag(bit);
@@ -37,38 +37,27 @@ public class ExposeFieldBase
 {
     public static event Action UpdateInitValueExposeFields;
 
-    public static void UpdateInitValue()
-    {
-        UpdateInitValueExposeFields?.Invoke();
-    }
+    public static void UpdateInitValue() => UpdateInitValueExposeFields?.Invoke();
 }
 
 public class ExposeField<T> : ExposeFieldBase
 {
-    Func<T> get;
-    Action<T> set;
-    FlagGameSettingChanged flagGameSettingChanged;
-    GameSettingChangedBit bitChanged;
-    T initValue;
+    public Func<T> GetCurrentValue { get; private set; }
+    public Action<T> SetNewValue { get; private set; }
 
-    public Func<T> GetCurrentValue => get;
-
-    public Action<T> SetNewValue => (newValue) =>
-    {
-        //Debug.LogWarning($"{this} : SetNewValue ({newValue})");
-        flagGameSettingChanged.SetBitGameSettingChanged(!EqualityComparer<T>.Default.Equals(newValue, initValue), bitChanged);
-        set(newValue);
-    };
+    private T initValue;
 
     public ExposeField(Func<T> get, Action<T> set, FlagGameSettingChanged flagGameSettingChanged, GameSettingChangedBit bitChanged)
     {
-        this.get = get;
-        this.set = set;
-        StoreNewInitValue();
-        this.flagGameSettingChanged = flagGameSettingChanged;
-        this.bitChanged = bitChanged;
+        GetCurrentValue = get;
+        SetNewValue = (newValue) =>
+        {
+            flagGameSettingChanged.SetBitGameSettingChanged(!EqualityComparer<T>.Default.Equals(newValue, initValue), bitChanged);
+            set(newValue);
+        };
         UpdateInitValueExposeFields += () => StoreNewInitValue();
+        StoreNewInitValue();
     }
 
-    public void StoreNewInitValue() => initValue = get();
+    public void StoreNewInitValue() => initValue = GetCurrentValue();
 }

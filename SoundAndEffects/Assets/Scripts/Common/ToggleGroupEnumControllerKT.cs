@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using GMTools.Menu;
+using GMTools.Menu.Elements;
 /// <summary>
 /// Controller for toggle group UIElements based on ToggleGroupEnum<T>
 /// </summary>

@@ -1,2 +1,2 @@
-using GMTools.Menu;
+using GMTools.Menu.Elements;
 public class ToggleGroupPlayMode : ToggleGroupEnum<PlayMode> { }

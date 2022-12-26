@@ -1,7 +1,11 @@
 ﻿using System;
-
-public interface IElement<T>
+namespace GMTools.Menu.Elements
 {
-    public event Action<T> onNewValue;
-    public void SetValue(T value);
+    public interface IElement<T>
+    {
+        public void InitElement();
+
+        public event Action<T> onNewValue;
+        public void SetValue(T value);
+    }
 }

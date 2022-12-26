@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using TMPro;
 using System;
-using System.Collections;
 
-namespace GMTools.Menu
+namespace GMTools.Menu.Elements
 {
     public enum YesNoToggleEnum : byte
     {
@@ -24,31 +21,51 @@ namespace GMTools.Menu
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [ExecuteInEditMode]
-    public class ToggleGroupBoolEnum<T> : ToggleGroup, IElement<bool> where T : Enum
+    public class ToggleGroupBoolEnum<T> : MonoBehaviour, IElement<bool> where T : Enum
     {
         [SerializeField] private T _true;
-        [ReadOnly]
-        [SerializeField] private T _false;
+        [ReadOnly, SerializeField] private T _false;
         [SerializeField] private bool _trueFirstToggle = true;
         private const int TwoTogglesInGroup = 2;
         public bool ToggleGroupIsInit { get; private set; } = false;
-
+        #region VariablesforValidate
         private T _oldValueTrue;
-        private bool oldValueTrueFirstToggle;
+        private bool oldValueTrueFirstToggle; 
+        #endregion
         private Toggle[] foudedToggles = new Toggle[TwoTogglesInGroup];
         private Array _enumValues;
         private Dictionary<bool, T> _dictBoolEnums = new Dictionary<bool, T>(2);
         private Dictionary<bool, Toggle> _dictBoolToggles = new Dictionary<bool, Toggle>(2);
 
         //At OnEnable() the m_Toggles may not be initiated use Coroutine or Start() or don't use the internal m_Toggles
-        protected override void OnEnable()
+        private void Awake()
         {
-            base.OnEnable();
-            InitToggles();
-            InitEnum();
-            InitDictBoolValues();
-            InitToggleGroup();
-            
+            //Start run once and after all OnEnable(), also the code doesn't linked with "m_Toggles.OnEnable"
+            InitElement();
+        }
+
+        public void InitElement()
+        {
+            if (!ToggleGroupIsInit)
+            {
+                InitToggles();
+                InitEnum();
+                InitDictBoolValues();
+                UpdateTrueFalseToggle();
+                ToggleGroupIsInit = true;
+            }
+        }
+
+        public event Action<bool> onNewValue;
+
+        public void SetValue(bool value)
+        {
+            if (ToggleGroupIsInit)
+            {
+                _dictBoolToggles[value].SetIsOnWithoutNotify(true);
+            }
+            else
+                Debug.LogError($"{this} : Attemp SetValue but ToggleGroupIsInit is not inited");
         }
 
         private void InitDictBoolValues()
@@ -79,32 +96,25 @@ namespace GMTools.Menu
         }
 
 #if UNITY_EDITOR
-        protected override void OnValidate()
+        private void OnValidate()
         {
-            base.OnValidate();
+            //base.OnValidate();
             if (ToggleGroupIsInit && oldValueTrueFirstToggle != _trueFirstToggle)
             {
-                ToggleGroupIsInit = false;
-                InitToggleGroup();
+                UpdateTrueFalseToggle();
             }
             if (ToggleGroupIsInit && !EqualityComparer<T>.Default.Equals(_oldValueTrue, _true))
             {
                 InitDictBoolValues();
-                ToggleGroupIsInit = false;
-                InitToggleGroup();
+                UpdateTrueFalseToggle();
             }
         } 
 #endif
 
-        private void InitToggleGroup()
+        private void UpdateTrueFalseToggle()
         {
-            if (!ToggleGroupIsInit)
-            {
-                Debug.LogError($"{this} : InitToggleGroup()");
-                SetTrueFalseToggle();
-                oldValueTrueFirstToggle = _trueFirstToggle;
-                ToggleGroupIsInit = true;
-            }
+            SetTrueFalseToggle();
+            oldValueTrueFirstToggle = _trueFirstToggle;
         }
 
         private void InitToggles()
@@ -161,16 +171,6 @@ namespace GMTools.Menu
             return foudedToggles.Length;
         }
 
-        public event Action<bool> onNewValue;
 
-        public void SetValue(bool value)
-        {
-            if (ToggleGroupIsInit)
-            {
-                _dictBoolToggles[value].SetIsOnWithoutNotify(true); 
-            }
-            else
-                Debug.LogError($"{this} : Attemp SetValue but ToggleGroupIsInit is not inited");
-        }
     }
 }

@@ -155,7 +155,7 @@ public class PlayJukeBox : MonoBehaviour
 
     public void SwitchJukeBoxSequenceType(SequenceType newSequenceType)
     {
-        //Debug.Log($"{this} : PlayJukeBox.SwitchJukeBoxSequenceType()");
+        //Debug.LogWarning($"{this} : PlayJukeBox.SwitchJukeBoxSequenceType()");
         bool initialMusicState = JukeBoxStateInited;
         if (initialMusicState)
             TurnOn(false);

@@ -21,6 +21,28 @@ public class MainManager : SingletonController<MainManager>
     private GameSceneManager _gameSceneManager;
 
     private int _characterHealth;
+    /*
+     * The Start order:
+     *  Turn Loader camera
+     *  Load GameSettings and Set Environment variables
+     *  Turn on Music
+     *  Load Scenes
+     */
+    private void Start()
+    {
+        StartCoroutine(InitGameSettingLoadScenes());
+    }
+
+    private IEnumerator InitGameSettingLoadScenes()
+    {
+        _loaderSceneManager.ActivateLoaderCamera(true);
+
+        GameSettingsSOController.Instance.InitGameSettings();
+        yield return new WaitUntil(() => GameSettingsSOController.Instance.GameSettingsInited);
+        _loaderSceneManager.ActivateMusicLoaderMenus(true);
+
+        yield return _loaderSceneManager.StartLoadScenes();
+    }
 
     public void SetCharacterHelath(int characterHealth) => _characterHealth = characterHealth;
 
