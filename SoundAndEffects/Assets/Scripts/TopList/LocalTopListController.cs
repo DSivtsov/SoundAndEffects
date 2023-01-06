@@ -39,7 +39,7 @@ public class LocalTopListController : TopListController
 
     public void ResetTopList()
     {
-        Debug.Log("ButtonType.ResetTopList");
+        //Debug.Log("ButtonType.ResetTopList");
         _topList.Clear();
         SaveTopList();
         UpdateAndShowTopList();
@@ -58,7 +58,7 @@ public class LocalTopListController : TopListController
 
     private void InitTopLis()
     {
-        Debug.LogWarning($"{this} : InitTopLis() created new TopList");
+        //Debug.LogWarning($"{this} : InitTopLis() created new TopList");
         _topList = new List<PlayerData>();
         _topListElement.SetUsedTopList(_topList);
         InitCharacterData = true;
@@ -73,11 +73,11 @@ public class LocalTopListController : TopListController
         {
             if (InitCharacterData)
                 _topListElement.UpdateTopList(_autoSortByScore);
-            else
-                Debug.LogWarning($"{this.GetType().Name} : TopList is Empty");
+            //else
+            //    Debug.LogWarning($"{this.GetType().Name} : TopList is Empty");
         }
         else
-            Debug.LogError("TopListElementBase == null");
+            Debug.LogError($"{this} : TopListElementBase == null");
     }
 
     /// <summary>
@@ -105,8 +105,7 @@ public class LocalTopListController : TopListController
                 }
                 else
                 {
-                    Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()} Load breaked");
-                    Debug.Log($"_topList=[{_topList}]");
+                    //Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()} Load breaked");
                     InitTopLis();
                 }
                 break;

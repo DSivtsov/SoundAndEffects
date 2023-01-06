@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using UnityEditor;
 public class TempActivateGameObject : MonoBehaviour
 {
     [SerializeField] private GameObject[] _tempGameObject;
+#if UNITY_EDITOR
     private void Awake()
     {
         for (int i = 0; i < _tempGameObject.Length; i++)
@@ -45,5 +45,5 @@ public class TempActivateGameObject : MonoBehaviour
             Debug.LogWarning(strMsg);
         }
     }
-} 
 #endif
+}

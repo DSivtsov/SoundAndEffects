@@ -1,10 +1,11 @@
-#if UNITY_EDITOR
+
 using UnityEngine;
 /// <summary>
 /// Add AudioListener to current object if Scene can't find any one actine Audiolisneter, in Editor only
 /// </summary>
 public class TempAudioListener : MonoBehaviour
 {
+#if UNITY_EDITOR
     private void Awake()
     {
         //WARNING! This finds disabled listener components!! (although not inactive GOs with listeners on them)
@@ -30,5 +31,6 @@ public class TempAudioListener : MonoBehaviour
         gameObject.AddComponent<AudioListener>();
         Debug.LogWarning($"Temporary for [{gameObject.scene.name}] Scene was added [AudioListener]");
     }
-} 
 #endif
+}
+

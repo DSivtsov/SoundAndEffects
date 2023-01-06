@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.EventSystems;
@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class TempEventSystem : MonoBehaviour
 {
+#if UNITY_EDITOR
     private void Awake()
     {
         EventSystem[] myEventSystems = FindObjectsOfType<EventSystem>(includeInactive: true);
@@ -34,5 +35,5 @@ public class TempEventSystem : MonoBehaviour
         Debug.LogWarning($"Temporary for [{gameObject.scene.name}] Scene was added [EventSystem] with [InputSystemUIInputModule]");
         InputSystemUIInputModule inputModule = gameObject.AddComponent<InputSystemUIInputModule>();
     }
-} 
 #endif
+}
