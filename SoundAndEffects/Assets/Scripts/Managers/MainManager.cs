@@ -59,7 +59,7 @@ public class MainManager : SingletonController<MainManager>
 
     public void AllScenesLoaded()
     {
-        CountFrame.DebugLogUpdate(this, $"AllScenesLoaded() started");
+        CountFrame.DebugLogUpdate(this, $"AllScenesLoaded()");
         FromLoaderToMenus();
     }
 

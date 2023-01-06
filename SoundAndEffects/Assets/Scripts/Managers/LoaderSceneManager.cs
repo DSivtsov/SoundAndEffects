@@ -48,7 +48,6 @@ public class LoaderSceneManager : MonoBehaviour
                 yield return null;
             } while (!_playJukeBoxLoaderMenus.GetIsJukeBoxPlaying());
         }
-        CountFrame.DebugLogUpdate(this, "Call _loaderScenes.LoadScenes()");
         _loaderScenes.LoadScenes();
     }
 

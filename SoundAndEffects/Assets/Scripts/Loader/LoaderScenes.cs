@@ -45,6 +45,7 @@ public class LoaderScenes : MonoBehaviour
 
     public void LoadScenes()
     {
+        CountFrame.DebugLogUpdate(this, "LoadScenes()");
         if (loadedAllAfterStartFirst)
             LoadAllAfterStartFirst();
         else

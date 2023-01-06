@@ -44,13 +44,13 @@ public class SectionAudioOptionsController : MonoBehaviour
 
     private void LinkFieldsToElement()
     {
-        Debug.LogError($"{this} : LinkFieldsToElement()");
+        //Debug.LogError($"{this} : LinkFieldsToElement()");
         LinkFieldToElementBase.Link(_gameSettings.FieldMasterVolume, _UIMasterVolume);
         LinkFieldToElementBase.Link(_gameSettings.FieldMusicVolume, _UIMusicVolume);
         LinkFieldToElementBase.Link(_gameSettings.FieldEffectVolume, _UIEffectsVolume);
         LinkFieldToElementBase.Link(_gameSettings.FieldSequenceType, _UISequenceType);
 
-        Debug.LogWarning($"{this} : LoadSectionValues()");
+        //Debug.LogWarning($"{this} : LoadSectionValues()");
         UpdateElementsValueFromFields();
     }
 

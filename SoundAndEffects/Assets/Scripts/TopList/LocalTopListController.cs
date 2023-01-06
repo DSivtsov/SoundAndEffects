@@ -21,7 +21,7 @@ public class LocalTopListController : TopListController
 
     protected override void LoadAndShow(bool multiAsyncOperations = true)
     {
-        CountFrame.DebugLogUpdate(this, $"LoadAndShow() started");
+        //CountFrame.DebugLogUpdate(this, $"LoadAndShow() started");
         LoadTopList();
         UpdateAndShowTopList();
     }

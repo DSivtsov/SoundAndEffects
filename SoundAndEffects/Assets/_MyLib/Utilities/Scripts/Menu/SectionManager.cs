@@ -13,57 +13,54 @@ namespace GMTools.Menu
         [SerializeField] private bool _useInitialStartSection = true;
         [SerializeField] private SectionName _initialStartSection;
 
-        //protected Dictionary<(SectionName, Type), ISectionControllerAction> SectionControllers = new Dictionary<(SectionName, Type), ISectionControllerAction>();
+        private Dictionary<SectionName, SectionObject> _dictSections = new Dictionary<SectionName, SectionObject>();
+        private SectionObject _activeSectionObject;
 
+        public SectionObject GetSelectedSection => _activeSectionObject;
         public static SectionManager ActiveSectionManager { get; private set; }
 
-        //public static ISectionControllerAction SectionController { get; private set; }
-
-        private SectionObject _selectedSection;
-        public SectionObject GetSelectedSection => _selectedSection;
-        private Dictionary<SectionName, SectionObject> _dictSections = new Dictionary<SectionName, SectionObject>();
-
-        //Initialization of dictSections must be made only after finishing of all Awakes of SectionObject
+        //InitDictAndSections() must be made only after finishing of all Awake of SectionObject
         //Start will call only after the CanvasOption will be activated
         private void Start()
         {
+            InitDictAndSections();
+            if (_useInitialStartSection)
+                SwitchToSection(_initialStartSection); 
+        }
+
+        private void InitDictAndSections()
+        {
             foreach (SectionObject section in _sectionsNames.GetComponentsInChildren<SectionObject>(includeInactive: true))
             {
-                //Debug.Log(section.name);
                 _dictSections.Add(section.SectionName, section);
                 section.LinkToSectionManager(this);
                 //Initially all sections must be not active, but coresponded button is Active
                 ActivateSelectedSession(section, false);
             }
-            if (_useInitialStartSection)
-                SwitchSection(_initialStartSection);
         }
 
         public void SetActiveSectionManager() => ActiveSectionManager = this;
 
-        public void SwitchSection(SectionName selectedSection)
+        public void SwitchToSection(SectionName switchedSectionName)
         {
-            if (_selectedSection != null)
-                ActivateSelectedSession(_selectedSection, false);
-            SectionObject desiredSection = _dictSections[selectedSection];
-            if (desiredSection != null)
+            if (_dictSections.TryGetValue(switchedSectionName, out SectionObject desiredSectionObject))
             {
-                ActivateSelectedSession(desiredSection);
-                _selectedSection = desiredSection;
-                if (!(GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local))
-                {
-                    //SectionController = SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())];
-                    Debug.Log($"LoadValuesSelectedSession()");
-                    //SectionController.LoadSectionValues(); 
-                }
-                else
-                {
-                    Debug.LogError($"Temporary blocked : GetSelectedSection.SectionName={GetSelectedSection.SectionName}" +
-                        " GetSelectedSection.SectionName == SectionName.Global || GetSelectedSection.SectionName == SectionName.Local"); 
-                }
+                DeactivateCurrentSection();
+                ActivateSelectedSession(desiredSectionObject);
+                _activeSectionObject = desiredSectionObject;
+                CallSpecificSectionsActions();
             }
             else
-                Debug.LogWarning($"The desired [{selectedSection}] Section was not found!");
+                Debug.LogError($"The desired [{switchedSectionName}] Section was not found!");
+        }
+
+        //Derived types can call the additional actions for that specific Sections types which must do at switching of Sections of that types
+        protected virtual void CallSpecificSectionsActions() {}
+
+        private void DeactivateCurrentSection()
+        {
+            if (_activeSectionObject != null)
+                ActivateSelectedSession(_activeSectionObject, false);
         }
 
         private void ActivateSelectedSession(SectionObject selectedSection, bool activate = true)
@@ -72,23 +69,5 @@ namespace GMTools.Menu
             selectedSection.SetValueMenuButtonInteractable(!activate);
             selectedSection.SetVisibleSectionBody(activate);
         }
-
-        public void LinkToSectionActions(SectionName sectionName, ISectionControllerAction sectionController)
-        {
-            //SettingsSectionControllers.Add(sectionName, sectionController);
-            //SectionControllers.Add((sectionName, typeof(SettingsSectionManager)), sectionController);
-        }
-
-        //private void LoadValuesSelectedSession()
-        //{
-        //    Debug.Log($"LoadValuesSelectedSession()");
-        //    SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())].LoadSectionValues();
-        //}
-
-        //public void ResetSectionValuesToDefault()
-        //{
-        //    //SettingsSectionControllers[GetLastActiveSection.SectionName].ResetSectionValuesToDefault();
-        //    SectionControllers[(GetSelectedSection.SectionName, ActiveSectionManager.GetType())].ResetSectionValuesToDefault();
-        //}
     }
 }

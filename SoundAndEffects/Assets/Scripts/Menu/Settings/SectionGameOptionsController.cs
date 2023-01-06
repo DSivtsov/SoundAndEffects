@@ -38,13 +38,13 @@ public class SectionGameOptionsController : MonoBehaviour
 
     private void LinkFieldsToElement()
     {
-        Debug.LogError($"{this} : LinkFieldsToElement()");
+        //Debug.LogError($"{this} : LinkFieldsToElement()");
         LinkFieldToElementBase.Link(_gameSettings.FieldPlayMode, _UIPlayMode);
         LinkFieldToElementBase.Link(_gameSettings.FieldNotCopyToGlobal, _UINotCopyToGlobal);
         LinkFieldToElementBase.Link(_gameSettings.FieldByDefaultShowGlobalTopListl, _UIDefaultTopListGlobal);
         LinkFieldToElementBase.Link(_gameSettings.FieldComplexityGame, _UIComplexityGame);
 
-        Debug.LogWarning($"{this} : LoadSectionValues()");
+        //Debug.LogWarning($"{this} : LoadSectionValues()");
         UpdateElementsValueFromFields();
     }
 

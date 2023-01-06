@@ -20,7 +20,6 @@ public class RemoteTopListController : TopListController
     {
         if (_lootLockerController.CurrentPlayMode != PlayMode.Offline)
         {
-            CountFrame.DebugLogUpdate(this, $"LoadAndShow : Call  StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations))"); 
             StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations));
         }
         else
@@ -29,6 +28,7 @@ public class RemoteTopListController : TopListController
 
     private IEnumerator CoroutineLoadAndShow(bool multiAsyncOperations = true)
     {
+        //CountFrame.DebugLogUpdate(this, $"LoadAndShow : StartCoroutine(CoroutineLoadAndShow(multiAsyncOperations))");
         while (!_lootLockerController.GuestSessionInited && _connectingToServer.Connecting)
         {
             yield return null;
@@ -56,7 +56,7 @@ public class RemoteTopListController : TopListController
                 _lootLockerController.FinalizeAllServerOperations(resultOK: false, ErrorConnecting.TopListNotLoaded);
                 Debug.LogError($"{this} : Remote TopList was not Loaded"); 
             }
-            CountFrame.DebugLogUpdate(this, $"CoroutineLoadAndShow Finished");
+            //CountFrame.DebugLogUpdate(this, $"CoroutineLoadAndShow Finished");
         }
         else
             CountFrame.DebugLogUpdate(this, $"LoadAndShow Canceled - GuestSession not inited");
