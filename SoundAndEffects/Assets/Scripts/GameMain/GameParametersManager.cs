@@ -168,7 +168,8 @@ public class GameParametersManager : MonoBehaviour
 
     private ForceJumpSO GetForceJumpSO()
     {
-        ComplexitySO currentComplexity = _gameSettings.ComplexityGame;
+        //ComplexitySO currentComplexity = _gameSettings.ComplexityGame;
+        ComplexitySO currentComplexity = _gameSettings.FieldComplexityGame.GetCurrentValue();
         for (int i = 0; i < _arrForceJump.Length; i++)
         {
             if (_arrForceJump[i].Complexity == currentComplexity)

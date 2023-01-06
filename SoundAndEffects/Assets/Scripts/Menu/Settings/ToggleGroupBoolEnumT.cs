@@ -28,7 +28,7 @@ namespace GMTools.Menu.Elements
         [SerializeField] private bool _trueFirstToggle = true;
         private const int TwoTogglesInGroup = 2;
         public bool ToggleGroupIsInit { get; private set; } = false;
-        #region VariablesforValidate
+        #region VariablesforEditorOnValidate
         private T _oldValueTrue;
         private bool oldValueTrueFirstToggle; 
         #endregion
@@ -40,59 +40,9 @@ namespace GMTools.Menu.Elements
         //At OnEnable() the m_Toggles may not be initiated use Coroutine or Start() or don't use the internal m_Toggles
         private void Awake()
         {
+            //Debug.LogError($"{this} : ToggleGroupBoolEnum<T>.Awake()");
             //Start run once and after all OnEnable(), also the code doesn't linked with "m_Toggles.OnEnable"
             InitElement();
-        }
-
-        public void InitElement()
-        {
-            if (!ToggleGroupIsInit)
-            {
-                InitToggles();
-                InitEnum();
-                InitDictBoolValues();
-                UpdateTrueFalseToggle();
-                ToggleGroupIsInit = true;
-            }
-        }
-
-        public event Action<bool> onNewValue;
-
-        public void SetValue(bool value)
-        {
-            if (ToggleGroupIsInit)
-            {
-                _dictBoolToggles[value].SetIsOnWithoutNotify(true);
-            }
-            else
-                Debug.LogError($"{this} : Attemp SetValue but ToggleGroupIsInit is not inited");
-        }
-
-        private void InitDictBoolValues()
-        {
-            _dictBoolEnums.Clear();
-            T value0 = (T)_enumValues.GetValue(0);
-            T value1 = (T)_enumValues.GetValue(1);
-            if (EqualityComparer<T>.Default.Equals(value0, _true))
-                SetTrueFalseEnum(value0, value1);
-            else
-                SetTrueFalseEnum(value1, value0);
-            _oldValueTrue = _true;
-            _false = _dictBoolEnums[false];
-            void SetTrueFalseEnum(T trueValues, T falseValue)
-            {
-                _dictBoolEnums.Add(true, trueValues);
-                _dictBoolEnums.Add(false, falseValue);
-            }
-        }
-
-        private void InitEnum()
-        {
-            _enumValues = Enum.GetValues(typeof(T));
-            if (_enumValues.Length != TwoTogglesInGroup)
-            {
-                throw new NotImplementedException($"enumValues.Length [{_enumValues.Length}] != {TwoTogglesInGroup} not implemented");
-            }
         }
 
 #if UNITY_EDITOR
@@ -111,19 +61,81 @@ namespace GMTools.Menu.Elements
         } 
 #endif
 
-        private void UpdateTrueFalseToggle()
+        public void InitElement()
         {
-            SetTrueFalseToggle();
-            oldValueTrueFirstToggle = _trueFirstToggle;
+            if (!ToggleGroupIsInit)
+            {
+                InitArrToggles();
+                InitArrayEnum();
+                InitDictBoolValues();
+                UpdateTrueFalseToggle();
+                ToggleGroupIsInit = true;
+            }
         }
 
-        private void InitToggles()
+        public event Action<bool> onNewValue;
+
+        public void SetValue(bool value)
+        {
+            if (ToggleGroupIsInit)
+            {
+                _dictBoolToggles[value].SetIsOnWithoutNotify(true);
+                _dictBoolToggles[!value].SetIsOnWithoutNotify(false);
+            }
+            else
+                Debug.LogError($"{this} : Attemp SetValue but ToggleGroupIsInit is not inited");
+        }
+
+        private void InitArrToggles()
         {
             int countToggles = FillArrToggles();
             if (countToggles != TwoTogglesInGroup)
             {
                 throw new NotImplementedException($"countToggles [{countToggles}] != {TwoTogglesInGroup} not implemented");
             }
+        }
+        /// <summary>
+        /// Find the Toggle and add them to myArrToggles
+        /// </summary>
+        /// <returns>number founded toggles</returns>
+        private int FillArrToggles()
+        {
+            foudedToggles = transform.GetComponentsInChildren<Toggle>();
+            if (foudedToggles == null)
+                throw new NotImplementedException($"{this} : Can't find demdanded Toggles at initialization");
+            return foudedToggles.Length;
+        }
+
+        private void InitArrayEnum()
+        {
+            _enumValues = Enum.GetValues(typeof(T));
+            if (_enumValues.Length != TwoTogglesInGroup)
+            {
+                throw new NotImplementedException($"enumValues.Length [{_enumValues.Length}] != {TwoTogglesInGroup} not implemented");
+            }
+        }
+        private void InitDictBoolValues()
+        {
+            _dictBoolEnums.Clear();
+            T value0 = (T)_enumValues.GetValue(0);
+            T value1 = (T)_enumValues.GetValue(1);
+            if (EqualityComparer<T>.Default.Equals(value0, _true))
+                SetTrueFalseEnum(value0, value1);
+            else
+                SetTrueFalseEnum(value1, value0);
+            _oldValueTrue = _true;
+            _false = _dictBoolEnums[false];
+            void SetTrueFalseEnum(T trueValues, T falseValue)
+            {
+                _dictBoolEnums.Add(true, trueValues);
+                _dictBoolEnums.Add(false, falseValue);
+            }
+        }
+
+        private void UpdateTrueFalseToggle()
+        {
+            SetTrueFalseToggle();
+            oldValueTrueFirstToggle = _trueFirstToggle;
         }
 
         private void SetTrueFalseToggle()
@@ -145,10 +157,15 @@ namespace GMTools.Menu.Elements
             {
                 Toggle currentToggle = foudedToggles[idx];
                 _dictBoolToggles.Add(value, currentToggle);
-                bool fixValue = value;
+                //bool fixValue = value;
+                //Every Toggle invoke onNewValue when this toggle is On
                 currentToggle.onValueChanged.AddListener((toggleIsOn) =>
                 {
-                    if (toggleIsOn) onNewValue?.Invoke(fixValue);
+                    if (toggleIsOn)
+                    {
+                        //Debug.LogWarning($"{this}: currentToggle={currentToggle} Value={value}");
+                        onNewValue?.Invoke(value); 
+                    }
                 });
                 Text labelToggle = currentToggle.GetComponentInChildren<Text>();
                 if (labelToggle)
@@ -159,17 +176,7 @@ namespace GMTools.Menu.Elements
             }
         }
 
-        /// <summary>
-        /// Find the Toggle and add them to myArrToggles
-        /// </summary>
-        /// <returns>number founded toggles</returns>
-        private int FillArrToggles()
-        {
-            foudedToggles = transform.GetComponentsInChildren<Toggle>();
-            if (foudedToggles == null)
-                throw new NotImplementedException($"{this} : Can't find demdanded Toggles at initialization");
-            return foudedToggles.Length;
-        }
+
 
 
     }

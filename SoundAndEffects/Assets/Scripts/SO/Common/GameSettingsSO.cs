@@ -35,15 +35,15 @@ public class GameSettingsSO : ScriptableObject
 
     public override string ToString() => JsonUtility.ToJson(this); 
 
-    public ComplexitySO ComplexityGame => _complexityGame;
-    public PlayMode UsedPlayMode => _usedPlayMode;
+    //public ComplexitySO ComplexityGame => _complexityGame;
+    //public PlayMode UsedPlayMode => _usedPlayMode;
     public bool NotCopyToGlobal => _notCopyToGlobal;
     public bool DefaultTopListGlobalt => _defaultTopListGlobal;
 
     public ExposeField<ComplexitySO> FieldComplexityGame { get; private set; }
     public ExposeField<PlayMode> FieldPlayMode { get; private set; }
     public ExposeField<bool> FieldNotCopyToGlobal { get; private set; }
-    public ExposeField<bool> FieldByDefaultShowGlobalTopListl { get; private set; }
+    public ExposeField<bool> FieldByDefaultShowGlobalTopList { get; private set; }
     public ExposeField<SequenceType> FieldSequenceType { get; private set; }
     public ExposeField<int> FieldMasterVolume { get; private set; }
     public ExposeField<int> FieldMusicVolume { get; private set; }
@@ -58,7 +58,7 @@ public class GameSettingsSO : ScriptableObject
         FieldComplexityGame = new ExposeField<ComplexitySO>(() => _complexityGame, (newValue) => _complexityGame = newValue, _flagGameSettingChanges, GameSettingChangedBit.ComplexityGame);
         FieldPlayMode = new ExposeField<PlayMode>(() => _usedPlayMode, (newValue) => _usedPlayMode = newValue, _flagGameSettingChanges, GameSettingChangedBit.PlayMode);
         FieldNotCopyToGlobal = new ExposeField<bool>(() => _notCopyToGlobal, (newValue) => _notCopyToGlobal = newValue, _flagGameSettingChanges, GameSettingChangedBit.NotCopyToGlobal);
-        FieldByDefaultShowGlobalTopListl = new ExposeField<bool>(() => _defaultTopListGlobal, (newValue) => _defaultTopListGlobal = newValue, _flagGameSettingChanges,
+        FieldByDefaultShowGlobalTopList = new ExposeField<bool>(() => _defaultTopListGlobal, (newValue) => _defaultTopListGlobal = newValue, _flagGameSettingChanges,
             GameSettingChangedBit.ByDefaultShowGlobalTopList);
         FieldSequenceType = new ExposeField<SequenceType>(() => _musicSequenceType, (newValue) => { _musicSequenceType = newValue; _audioContoller.SetSequenceType(newValue); },
             _flagGameSettingChanges, GameSettingChangedBit.SequenceType);

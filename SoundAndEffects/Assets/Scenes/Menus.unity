@@ -14308,8 +14308,8 @@ MonoBehaviour:
   m_FillRect: {fileID: 2035648495}
   m_HandleRect: {fileID: 131292846}
   m_Direction: 0
-  m_MinValue: -40
-  m_MaxValue: 5
+  m_MinValue: -20
+  m_MaxValue: 10
   m_WholeNumbers: 1
   m_Value: 0
   m_OnValueChanged:
@@ -21702,6 +21702,7 @@ MonoBehaviour:
   _sectionsNames: {fileID: 1060477214}
   _useInitialStartSection: 1
   _initialStartSection: 4
+  _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
 --- !u!1 &2097756729
 GameObject:
   m_ObjectHideFlags: 0

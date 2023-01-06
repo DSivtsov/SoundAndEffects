@@ -27,7 +27,7 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
     [SerializeField, ReadOnly] private string _nameFile = "GameSettingsSO.txt";
     [SerializeField, ReadOnly] private string _nameFileDefault = "GameSettingsSODefault.txt";
 
-    public event Action UpdateElementFromFields;
+    //public event Action UpdateElementFromFields;
     public event Action UpdateGameSettingsControlButtons;
 
     public bool GameSettingsInited { get; private set; } = false;
@@ -90,7 +90,8 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
     {
         OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFile);
         ExistCustomSavedSettings = true;
-        UpdateElementFromFields?.Invoke();
+        LinkFieldToElementBase.UpdateElementsValues(); 
+        //UpdateElementFromFields?.Invoke();
         UpdateInitValues();
     }
 
@@ -106,7 +107,8 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         OdinSerializerCalls.LoadUnityObject(_gameSettings, _nameFileDefault);
         if (File.Exists(_nameFile)) File.Delete(_nameFile);
         ExistCustomSavedSettings = false;
-        UpdateElementFromFields?.Invoke();
+        LinkFieldToElementBase.UpdateElementsValues();
+        //UpdateElementFromFields?.Invoke();
         UpdateInitValues();
     }
 }

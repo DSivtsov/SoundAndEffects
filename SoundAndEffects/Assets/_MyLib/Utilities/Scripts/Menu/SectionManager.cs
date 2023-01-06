@@ -24,8 +24,7 @@ namespace GMTools.Menu
         private void Start()
         {
             InitDictAndSections();
-            if (_useInitialStartSection)
-                SwitchToSection(_initialStartSection); 
+            InitSectionCallActions();
         }
 
         private void InitDictAndSections()
@@ -39,6 +38,13 @@ namespace GMTools.Menu
             }
         }
 
+        //Derived types can call the additional actions for that specific Sections types which must do at Init Sections of that types
+        protected virtual void InitSectionCallActions()
+        {
+            if (_useInitialStartSection)
+                SwitchToSection(_initialStartSection);
+        }
+
         public void SetActiveSectionManager() => ActiveSectionManager = this;
 
         public void SwitchToSection(SectionName switchedSectionName)
@@ -48,14 +54,14 @@ namespace GMTools.Menu
                 DeactivateCurrentSection();
                 ActivateSelectedSession(desiredSectionObject);
                 _activeSectionObject = desiredSectionObject;
-                CallSpecificSectionsActions();
+                SwitchToSectionCallSpecificActions();
             }
             else
                 Debug.LogError($"The desired [{switchedSectionName}] Section was not found!");
         }
 
         //Derived types can call the additional actions for that specific Sections types which must do at switching of Sections of that types
-        protected virtual void CallSpecificSectionsActions() {}
+        protected virtual void SwitchToSectionCallSpecificActions() {}
 
         private void DeactivateCurrentSection()
         {

@@ -1,4 +1,6 @@
 using GMTools.Menu.Elements;
+using UnityEngine;
+using UnityEngine.UI;
 
 public enum DefaultTopListToggleEnum : byte
 {
@@ -6,4 +8,4 @@ public enum DefaultTopListToggleEnum : byte
     Global,
 }
 
-public class ToggleGroupBoolDefTopLIst : ToggleGroupBoolEnum<DefaultTopListToggleEnum> { }
+public class ToggleGroupBoolDefTopList : ToggleGroupBoolEnum<DefaultTopListToggleEnum> { }

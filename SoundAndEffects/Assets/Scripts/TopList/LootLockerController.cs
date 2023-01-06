@@ -75,7 +75,8 @@ public class LootLockerController : MonoBehaviour
 //        SelectedPlayMode = PlayMode.Online;
 //#endif
         GuestSessionInited = false;
-        if (_gameSettings.UsedPlayMode == PlayMode.Offline)
+        //if (_gameSettings.UsedPlayMode == PlayMode.Offline)
+        if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
         {
             CurrentPlayMode = PlayMode.Offline;
             _connectingToServer.OfflineMode();

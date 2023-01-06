@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using GMTools.Menu.Elements;
@@ -21,23 +18,7 @@ public class SectionAudioOptionsController : MonoBehaviour
     [SerializeField] private ValueableSliderInt _UIMusicVolume;
     [SerializeField] private ValueableSliderInt _UIEffectsVolume;
 
-    private GameSettingsSOController _gameSettingsSOController;
-
     private void Awake()
-    {
-        _gameSettingsSOController = GameSettingsSOController.Instance;
-    }
-
-    private void OnEnable()
-    {
-        _gameSettingsSOController.UpdateElementFromFields += UpdateElementsValueFromFields;
-    }
-    private void OnDisable()
-    {
-        _gameSettingsSOController.UpdateElementFromFields -= UpdateElementsValueFromFields;
-    }
-
-    private void Start()
     {
         LinkFieldsToElement();
     }
@@ -51,8 +32,6 @@ public class SectionAudioOptionsController : MonoBehaviour
         LinkFieldToElementBase.Link(_gameSettings.FieldSequenceType, _UISequenceType);
 
         //Debug.LogWarning($"{this} : LoadSectionValues()");
-        UpdateElementsValueFromFields();
+        LinkFieldToElementBase.UpdateElementsValues();
     }
-
-    private void UpdateElementsValueFromFields() => LinkFieldToElementBase.UpdateElementsValues();
 }

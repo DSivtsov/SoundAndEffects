@@ -1,13 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using GMTools.Menu.Elements;
 
 public abstract class LinkFieldToElementBase
 {
     public static event Action UpdateElementValue;
 
+    /// <summary>
+    /// Update Element values from GameSetting fields
+    /// </summary>
     public static void UpdateElementsValues()
     {
+        //if (UpdateElementValue != null)
+        //{
+        //    UnityEngine.Debug.Log($"GetInvocationList()?.Length={UpdateElementValue.GetInvocationList()?.Length}");
+        //}
         UpdateElementValue?.Invoke();
     }
 
@@ -18,13 +24,3 @@ public abstract class LinkFieldToElementBase
         UpdateElementValue += () => uiElement.SetValue(field.GetCurrentValue());
     }
 }
-
-//public class LinkFieldToElement<T> : LinkFieldToElementBase
-//{
-//    public LinkFieldToElement(ExposeField<T> field, IElement<T> uiElement)
-//    {
-//        uiElement.InitElement();
-//        uiElement.onNewValue += field.SetNewValue;
-//        UpdateElementValue += () => uiElement.SetValue(field.GetCurrentValue());
-//    }
-//}
