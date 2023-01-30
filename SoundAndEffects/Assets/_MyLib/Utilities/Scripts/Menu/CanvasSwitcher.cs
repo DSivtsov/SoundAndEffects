@@ -6,22 +6,18 @@ namespace GMTools.Menu
     [RequireComponent(typeof(Button))]
     public class CanvasSwitcher : MonoBehaviour
     {
-        public CanvasName desiredCanvasType;
-
-        CanvasManager canvasManager;
-        Button menuButton;
+        [SerializeField] private CanvasName desiredCanvasType;
+        //private CanvasManager canvasManager;
+        //private Button menuButton;
 
         private void Awake()
         {
-            menuButton = GetComponent<Button>();
-            //menuButton.onClick.AddListener(OnButtonClicked);
-            canvasManager = CanvasManager.Instance;
+            //menuButton = GetComponent<Button>();
+            //canvasManager = CanvasManager.Instance;
+            GetComponent<Button>().onClick.AddListener(() => CanvasManager.Instance.SwitchCanvas(desiredCanvasType));
         }
-
-        private void OnEnable() => menuButton.onClick.AddListener(OnButtonClicked);
-
-        private void OnDisable() => menuButton.onClick.RemoveListener(OnButtonClicked);
-
-        void OnButtonClicked() => canvasManager.SwitchCanvas(desiredCanvasType);
+        //private void OnEnable() => menuButton.onClick.AddListener(OnButtonClicked);
+        //private void OnDisable() => menuButton.onClick.RemoveListener(OnButtonClicked);
+        //void OnButtonClicked() => canvasManager.SwitchCanvas(desiredCanvasType);
     } 
 }

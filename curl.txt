@@ -1,0 +1,155 @@
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl https://jsonplaceholder.typicode.com/posts/3
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   283  100   283    0     0   1119      0 --:--:-- --:--:-- --:--:--  1123{
+  "userId": 1,
+  "id": 3,
+  "title": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+  "body": "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -i https://jsonplaceholder.typicode.com/posts/3
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   283  100   283    0     0   1126      0 --:--:-- --:--:-- --:--:--  1132HTTP/2 200
+date: Tue, 17 Jan 2023 23:09:39 GMT
+content-type: application/json; charset=utf-8
+content-length: 283
+x-powered-by: Express
+x-ratelimit-limit: 1000
+x-ratelimit-remaining: 999
+x-ratelimit-reset: 1673939757
+vary: Origin, Accept-Encoding
+access-control-allow-credentials: true
+cache-control: max-age=43200
+pragma: no-cache
+expires: -1
+x-content-type-options: nosniff
+etag: W/"11b-USacuIw5a/iXAGdNKBvqr/TbMTc"
+via: 1.1 vegur
+cf-cache-status: HIT
+age: 16455
+accept-ranges: bytes
+server-timing: cf-q-config;dur=6.9999987317715e-06
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=xP8Djp8wWCCidexO7Dl%2BsZNnDRL4SUg8lURuPzkyEdaGwTYEHJfi6bokttbaKml7FCamz8sJ8roU5Pyl5sMnISfpmkmkQkBqCfdJ7GTTbrN4Eb8NLry50PJoXMsXCMtfKWs4csTfOYyap6GBwC5E"}],"group":"cf-nel","max_age":604800}
+nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+server: cloudflare
+cf-ray: 78b2c27f5e3cd96b-HEL
+alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
+
+{
+  "userId": 1,
+  "id": 3,
+  "title": "ea molestias quasi exercitationem repellat qui ipsa sit aut",
+  "body": "et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X POST "https://api.lootlocker.io/game/v2/session/guest"   -H "Content-Type: application/json"   -d "{\"game_key\": \"eab368a6c5ff699bceb60799ff596eb90981f18e\", \"game_version\": \"0.10.0.0\"}"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   503  100   419  100    84    375     75  0:00:01  0:00:01 --:--:--   451{
+    "success": true,
+    "player_id": 3296676,
+    "player_identifier": "734ee3b4-7264-4157-9b60-02ef4f4e4722",
+    "public_uid": "43GN445S",
+    "seen_before": false,
+    "player_created_at": "2023-01-17T23:25:50+00:00",
+    "check_grant_notifications": false,
+    "check_deactivation_notifications": false,
+    "check_dlcs": [],
+    "public": false,
+    "session_token": "805031552f2f6b2e4a5552369290c86ede6fac25"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X GET "https://api.lootlocker.io/game/player/name" \
+  -H "x-session-token: your_token_here" \
+  -H "LL-Version: 2021-03-01"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   170  100   170    0     0    239      0 --:--:-- --:--:-- --:--:--   239{"error":"Authentication failed","message":"Authentication failed. Register a new session and try request again.","request_id":"req_2d59873a-fea6-4c65-84de-fee6714ccc46"}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X GET "https://api.lootlocker.io/game/player/name"   -H "805031552f2f6b2e4a5552369290c86ede6fac25"   -H "LL-Version: 2021-03-01"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   136  100   136    0     0    215      0 --:--:-- --:--:-- --:--:--   215{"error":"Authentication failed","message":"No x-session-token header supplied","request_id":"req_ec4e287c-97a7-4141-a023-3fda8a0ed0ec"}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X POST "https://api.lootlocker.io/game/v2/session/guest"   -H "Content-Type: application/json"   -d "{\"game_key\": \"eab368a6c5ff699bceb60799ff596eb90981f18e\", \"game_version\": \"0.10.0.0\"}"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   503  100   419  100    84    416     83  0:00:01  0:00:01 --:--:--   500{
+    "success": true,
+    "player_id": 3296687,
+    "player_identifier": "233f7c5f-ae04-41a1-841a-a63e49c6a21e",
+    "public_uid": "DPMKGCCP",
+    "seen_before": false,
+    "player_created_at": "2023-01-17T23:28:51+00:00",
+    "check_grant_notifications": false,
+    "check_deactivation_notifications": false,
+    "check_dlcs": [],
+    "public": false,
+    "session_token": "ed715f9dc5b732b446c636015bba2eb6b08750af"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X POST "https://api.lootlocker.io/game/v2/session/guest"   -H "Content-Type: application/json"   -d "{\"game_key\": \"eab368a6c5ff699bceb60799ff596eb90981f18e\", \"player_identifier\": \"4e1f26f1-1bee-4c13-8b1d-60ef9addc05b\", \"game_version\": \"0.10.0.0\"}"your_game_key
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   349  100   191  100   158    184    152  0:00:01  0:00:01 --:--:--   337{
+    "success": false,
+    "error": "Internal non-recoverable server error occurred. Please reach out to us with the error id if this issue persists.",
+    "error_id": "NjNjNzMxOTkwYTFiMA"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X POST "https://api.lootlocker.io/game/v2/session/guest"   -H "Content-Type: application/json"   -d "{\"game_key\": \"eab368a6c5ff699bceb60799ff596eb90981f18e\", \"player_identifier\": \"4e1f26f1-1bee-4c13-8b1d-60ef9addc05b\", \"game_version\": \"1.0.0.0\", \"development_mode\":true}"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   586  100   417  100   169    378    153  0:00:01  0:00:01 --:--:--   532{
+    "success": true,
+    "player_id": 2739557,
+    "player_identifier": "4e1f26f1-1bee-4c13-8b1d-60ef9addc05b",
+    "public_uid": "SH7RRJY6",
+    "seen_before": true,
+    "player_created_at": "2022-11-02T13:08:06+00:00",
+    "check_grant_notifications": false,
+    "check_deactivation_notifications": false,
+    "check_dlcs": [],
+    "public": true,
+    "session_token": "7d08935917b546f66e23d4d38340044318a37479"
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X GET "https://api.lootlocker.io/game/v1/player/info" \
+  -H "x-session-token: 7d08935917b546f66e23d4d38340044318a37479"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   117  100   117    0     0     96      0  0:00:01  0:00:01 --:--:--    96{
+    "success": true,
+    "account_balance": null,
+    "xp": null,
+    "level": null,
+    "level_thresholds": null
+}
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X GET "https://api.lootlocker.io/game/player/name"  -H "x-session-token: 7d08935917b546f66e23d4d38340044318a37479"   -H "LL-Version: 2021-03-01"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    20  100    20    0     0     14      0  0:00:01  0:00:01 --:--:--    14{"name":"LastDenis"}
+
+dsivt@DGoodman74 MINGW64 ~
+$
+
+dsivt@DGoodman74 MINGW64 ~
+$ curl -X GET "https://api.lootlocker.io/game/leaderboards/CityRunnerGlobalTopList/list?count=10&after=0"  -H "x-session-token: 7d08935917b546f66e23d4d38340044318a37479"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1333  100  1333    0     0   1801      0 --:--:-- --:--:-- --:--:--  1801{"pagination":{"total":15,"next_cursor":10,"previous_cursor":null},"items":[{"rank":1,"member_id":"3236439","score":1176,"player":{"name":"Ayyub","id":3236439,"public_uid":"RMDKXHMJ"},"metadata":""},{"rank":2,"member_id":"2929502","score":450,"player":{"name":"GoodManUZ","id":2929502,"public_uid":"NKK3GS5J"},"metadata":""},{"rank":3,"member_id":"3177556","score":381,"player":{"name":"Andrey","id":3177556,"public_uid":"CNJLJAP7"},"metadata":""},{"rank":4,"member_id":"2257336","score":274,"player":{"name":"MyCat123","id":2257336,"public_uid":"6LG6YH5A"},"metadata":""},{"rank":5,"member_id":"2258567","score":258,"player":{"name":"Kate","id":2258567,"public_uid":"PS6L574Y"},"metadata":""},{"rank":6,"member_id":"2241087","score":173,"player":{"name":"Goodman74","id":2241087,"public_uid":"SPDFMS9R"},"metadata":""},{"rank":7,"member_id":"2247785","score":97,"player":{"name":"GoodmnaNew2022","id":2247785,"public_uid":"67N37ND4"},"metadata":""},{"rank":8,"member_id":"2244906","score":97,"player":{"name":"NewGoodman86","id":2244906,"public_uid":"GE5YHK27"},"metadata":""},{"rank":9,"member_id":"2244659","score":73,"player":{"name":"BlackBro2000","id":2244659,"public_uid":"CRNL2XGC"},"metadata":""},{"rank":10,"member_id":"2252652","score":60,"player":{"name":"Test12345","id":2252652,"public_uid":"Y3G5C455"},"metadata":""}]}
+

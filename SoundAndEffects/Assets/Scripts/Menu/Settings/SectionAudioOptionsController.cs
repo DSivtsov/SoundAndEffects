@@ -20,7 +20,12 @@ public class SectionAudioOptionsController : MonoBehaviour
 
     private void Awake()
     {
-        LinkFieldsToElement();
+        if (GameSettingsSOController.Instance.GameSettingsInited)
+        {
+            LinkFieldsToElement();
+        }
+        else
+            Debug.LogError($"{this} : Attempt to Use before GameSettingsInited was Inited");
     }
 
     private void LinkFieldsToElement()

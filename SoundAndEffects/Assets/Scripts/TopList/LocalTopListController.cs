@@ -6,7 +6,7 @@ public class LocalTopListController : TopListController
 {
     [Header("LocalTopList Options")]
     [SerializeField] private TopListSource _usedTopListSource = TopListSource.Local;
-    [SerializeField] private StoreObjectController _storeObjectController;
+    [SerializeField] private StoreTopListController _storeObjectController;
     ///// <summary>
     ///// Use the IComparable<T> from CharacterData
     ///// </summary>
@@ -19,7 +19,7 @@ public class LocalTopListController : TopListController
         _storedPlainPlayerData = (StoredPlainClass<PlayerData>)_storeObjectController.GetStoredObject();
     }
 
-    protected override void LoadAndShow(bool multiAsyncOperations = true)
+    public override void LoadAndShow(bool multiAsyncOperations = true)
     {
         //CountFrame.DebugLogUpdate(this, $"LoadAndShow() started");
         LoadTopList();
@@ -39,7 +39,6 @@ public class LocalTopListController : TopListController
 
     public void ResetTopList()
     {
-        //Debug.Log("ButtonType.ResetTopList");
         _topList.Clear();
         SaveTopList();
         UpdateAndShowTopList();
@@ -58,7 +57,6 @@ public class LocalTopListController : TopListController
 
     private void InitTopLis()
     {
-        //Debug.LogWarning($"{this} : InitTopLis() created new TopList");
         _topList = new List<PlayerData>();
         _topListElement.SetUsedTopList(_topList);
         InitCharacterData = true;
@@ -73,8 +71,6 @@ public class LocalTopListController : TopListController
         {
             if (InitCharacterData)
                 _topListElement.UpdateTopList(_autoSortByScore);
-            //else
-            //    Debug.LogWarning($"{this.GetType().Name} : TopList is Empty");
         }
         else
             Debug.LogError($"{this} : TopListElementBase == null");
@@ -98,16 +94,18 @@ public class LocalTopListController : TopListController
                     PlayerData[] loaded = _storedPlainPlayerData.GetLoadedObjects();
                     if (loaded == null || loaded.Length == 0)
                     {
-                        InitTopLis(); 
+                        InitTopLis();
                     }
                     else
                         _topList = new List<PlayerData>(loaded);
                 }
                 else
                 {
-                    //Debug.LogWarning($"{this} : [{_storeObjectController.GetNameFile()} Load breaked");
                     InitTopLis();
                 }
+                break;
+            default:
+                Debug.LogError($"{this} : TopListSource [{_usedTopListSource}] can't be load");
                 break;
         }
         ActivateAndCheckTopList();

@@ -6,6 +6,9 @@ using System;
 
 public class SettingsSectionManager : SectionManager
 {
+    [Header("InitSectionOption")]
+    [SerializeField] private bool _useInitialStartSection = true;
+    [SerializeField] private SectionName _initialStartSection; 
     [Header("GameSettingsButton")]
     [SerializeField] private GameObject _loadSaved;
     [SerializeField] private GameObject _loadDef;
@@ -13,27 +16,25 @@ public class SettingsSectionManager : SectionManager
 
     private GameSettingsSOController _gameSettingsSOController;
 
-    private void Awake()
+    protected new void Awake()
     {
+        base.Awake();
         _gameSettingsSOController = GameSettingsSOController.Instance;
         if (_gameSettingsSOController.GameSettingsInited)
         {
+            _gameSettingsSOController.UpdateGameSettingsControlButtons += UpdateGameSettingsControlButtons;
             //initial update after set all flags after load
             UpdateGameSettingsControlButtons();
         }
         else
-            Debug.LogError($"{this} : Attempt to UpdateGameSettingsControlButtons() before GameSettingsInited==true");
-
+            Debug.LogError($"{this} : Attempt to use the UpdateGameSettingsControlButtons() before GameSettingsInited==true");
     }
 
-    private void OnEnable()
+    protected new void Start()
     {
-        _gameSettingsSOController.UpdateGameSettingsControlButtons += UpdateGameSettingsControlButtons;
-    }
-
-    private void OnDisable()
-    {
-        _gameSettingsSOController.UpdateGameSettingsControlButtons -= UpdateGameSettingsControlButtons;
+        base.Start();
+        if (_useInitialStartSection)
+                SwitchToSection(_initialStartSection); 
     }
 
     private void UpdateGameSettingsControlButtons()
@@ -57,9 +58,4 @@ public class SettingsSectionManager : SectionManager
                 _loadDef.SetActive(false);
         }
     }
-
-    //protected override void CallSpecificSectionsActions()
-    //{
-    //    base.CallSpecificSectionsActions();
-    //}
 }

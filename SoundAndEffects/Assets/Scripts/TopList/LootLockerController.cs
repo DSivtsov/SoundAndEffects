@@ -19,10 +19,12 @@ public enum ErrorConnecting : byte
     NoErrors = 0b00,
     GuestSessionNotStarted = 0b01,
     PlayerNameNotLoaded = 0b10,
-    TopListNotLoaded = 0b100,
+    ScoreFromLeaderBoardNotGet = 0b100,
     NewNameNotSaved = 0b1000,
-    NewResultNotSaved = 0b1000,
-    PlayerNameIsEmpty = 0b10000
+    ScoreToLeaderBoardNotSent = 0b1000,
+    PlayerNameIsEmpty = 0b10_000,
+    TimeOut = 0b100_000,
+    SessionNotStoped = 0b1_000_000,
 }
 [Serializable]
 public enum PlayMode// : byte
@@ -34,329 +36,302 @@ public enum PlayMode// : byte
 
 public class LootLockerController : MonoBehaviour
 {
-    [SerializeField] private ConnectingToServer _connectingToServer;
+    [SerializeField] private DisplayConnectingToServer _connectingToServer;
     [SerializeField] private PlayerDataController _playerDataController;
     [SerializeField] private GameSettingsSO _gameSettings;
+    [SerializeField] private MainMenusSceneManager _mainMenusSceneManager;
 
-    /// <summary>
-    /// The standart key PlayerPref used by LootLocker
-    /// </summary>
-    private const string _guestPlayerIDKey = "LootLockerGuestPlayerID";
-    // Computer\HKEY_CURRENT_USER\SOFTWARE\DefaultCompany\SoundAndEffects for Build
-    // CComputer\HKEY_CURRENT_USER\SOFTWARE\Unity\UnityEditor\DefaultCompany\SoundAndEffects for Player in Editor
-    //private const int _leaderboardID = 5374;
     /// <summary>
     /// The key of the leaderboard used
     /// </summary>
     private const string _leaderboardKey = "CityRunnerGlobalTopList";
-
-    private string _playerIdentifierLootLocker;
     private string _sessionTokenLootLocker;
     private int _playerIDLootLocker;
-    public bool GuestSessionInited { get; private set;}
+
+    /// <summary>
+    /// Maximum time for one server operaion, for internal detection the TimeOut error
+    /// </summary>
+    private const float MaximumTimePeriod = 10f;
+    private bool _connecting;
+    private float _startTime;
+    private Coroutine _coroutineProcessCountDown;
+
+    public bool GuestSessionInited { get; private set;} = false;
     public bool GlobalListLoaded { get; private set; }
-    private string _playerNameLootLocker;
-    private Coroutine _coroutineProcessConnecting;
-    private MultiOperation _statusFinishedConnecting;
-    private ErrorConnecting _statusErrorConnecting;
-    private bool _newNameWasSaved;
-    public bool NewResultWasSaved { get; private set; }
-    public PlayMode CurrentPlayMode { get; private set; }
-    //public PlayMode SelectedPlayMode { get; private set; }
 
-    private void Awake()
-    {
-//#if UNITY_EDITOR
-//        if (_gameSettings.UsedPlayMode == PlayMode.Online)
-//            SelectedPlayMode = PlayMode.Online;
-//        else
-//            SelectedPlayMode = PlayMode.Offline;
-//#else
-//        SelectedPlayMode = PlayMode.Online;
-//#endif
-        GuestSessionInited = false;
-        //if (_gameSettings.UsedPlayMode == PlayMode.Offline)
-        if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
-        {
-            CurrentPlayMode = PlayMode.Offline;
-            _connectingToServer.OfflineMode();
-            CountFrame.DebugLogUpdate(this, $" Start() : _currentPlayMode set to Offline");
-        }
-        else
-            CurrentPlayMode = PlayMode.Online;
-    }
+    private void Awake() => ClearSessionData();
 
-    void Start()
-    {
-        if (CurrentPlayMode == PlayMode.Offline)
-        {
-            _playerDataController.GetPlayerNameFromLocalStorage();
-        }
-        else
-        {
-            UseExistedPlayer();
-        }
-    }
+    public void SetDisplayOfflineModeActive() => _connectingToServer.DisplayOfflineModeActive();
 
-    private void UseExistedPlayer()
+    public void OpenSession()
     {
-        if (PlayerPrefs.HasKey(_guestPlayerIDKey))
+        if (_playerDataController.ExistGuestPlayerID)
         {
-            BeginConnectingToServer();
-            _playerIdentifierLootLocker = PlayerPrefs.GetString(_guestPlayerIDKey);
-            StartCoroutine(InitExistenPlayerRecord());
+            StartCoroutine(OpenSessionUseExistenRecord());
         }
         else
         {
             CountFrame.DebugLogUpdate(this, $"PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
-            //throw new NotImplementedException("PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
+            StartCoroutine(CoroutineCreateNewGuestIDRecord());
         }
     }
 
-    private void BeginConnectingToServer()
+    public void DisconnectedFromServer()
     {
-        _statusErrorConnecting = ErrorConnecting.NoErrors;
-        _statusFinishedConnecting = MultiOperation.NothingLoaded;
-        _coroutineProcessConnecting = StartCoroutine(_connectingToServer.CoroutineProcessConnecting());
-    }
-
-    private IEnumerator InitExistenPlayerRecord()
-    {
-        yield return InitGuestSession(useExistedPlayerRecord: true);
-        if (GuestSessionInited)
+        if (_playerDataController.ExistGuestPlayerID)
         {
-            yield return GetPlayerName();
-            //All players will have a nickname
-            if (_playerNameLootLocker != null)
-            {
-                if ( _playerNameLootLocker.Length != 0)
-                {
-                    FinishOneConnectionToServer(MultiOperation.LoadedPlayerName);
-                    _playerDataController.SetPlayerNameAndUpdateMenuScene(_playerNameLootLocker);  
-                }
-                else
-                    FinalizeAllServerOperations(resultOK: false, ErrorConnecting.PlayerNameIsEmpty);
-            }
-            else
-                FinalizeAllServerOperations(resultOK: false, ErrorConnecting.PlayerNameNotLoaded);
+            StartProcessConnecting();
+            StartCoroutine(StopCurrentSession(onlyEndSession: true)); 
         }
         else
-            FinalizeAllServerOperations(resultOK: false, ErrorConnecting.GuestSessionNotStarted);
+            CountFrame.DebugLogUpdate(this, $"DisconnectedFromServer() but absent the Key(_guestPlayerIDKey)");
     }
 
-    public void FinalizeAllServerOperations(bool resultOK, ErrorConnecting error = ErrorConnecting.NoErrors)
+    private IEnumerator OpenSessionUseExistenRecord()
     {
-        if (resultOK)
-            CurrentPlayMode = PlayMode.Online;
-        else
-        {
-            _statusErrorConnecting |= error;
-            CurrentPlayMode = PlayMode.Offline;
-            _connectingToServer.OfflineMode();
-        }
-        StopCoroutine(_coroutineProcessConnecting);
-        _connectingToServer.Result(resultOK);
-
-    }
-
-    public void FinishOneConnectionToServer(MultiOperation result)
-    {
-        if (_statusFinishedConnecting.Equals(MultiOperation.NothingLoaded))
-        {
-            _statusFinishedConnecting = result;
-            StartCoroutine(InitWaitingFinishingConnectionsToServer()); 
-        }
-        else
-            _statusFinishedConnecting |= result;
-    }
-
-    private IEnumerator InitWaitingFinishingConnectionsToServer()
-    {
-        while (_connectingToServer.Connecting && !_statusFinishedConnecting.HasFlag(MultiOperation.LoadedAll))
-        {
-            yield return null;
-        }
-        FinalizeAllServerOperations(resultOK: true);
+        StartProcessConnecting();
+        yield return OpenGuestSession(useExistedPlayerRecord: true);
     }
    
-    private IEnumerator InitGuestSession(bool useExistedPlayerRecord = true)
+    private IEnumerator OpenGuestSession(bool useExistedPlayerRecord = true)
     {
+        string player_identifier = null;
         bool notGetResponse = true;
         Action<LootLockerGuestSessionResponse> onComplete = (response) =>
         {
-            //Debug.Log($"Current state notGetResponse == true [{notGetResponse == true}] before StartGuestSession");
             if (response.success)
             {
                 _sessionTokenLootLocker = response.session_token;
                 _playerIDLootLocker = response.player_id;
+                player_identifier = response.player_identifier;
                 GuestSessionInited = true;
-                //Debug.Log($"{this} : Successfully started LootLocker GuestSession with {_sessionTokenLootLocker} token");
-            }
-            else
-            {
-                Debug.Log($"{this} : Error starting LootLocker GuestSession");
             }
             notGetResponse = false;
         };
         if (useExistedPlayerRecord)
-            LootLockerSDKManager.StartGuestSession(_playerIdentifierLootLocker, (response) => onComplete(response));
+            LootLockerSDKManager.StartGuestSession(_playerDataController.Player.GuestPlayerID, (response) => onComplete(response));
         else
-            LootLockerSDKManager.StartGuestSession((response) => onComplete(response));
-        yield return new WaitWhile(() => notGetResponse);
-    }
-
-    private IEnumerator GetPlayerName()
-    {
-        bool notGetResponse = true;
-        //used also for check the result of request
-        _playerNameLootLocker = null;
-        LootLockerSDKManager.GetPlayerName((response) =>
+            LootLockerSDKManager.StartGuestSession((response) => onComplete(response)); 
+        yield return new WaitWhile(() => notGetResponse && _connecting);
+        if (GuestSessionInited)
         {
-            if (response.success)
-            {
-                _playerNameLootLocker = response.name;
-                //Debug.Log($"{this} : Successfully get [{_playerNameLootLocker}] Player name for {_playerIDLootLocker} playerIDLootLocker");
-            }
+            if (useExistedPlayerRecord)
+                CheckResultsServerOperations();
             else
             {
-                Debug.LogWarning($"{this} : Error getting player name");
+                //In this Case the process is not finished yet
+                _playerDataController.Player.SetGuestPlayerID(player_identifier);
+                Debug.LogWarning($"SetGuestPlayerID(response.player_identifier)[{player_identifier}]");
             }
-            notGetResponse = false;
-        });
-        yield return new WaitWhile(() => notGetResponse);
-    }
-
-    public IEnumerator SendScoreToLeaderBoard(int score)
-    {
-        BeginConnectingToServer();
-
-        NewResultWasSaved = false;
-        bool notGetResponse = true;
-        LootLockerSDKManager.SubmitScore(_playerIDLootLocker.ToString(), score, _leaderboardKey, (response) =>
-        {
-            if (response.success)
-            {
-                //Debug.Log($"{this} : Successful : Was writen [{score}] score for Player [{_playerIDLootLocker}]");
-                NewResultWasSaved = true;
-            }
-            else
-            {
-                Debug.LogError($"{this} : failed: " + response.Error);
-            }
-            notGetResponse = false;
-        });
-        yield return new WaitWhile(() => notGetResponse);
-    }
-
-    public IEnumerator SetPlayerName(string newName)
-    {
-        _newNameWasSaved = false;
-        bool notGetResponse = true;
-        LootLockerSDKManager.SetPlayerName(newName, (response) =>
-        {
-            if (response.success)
-            {
-                //Debug.Log($"{this} : Successfully set {response.name} player name");
-                _newNameWasSaved = true;
-            }
-            else
-            {
-                Debug.LogError($"{this} : Error setting player name");
-            }
-            notGetResponse = false;
-        });
-        yield return new WaitWhile(() => notGetResponse);
-    }
-
-    public IEnumerator CoroutineGetScoreFromLeaderBoard(List<PlayerData> playerDatas, int count = 10, int after = 0)
-    {
-        GlobalListLoaded = false;
-        bool notGetResponse = true;
-        LootLockerLeaderboardMember[] table = default(LootLockerLeaderboardMember[]);
-        LootLockerSDKManager.GetScoreList(_leaderboardKey, count, after, (response) =>
-        {
-            if (response.statusCode == 200)
-            {
-                table = response.items;
-                //Debug.Log($"{this} : Successfuly get {table.Length} records from LootLocker");
-            }
-            else
-            {
-                Debug.LogError($"{this} : failed: " + response.Error);
-            }
-            notGetResponse = false;
-        });
-        yield return new WaitWhile(() => notGetResponse);
-        for (int i = 0; i < table.Length; i++)
-        {
-            //Debug.Log($"i[{i + 1}] player.id={table[i].player.id} player.name={table[i].player.name} score={table[i].score} player.public_uid={table[i].player.public_uid}");
-            playerDatas.Add(new PlayerData(table[i].player.name, 0, table[i].score));
         }
-        GlobalListLoaded = true;
-        //CountFrame.DebugLogUpdate(this, $"Finished the GetScoreFromLeaderBoard()");
+        else
+        {
+            Debug.Log($"{this} : ErrorConnecting.GuestSessionNotStarted");
+            CheckResultsServerOperations(ErrorConnecting.GuestSessionNotStarted);
+        }
     }
 
-    public void CreateNewPlayerRecord(string playerName)
+    public IEnumerator CoroutineSaveScoreToLeaderBoard(int score)
     {
-        BeginConnectingToServer();
-        StartCoroutine(CoroutineCreateNewPlayerRecord(playerName));
-    }
-    public IEnumerator CoroutineCreateNewPlayerRecord(string playerName)
-    {
-        //BackUp and Remove the previous Player Record
-        if (PlayerPrefs.HasKey(_guestPlayerIDKey))
+        if (GuestSessionInited)
         {
-            BackUpOldPlayerRecord();
-            if (_sessionTokenLootLocker != null)
+            StartProcessConnecting();
+            bool NewResultWasSaved = false;
+            bool notGetResponse = true;
+            LootLockerSDKManager.SubmitScore(_playerIDLootLocker.ToString(), score, _leaderboardKey, (response) =>
             {
-                if (GuestSessionInited)
+                if (response.success)
+                    NewResultWasSaved = true;
+                notGetResponse = false;
+            });
+            yield return new WaitWhile(() => notGetResponse && _connecting);
+            if (NewResultWasSaved)
+                CheckResultsServerOperations();
+            else
+                CheckResultsServerOperations(ErrorConnecting.ScoreToLeaderBoardNotSent);
+        }
+        else
+            CountFrame.DebugLogUpdate(this, $"CoroutineSaveScoreToLeaderBoard Canceled - GuestSession not inited");
+    }
+
+    public IEnumerator CoroutineGetScoreFromLeaderBoard(List<PlayerData> playerDatas, Action callbackShowTopList, int count = 10, int after = 0)
+    {
+        if (GuestSessionInited)
+        {
+            StartProcessConnecting();
+            GlobalListLoaded = false;
+            bool notGetResponse = true;
+            LootLockerLeaderboardMember[] table = default(LootLockerLeaderboardMember[]);
+            LootLockerSDKManager.GetScoreList(_leaderboardKey, count, after, (response) =>
+            {
+                if (response.statusCode == 200)
                 {
-                    yield return StopCurrentSession();
-                    //Because the result of StopCurrentSession not so important it will not checking
+                    table = response.items;
+                }
+                notGetResponse = false;
+            });
+            yield return new WaitWhile(() => notGetResponse && _connecting);
+            if (table != null)
+            {
+                CheckResultsServerOperations();
+                for (int i = 0; i < table.Length; i++)
+                {
+                    //Debug.Log($"i[{i + 1}] player.id={table[i].player.id} player.name={table[i].player.name} score={table[i].score} player.public_uid={table[i].player.public_uid}");
+                    playerDatas.Add(new PlayerData(table[i].player.name, 0, table[i].score));
+                }
+                GlobalListLoaded = true;
+                callbackShowTopList(); 
+            }
+            else
+            {
+                //!!!In this case will show previous state of GlobalTopList
+                CheckResultsServerOperations(ErrorConnecting.ScoreFromLeaderBoardNotGet);
+                Debug.LogWarning("TIME SOLUTION");
+                ClearSessionData();
+            }
+        }
+        else
+            CountFrame.DebugLogUpdate(this, $"CoroutineGetScoreFromLeaderBoard Canceled - GuestSession not inited");
+    }
+
+    public IEnumerator CoroutineCreateNewGuestIDRecord()
+    {
+        StartProcessConnecting();
+        if (_playerDataController.ExistGuestPlayerID)
+        {
+            yield return StopCurrentSession();
+            if (!GuestSessionInited)
+            {
+                CountFrame.DebugLogUpdate(this, $"CoroutineCreateNewGuestIDRecord Canceled - StopCurrentSession not finished successfully");
+                yield break;
+            }
+            //BackUp and Remove the current Player Record
+            _playerDataController.Player.BackUpCurrentPlayerRecord();
+            _playerDataController.Player.DeleteCurrentGuestPlayerID();
+        }
+        yield return OpenGuestSession(useExistedPlayerRecord: false);
+        if (GuestSessionInited)
+        {
+            yield return SetPlayerNameForPlayerRecord();
+        }
+        else
+        {
+            CountFrame.DebugLogUpdate(this, $"CoroutineCreateNewGuestIDRecord Canceled - GuestSession for New Player not inited");
+        }
+    }
+
+    public IEnumerator SetPlayerNameForPlayerRecord()
+    {
+        bool NewNameSaved = false;
+        bool notGetResponse = true;
+        LootLockerSDKManager.SetPlayerName(_playerDataController.Player.Name, (response) =>
+        {
+            if (response.success)
+            {
+                NewNameSaved = true;
+            }
+            notGetResponse = false;
+        });
+        yield return new WaitWhile(() => notGetResponse && _connecting);
+        if (NewNameSaved)
+        {
+            CheckResultsServerOperations();
+        }
+        else
+        {
+            CheckResultsServerOperations(ErrorConnecting.NewNameNotSaved);
+            CreationPlayerNotFinished();
+        }
+    }
+
+    private void CreationPlayerNotFinished()
+    {
+        //Very Important Case: Record was created in LootLocker, but not set the coresponded Player Name
+        Debug.LogError("!!!Called _playerDataController.Player.DeleteCurrentGuestPlayerID()");
+        _playerDataController.Player.DeleteCurrentGuestPlayerID();
+    }
+
+    private IEnumerator StopCurrentSession(bool onlyEndSession = false)
+    {
+        if (GuestSessionInited && _sessionTokenLootLocker != null)
+        {
+            string responseError = null;
+            bool sessionStoped = false;
+            bool notGetResponse = true;
+            LootLockerSDKManager.EndSession(_sessionTokenLootLocker, (response) =>
+            {
+                if (response.success)
+                    sessionStoped = true;
+                else
+                    responseError = response.Error;
+                notGetResponse = false;
+            });
+            yield return new WaitWhile(() => notGetResponse && _connecting);
+            if (sessionStoped)
+            {
+                ClearSessionData();
+                if (onlyEndSession)
+                {
+                    StopCoroutine(_coroutineProcessCountDown);
+                    _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: false);
+                    _connectingToServer.SetResultsGoingToOffLineMode(); 
                 }
             }
             else
-                Debug.LogWarning($"{this} : Exist the _guestPlayerIDKey key, but active session is absent");
-            GuestSessionInited = false;
-            _sessionTokenLootLocker = null;
-            _playerIDLootLocker = 0;
-            PlayerPrefs.DeleteKey(_guestPlayerIDKey);
-        }
-        yield return InitGuestSession(useExistedPlayerRecord: false);
-        if (GuestSessionInited)
-        {
-            yield return SetPlayerName(playerName);
-            if (_newNameWasSaved)
             {
-                FinalizeAllServerOperations(resultOK: true);
+                CheckResultsServerOperations(ErrorConnecting.SessionNotStoped);
+                Debug.LogWarning($"{this} : StopCurrentSession failed: " + responseError);
             }
-            else
-                FinalizeAllServerOperations(resultOK: false, ErrorConnecting.NewNameNotSaved);
         }
         else
-        {
-            FinalizeAllServerOperations(resultOK: false, ErrorConnecting.GuestSessionNotStarted);
-        }
+            Debug.LogWarning($"{this} : Exist the _guestPlayerIDKey key, but active session is absent");
     }
 
-    private void BackUpOldPlayerRecord() => Debug.LogError($"Not Realized BackUpOldPlayer ({_playerIdentifierLootLocker})");
-
-    private IEnumerator StopCurrentSession()
+    private void ClearSessionData()
     {
-        bool notGetResponse = true;
-        LootLockerSDKManager.EndSession(_sessionTokenLootLocker, (response) =>
+        GuestSessionInited = false;
+        _sessionTokenLootLocker = null;
+        _playerIDLootLocker = 0;
+    }
+
+    public void CheckResultsServerOperations(ErrorConnecting finalStatus = ErrorConnecting.NoErrors)
+    {
+        StopCoroutine(_coroutineProcessCountDown);
+
+        //To combine ErrorConnecting.TimeOut with other Error if it occurs
+        // To have possibility to finish w/o error if good response will be in the one frame with Time.out
+        // awating must check the server response and _connecting status, but result check on value of the server response 
+        // here if _connecting = false the error in response in other case the ErrorConnecting.TimeOut error
+        if (finalStatus != ErrorConnecting.NoErrors)
+            finalStatus = (_connecting) ? finalStatus : ErrorConnecting.TimeOut | finalStatus;
+
+        CountFrame.DebugLogUpdate(this, $"finalStatus Connecting=[{finalStatus}]");
+        bool statusConnectionNoErrors = finalStatus == ErrorConnecting.NoErrors;
+        if (!statusConnectionNoErrors)
+            ClearSessionData();
+        _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: statusConnectionNoErrors);
+        _connectingToServer.DisplayResult(resultOK: statusConnectionNoErrors, _startTime);
+    }
+
+    private void StartProcessConnecting()
+    {
+        _connectingToServer.StartAnimateProcessConnecting();
+        _connecting = true;
+        _startTime = Time.time;
+        _coroutineProcessCountDown = StartCoroutine(CoroutineProcessCountDown());
+    }
+
+    private IEnumerator CoroutineProcessCountDown(float currentMaximumPeriod = MaximumTimePeriod)
+    {
+        do
         {
-            if (response.success)
+            yield return null;
+            if (Time.time - _startTime > currentMaximumPeriod)
             {
-                //Debug.Log($"{this} : Successfully {_sessionTokenLootLocker} EndSession");
+                CountFrame.DebugLogUpdate(this, $"CoroutineAnimateProcessConnecting(): canceled connection because time is more than {currentMaximumPeriod}");
+                _connecting = false;
             }
-            else
-            {
-                Debug.LogWarning($"{this} : StopCurrentSession failed: " + response.Error);
-            }
-            notGetResponse = false;
-        });
-        yield return new WaitWhile(() => notGetResponse);
+        } while (_connecting);
     }
 }
 

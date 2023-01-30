@@ -66,7 +66,7 @@ public static class ButtonActions
             switch (buttonType)
             {
                 case ButtonType.StartGame:
-                    _menuSceneManager.StartGame(_playerDataController.PlayerName);
+                    _menuSceneManager.StartGame(_playerDataController.Player.Name);
                     break;
                 case ButtonType.QuitGame:
 #if UNITY_EDITOR

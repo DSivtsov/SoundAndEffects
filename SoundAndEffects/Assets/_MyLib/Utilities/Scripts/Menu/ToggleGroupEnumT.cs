@@ -23,6 +23,7 @@ namespace GMTools.Menu.Elements
     {
         private const int TwoTogglesInGroup = 2;
         private Dictionary<T, Toggle> _dictToggle = new Dictionary<T, Toggle>();
+        private Dictionary<T, T> _dictOpositeValues = new Dictionary<T, T>();
         public bool ToggleGroupIsInit { get; private set; } = false;
 
         private Toggle[] myArrToggles = new Toggle[TwoTogglesInGroup];
@@ -49,7 +50,9 @@ namespace GMTools.Menu.Elements
         {
             if (ToggleGroupIsInit)
             {
+                //Use the method of Toggle which doesn't know regarding about other toggles
                 _dictToggle[value].SetIsOnWithoutNotify(true);
+                _dictToggle[_dictOpositeValues[value]].SetIsOnWithoutNotify(false);
             }
             else
                 Debug.LogError($"{this} : Attemp SetValue but ToggleGroupIsInit is not inited");
@@ -57,7 +60,6 @@ namespace GMTools.Menu.Elements
 
         private void InitToggleGroup()
         {
-            //Debug.LogError($"{this} : InitToggleGroup()");
             int countToggles = FillArrToggles();
             if (countToggles != TwoTogglesInGroup)
             {
@@ -75,6 +77,7 @@ namespace GMTools.Menu.Elements
             for (int i = 0; i < TwoTogglesInGroup; i++)
             {
                 T value = (T)Enum.ToObject(enumType, listEnumValues[i]);
+                _dictOpositeValues.Add(value, (T)Enum.ToObject(enumType, listEnumValues[(i == 0) ? 1 : 0]));
                 Toggle currentToggle = myArrToggles[i];
                 //Enough to use the event from one Toggle because they will change synchronously
                 currentToggle.onValueChanged.AddListener((toggleIsOn) => { if (toggleIsOn) onNewValue.Invoke(value); });

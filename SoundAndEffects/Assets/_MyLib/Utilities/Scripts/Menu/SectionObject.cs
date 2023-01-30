@@ -17,11 +17,8 @@ namespace GMTools.Menu
         private void Awake()
         {
             _menuButton = GetComponent<Button>();
+            _menuButton.onClick.AddListener(() => _sectionManager.SwitchToSection(_sectionName));
         }
-
-        private void OnEnable() => _menuButton.onClick.AddListener(() => _sectionManager.SwitchToSection(_sectionName));
-
-        private void OnDisable() => _menuButton.onClick.RemoveListener(() => _sectionManager.SwitchToSection(_sectionName));
 
         public void SetVisibleSectionBody(bool active) => _sectionBody.gameObject.SetActive(active);
 
@@ -30,3 +27,4 @@ namespace GMTools.Menu
         public void LinkToSectionManager(SectionManager sectionManager) => _sectionManager = sectionManager;
     }
 }
+

@@ -79,6 +79,7 @@ namespace GMTools.Menu.Elements
         {
             if (ToggleGroupIsInit)
             {
+                //Use the method of Toggle which doesn't know regarding about other toggles
                 _dictBoolToggles[value].SetIsOnWithoutNotify(true);
                 _dictBoolToggles[!value].SetIsOnWithoutNotify(false);
             }

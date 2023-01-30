@@ -10,58 +10,56 @@ namespace GMTools.Menu
     public class SectionManager : MonoBehaviour
     {
         [SerializeField] private Transform _sectionsNames;
-        [SerializeField] private bool _useInitialStartSection = true;
-        [SerializeField] private SectionName _initialStartSection;
 
         private Dictionary<SectionName, SectionObject> _dictSections = new Dictionary<SectionName, SectionObject>();
         private SectionObject _activeSectionObject;
+        /// <summary>
+        /// Give a possibility the Dirived Class detected the finishing initialization of SectionManager
+        /// </summary>
+        protected bool _sectionManagerInited = false;
 
-        public SectionObject GetSelectedSection => _activeSectionObject;
-        public static SectionManager ActiveSectionManager { get; private set; }
+        //The order in which Awake is called from  SectionManager and from SectionObject does not matter, as they are not related to each other
+        protected void Awake() => InitDictandSectionObject();
 
-        //InitDictAndSections() must be made only after finishing of all Awake of SectionObject
-        //Start will call only after the CanvasOption will be activated
-        private void Start()
+        //Start will call only after all SectionObject will be activated
+        protected void Start()
         {
-            InitDictAndSections();
-            InitSectionCallActions();
+            //Initially all sections must be not active, but coresponded button is Active
+            foreach (SectionObject section in _dictSections.Values)
+                ActivateSelectedSession(section, false);
+            _sectionManagerInited = true;
         }
 
-        private void InitDictAndSections()
+        private void InitDictandSectionObject()
         {
             foreach (SectionObject section in _sectionsNames.GetComponentsInChildren<SectionObject>(includeInactive: true))
             {
                 _dictSections.Add(section.SectionName, section);
                 section.LinkToSectionManager(this);
-                //Initially all sections must be not active, but coresponded button is Active
-                ActivateSelectedSession(section, false);
             }
         }
-
-        //Derived types can call the additional actions for that specific Sections types which must do at Init Sections of that types
-        protected virtual void InitSectionCallActions()
-        {
-            if (_useInitialStartSection)
-                SwitchToSection(_initialStartSection);
-        }
-
-        public void SetActiveSectionManager() => ActiveSectionManager = this;
 
         public void SwitchToSection(SectionName switchedSectionName)
         {
             if (_dictSections.TryGetValue(switchedSectionName, out SectionObject desiredSectionObject))
             {
-                DeactivateCurrentSection();
-                ActivateSelectedSession(desiredSectionObject);
-                _activeSectionObject = desiredSectionObject;
-                SwitchToSectionCallSpecificActions();
+                if (BeforeSwitchToSectionCallSpecificActions(prevSectionObject: _activeSectionObject, nextSectionObject: desiredSectionObject))
+                {
+                    DeactivateCurrentSection();
+                    ActivateSelectedSession(desiredSectionObject);
+                    _activeSectionObject = desiredSectionObject; 
+                }
             }
             else
                 Debug.LogError($"The desired [{switchedSectionName}] Section was not found!");
         }
-
-        //Derived types can call the additional actions for that specific Sections types which must do at switching of Sections of that types
-        protected virtual void SwitchToSectionCallSpecificActions() {}
+        /// <summary>
+        /// Derived types can call the additional actions for that specific Sections types which must do at switching of Sections of that types
+        /// </summary>
+        /// <param name="prevSectionObject"></param>
+        /// <param name="nextSectionObject"></param>
+        /// <returns>true - if switching aproved</returns>
+        protected virtual bool BeforeSwitchToSectionCallSpecificActions(SectionObject prevSectionObject, SectionObject nextSectionObject) => true;
 
         private void DeactivateCurrentSection()
         {

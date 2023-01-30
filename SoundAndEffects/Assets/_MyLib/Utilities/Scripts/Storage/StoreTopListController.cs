@@ -19,11 +19,11 @@ namespace GMTools.Manager
     /// which store the sources of information, after Data from this sources was saved to file.
     /// Not Garanted the possibility of Data restoring in this case
     /// </summary>
-    public class StoreObjectController : MonoBehaviour
+    public class StoreTopListController : MonoBehaviour
     {
         [SerializeField] private string nameFile = "TopList.txt";
         private IStoredObject _storedObject;
-        private bool _storeObjectControllerNotLinked = true;
+        private bool _storeObjectControllerLinked = false;
 
         public StoredObject GetStoredObject() => (StoredObject)_storedObject;
 
@@ -37,7 +37,7 @@ namespace GMTools.Manager
             _storedObject = GetComponent<StoredObject>();
             if (_storedObject != null)
             {
-                _storeObjectControllerNotLinked = false; 
+                _storeObjectControllerLinked = true; 
             }
         }
 
@@ -45,7 +45,7 @@ namespace GMTools.Manager
 
         public IOError Save()
         {
-            if (_storeObjectControllerNotLinked)
+            if (!_storeObjectControllerLinked)
             {
                 Debug.LogError($"{this} : Save() : Save skipped - _storeObjectControllerNotLinked ==  true");
                 return IOError.NotInitilized;
@@ -76,7 +76,7 @@ namespace GMTools.Manager
 
         public IOError Load()
         {
-            if (_storeObjectControllerNotLinked)
+            if (!_storeObjectControllerLinked)
             {
                 Debug.LogError($"{this} : Load() : _storeObjectControllerNotLinked ==  true");
                 return IOError.NotInitilized;

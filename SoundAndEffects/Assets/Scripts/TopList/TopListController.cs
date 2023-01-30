@@ -8,13 +8,13 @@ public enum TopListSource
 {
     Demo,
     Local,
-    Remote
+    //Remote
 }
 
 abstract public class TopListController : MonoBehaviour
 {
     [SerializeField] protected Transform _rootRecords;
-    [SerializeField] protected bool _loadAndShowAtStart = true;
+    //[SerializeField] protected bool _loadAndShowAtStart = true;
 
     protected List<PlayerData> _topList;
     protected TopListElementBase _topListElement;
@@ -24,19 +24,16 @@ abstract public class TopListController : MonoBehaviour
     protected void Awake()
     {
         _topListElement = new TopListGroupElement();
-        InitCharacterData = false;
+        InitialLoadTopList();
     }
 
-    public void InitialLoadTopList()
+    protected void InitialLoadTopList()
     {
+        InitCharacterData = false;
         _topListElement.CreateTableTopList(_rootRecords);
-        if (_loadAndShowAtStart)
-        {
-            LoadAndShow();
-        }
     }
 
-    abstract protected void LoadAndShow(bool multiAsyncOperations = true);
+    abstract public void LoadAndShow(bool multiAsyncOperations = true);
 
     abstract public void AddCharacterResult(PlayerData newCharacterData);
 

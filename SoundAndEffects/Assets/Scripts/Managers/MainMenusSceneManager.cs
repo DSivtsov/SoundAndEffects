@@ -9,131 +9,82 @@ using UnityEngine.UI;
 
 public class MainMenusSceneManager : MonoBehaviour
 {
-
     [SerializeField] private GameObject cameraMainMenus;
     [SerializeField] private LocalTopListController _localTopListController;
-    [SerializeField] private RemoteTopListController _remoteTopListController;
+    [SerializeField] private GlobalTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
     [SerializeField] private Button _buttonStart;
-    [Header("Demo Options")]
-    [SerializeField] private bool _useStartCanvas;
-    [SerializeField] private CanvasName _startCanvasName;
-    [Tooltip("Button Start is always Active")]
-    [SerializeField] private bool _startAlwaysActive;
+    [SerializeField] private GameSettingsSO _gameSettings;
 
     private MainManager _mainManager;
-    public Func<bool> FuncGetStatusLoadingScenes;
-
-    //public Func<(List<string> values, UnityAction<int> actionOnValueChanged, int initialValue)> FuncGetParametersToInitGameComplexityOption;
+    public bool IsConnectedToServer { get; private set; } = false;
 
     private void Awake()
     {
         CountFrame.DebugLogUpdate(this, $"Awake()");
         _mainManager = MainManager.Instance;
-        //Not extensively tested
         ButtonActions.LinkMenuSceneManager(this);
         if (_mainManager)
         {
             _mainManager.LinkMenuSceneManager(this);
             //Camera will manage by GameMainManager
             ActivateMainMenusCamera(false);
-            FuncGetStatusLoadingScenes = _mainManager.GetStatusLoadingScenes;
-            //FuncGetParametersToInitGameComplexityOption = _mainManager.GetParametersToInitGameComplexityOption;
         }
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
-            //ActivateMusicMainMenus(true);
-            StartCoroutine(EmulatorGetStatusLoadingScenes());
-            //FuncGetParametersToInitGameComplexityOption = EmulatorGetParametersToInitGameComplexityOption;
         }
         _buttonStart.interactable = false;
-#if UNITY_EDITOR
-        if (_startAlwaysActive)
-        {
-            _buttonStart.interactable = true;
-        }
-#endif
-    }
-    /// <summary>
-    /// If Online mode is active will be create a new Player in the LootLocker
-    /// </summary>
-    /// <param name="playerName"></param>
-    public void CreateNewPlayerLootLocker(string playerName)
-    {
-        if (_lootLockerController.CurrentPlayMode == PlayMode.Online)
-        {
-            _lootLockerController.CreateNewPlayerRecord(playerName); 
-        }
-        else
-        {
-            CountFrame.DebugLogUpdate(this, $" : CreateNewPlayerLootLocker skipped");
-        }
     }
 
     private void Start()
     {
-        _localTopListController.InitialLoadTopList();
-        _remoteTopListController.InitialLoadTopList();
-#if UNITY_EDITOR
-        if (_useStartCanvas)
+        _localTopListController.LoadAndShow();
+        _playerDataController.InitPlayerAccount();
+        CheckPlayerMode();
+        if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+            _lootLockerController.SetDisplayOfflineModeActive();
+    }
+    /// <summary>
+    /// Check PlayerMode and if it switched to Online then load remote data
+    /// </summary>
+    public void CheckPlayerMode()
+    {
+        if (_playerDataController.Player != null)
         {
-            TempSwitchToCanvsa(_startCanvasName);
+            //Debug.Log($"{this}: IsConnectedToServer[{IsConnectedToServer}] FieldPlayMode[{_gameSettings.FieldPlayMode.GetCurrentValue()}]");
+            if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
+                 _lootLockerController.OpenSession();
+            if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+                _lootLockerController.DisconnectedFromServer();
         }
-#endif
+        else
+            Debug.LogWarning($"{this} : _player == null");
     }
 
     public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
-
-    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption() => FuncGetParametersToInitGameComplexityOption();
-
-    public bool GetStatusLoadingScenes() => FuncGetStatusLoadingScenes();
-
-    //The GetStatusLoadingScenes() = true will be little postponed
-    private IEnumerator EmulatorGetStatusLoadingScenes()
-    {
-        FuncGetStatusLoadingScenes = () => { return false; };
-        yield return new WaitForSeconds(.5f);
-        FuncGetStatusLoadingScenes = () => { return true; };
-    }
-
-    public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) EmulatorGetParametersToInitGameComplexityOption()
-        => (new List<string>() { "E", "N", "H" }, (int value) => Debug.Log($"new GameComplexity value = {value}"), 0);
-    //{
-    //    return (new List<string>() {"E","N","H"}, (int value) => Debug.Log($"new GameComplexity value = {value}"), 0);
-    //}
-
-    /// <summary>
-    /// Method used for spped Testing of some Menu sections
-    /// </summary>
-    /// <param name="values"></param>
-    /// <param name="actionOnValueChanged"></param>
-    /// <param name="initialValue"></param>
-    private static void TempSwitchToCanvsa(CanvasName canvasName)
-    {
-        Debug.LogError($"Temporary Switched on [{canvasName}] Canvas");
-        FindObjectOfType<CanvasManager>().SwitchCanvas(canvasName);
-    }
 
     public void StartGame(string playerName) => _mainManager?.FromMenusToStartGame(playerName);
 
     public void ResetTopList() => _localTopListController.ResetTopList();
 
-    //public void ActivateMusicMainMenus(bool activate = true)
-    //{
-    //    if (activate)
-    //    {
-    //        playJukeBoxMainMenus.SetJukeBoxActive(true);
-    //        playJukeBoxMainMenus.TurnOn(true);
-    //    }
-    //    else
-    //    {
-    //        playJukeBoxMainMenus.TurnOn(false);
-    //        playJukeBoxMainMenus.SetJukeBoxActive(false);
-    //    }
-    //}
+    /// <summary>
+    /// If Online mode is active will be create a new Player in the LootLocker
+    /// </summary>
+    /// <param name="playerName"></param>
+    public void CreateNewPlayerLootLocker()
+    {
+        if (IsConnectedToServer)
+        {
+            StartCoroutine(_lootLockerController.CoroutineCreateNewGuestIDRecord());
+        }
+        else
+        {
+            Debug.LogWarning($"{this}: Not Create NewPlayerLootLocker record in Offline mode");
+        }
+    }
 
     public void ActivateMainMenusCamera(bool activate)
     {
@@ -146,4 +97,6 @@ public class MainMenusSceneManager : MonoBehaviour
         _localTopListController.AddCharacterResult(newCharacterData);
         _remoteTopListController.AddCharacterResult(newCharacterData);
     }
+
+    public void SetStatusConnectionToServer(bool isConnected) => IsConnectedToServer = isConnected;
 }

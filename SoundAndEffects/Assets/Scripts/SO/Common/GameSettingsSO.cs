@@ -33,10 +33,9 @@ public class GameSettingsSO : ScriptableObject
     [SerializeField] private int _effectVolume;
     [SerializeField] private int _musicVolume;
 
-    public override string ToString() => JsonUtility.ToJson(this); 
+    public override string ToString() => JsonUtility.ToJson(this);
 
-    //public ComplexitySO ComplexityGame => _complexityGame;
-    //public PlayMode UsedPlayMode => _usedPlayMode;
+    public event Action<PlayMode> ChangedFieldPlaymode;
     public bool NotCopyToGlobal => _notCopyToGlobal;
     public bool DefaultTopListGlobalt => _defaultTopListGlobal;
 
@@ -56,17 +55,42 @@ public class GameSettingsSO : ScriptableObject
     public void InitExposedFields(FlagGameSettingChanged _flagGameSettingChanges, AudioContoller _audioContoller)
     {
         FieldComplexityGame = new ExposeField<ComplexitySO>(() => _complexityGame, (newValue) => _complexityGame = newValue, _flagGameSettingChanges, GameSettingChangedBit.ComplexityGame);
-        FieldPlayMode = new ExposeField<PlayMode>(() => _usedPlayMode, (newValue) => _usedPlayMode = newValue, _flagGameSettingChanges, GameSettingChangedBit.PlayMode);
+        FieldPlayMode = new ExposeField<PlayMode>(() => _usedPlayMode, SetNewPlayMode(), _flagGameSettingChanges, GameSettingChangedBit.PlayMode);
         FieldNotCopyToGlobal = new ExposeField<bool>(() => _notCopyToGlobal, (newValue) => _notCopyToGlobal = newValue, _flagGameSettingChanges, GameSettingChangedBit.NotCopyToGlobal);
         FieldByDefaultShowGlobalTopList = new ExposeField<bool>(() => _defaultTopListGlobal, (newValue) => _defaultTopListGlobal = newValue, _flagGameSettingChanges,
             GameSettingChangedBit.ByDefaultShowGlobalTopList);
-        FieldSequenceType = new ExposeField<SequenceType>(() => _musicSequenceType, (newValue) => { _musicSequenceType = newValue; _audioContoller.SetSequenceType(newValue); },
-            _flagGameSettingChanges, GameSettingChangedBit.SequenceType);
-        FieldMasterVolume = new ExposeField<int>(() => _masterVolume, (newValue) => { _masterVolume = newValue; _audioContoller.SetMixerVolume(MixerVolume.VolMaster, newValue); },
-            _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
-        FieldMusicVolume = new ExposeField<int>(() => _musicVolume, (newValue) => { _musicVolume = newValue; _audioContoller.SetMixerVolume(MixerVolume.VolMusic, newValue); },
-            _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
-        FieldEffectVolume = new ExposeField<int>(() => _effectVolume, (newValue) => { _effectVolume = newValue; _audioContoller.SetMixerVolume(MixerVolume.VolEffects, newValue); },
-            _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
+        FieldSequenceType = new ExposeField<SequenceType>(() => _musicSequenceType, SetNewSequence(_audioContoller), _flagGameSettingChanges, GameSettingChangedBit.SequenceType);
+        FieldMasterVolume = new ExposeField<int>(() => _masterVolume, SetNewVolume(_audioContoller, MixerVolume.VolMaster), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
+        FieldMusicVolume = new ExposeField<int>(() => _musicVolume, SetNewVolume(_audioContoller, MixerVolume.VolMusic), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
+        FieldEffectVolume = new ExposeField<int>(() => _effectVolume, SetNewVolume(_audioContoller, MixerVolume.VolEffects), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
+    }
+
+    public void CallChangedFieldPlaymode() => ChangedFieldPlaymode?.Invoke(_usedPlayMode);
+
+    private Action<PlayMode> SetNewPlayMode()
+    {
+        return (newValue) =>
+        {
+            _usedPlayMode = newValue;
+            CallChangedFieldPlaymode();
+        };
+    }
+
+    private Action<SequenceType> SetNewSequence(AudioContoller _audioContoller)
+    {
+        return (newValue) =>
+        {
+            _musicSequenceType = newValue;
+            _audioContoller.SetSequenceType(newValue);
+        };
+    }
+
+    private Action<int> SetNewVolume(AudioContoller _audioContoller, MixerVolume mixer)
+    {
+        return (newValue) =>
+        {
+            _masterVolume = newValue;
+            _audioContoller.SetMixerVolume(mixer, newValue);
+        };
     }
 }

@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEditor;
 using GMTools.Manager;
 
-[CustomEditor(typeof(StoreObjectController), true)]
+[CustomEditor(typeof(StoreTopListController), true)]
 public class StoreObjectControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        StoreObjectController storeObjectController = target as StoreObjectController;
+        StoreTopListController storeObjectController = target as StoreTopListController;
         DrawDefaultInspector();
         EditorGUILayout.Space();
         //To exclude the possibility to create the temp GameObject in the process of run the Play mode
