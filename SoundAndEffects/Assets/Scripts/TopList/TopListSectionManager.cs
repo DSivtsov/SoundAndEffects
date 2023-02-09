@@ -47,9 +47,9 @@ public class TopListSectionManager : SectionManager
                 else
                     Debug.LogError($"{this}: Wrong Type of Section [{nextSectionObject.SectionName}]"); 
             }
-            else
-                Debug.LogError($"{this}: _mainMenusSceneManager.IsConnectedToServer [{_mainMenusSceneManager.IsConnectedToServer}]");
-            //by default switching to SectionName.Global in case od error always is forbad
+            //else
+            //    Debug.LogError($"{this}: _mainMenusSceneManager.IsConnectedToServer [{_mainMenusSceneManager.IsConnectedToServer}]");
+            //by default switching to SectionName.Global in case of error always is forbad
             return false;
         }
         //by default switching to SectionName.Local always aproved

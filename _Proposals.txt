@@ -1,17 +1,4 @@
-!!!
-SetPlayerMode() can call from start Game and after change game settings
-IsConnected may be made as Online/Offline/Init
-Going from Online to Offline without restart
-Influence on TopList/ Save Result and so on
-Check Online error afther connection to Server
-Diable some function if not connected to Server
-GameSetting PlauMode = Try Play in Online , if not connected to Server value not changing, chnaging onlu status in MainMenu (Connected To Server)
-!!!!
 
-ShowDefTopList - made change value for next open TopList (now only for new start Game)
-
-Not offer copy result - replace Not copy result to global TopList
-Made corespoding code
 
 Check button Reset "Local TopList"
 

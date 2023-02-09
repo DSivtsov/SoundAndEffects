@@ -38,6 +38,7 @@ public enum ButtonType
     LoadSavedSettings = 5,
     LoadDefSettings = 6,
     SaveNewSettings = 7,
+    TryReconnect = 8,
 }
 
 public static class ButtonActions
@@ -79,10 +80,6 @@ public static class ButtonActions
                 case ButtonType.ResetTopList:
                     _menuSceneManager.ResetTopList();
                     break;
-                //case ButtonType.ResetDefault:
-                //    SectionManager.SectionController.ResetSectionValuesToDefault();
-                    //Debug.Log("End ButtonType.ResetDefault");
-                    //break;
                 case ButtonType.NewPlayer:
                     _playerDataController.CreateNewPlayer();
                     break;
@@ -94,6 +91,9 @@ public static class ButtonActions
                     break;
                 case ButtonType.SaveNewSettings:
                     _gameSettingsSOController.SaveCustomGameSettings();
+                    break;
+                case ButtonType.TryReconnect:
+                    _menuSceneManager.TryReconnect();
                     break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");

@@ -6,6 +6,7 @@ using UnityEngine;
 using GMTools.Menu;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class MainMenusSceneManager : MonoBehaviour
 {
@@ -86,6 +87,8 @@ public class MainMenusSceneManager : MonoBehaviour
         }
     }
 
+    public void TryReconnect() => CheckPlayerMode();
+
     public void ActivateMainMenusCamera(bool activate)
     {
         cameraMainMenus.SetActive(activate);
@@ -99,4 +102,16 @@ public class MainMenusSceneManager : MonoBehaviour
     }
 
     public void SetStatusConnectionToServer(bool isConnected) => IsConnectedToServer = isConnected;
+
+    public void TemporaryDisableMouse(bool setDiabled = true)
+    {
+        if (setDiabled)
+        {
+            InputSystem.DisableDevice(Mouse.current); 
+        }
+        else
+        {
+            InputSystem.EnableDevice(Mouse.current);
+        }
+    }
 }

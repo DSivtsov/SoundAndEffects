@@ -51,7 +51,7 @@ public class LootLockerController : MonoBehaviour
     /// <summary>
     /// Maximum time for one server operaion, for internal detection the TimeOut error
     /// </summary>
-    private const float MaximumTimePeriod = 10f;
+    private const float MaximumTimePeriod = 5f;
     private bool _connecting;
     private float _startTime;
     private Coroutine _coroutineProcessCountDown;
@@ -80,7 +80,7 @@ public class LootLockerController : MonoBehaviour
     {
         if (_playerDataController.ExistGuestPlayerID)
         {
-            StartProcessConnecting();
+            StartProcessConnecting(operationType: ServerOperationType.Disconnecting);
             StartCoroutine(StopCurrentSession(onlyEndSession: true)); 
         }
         else
@@ -89,7 +89,7 @@ public class LootLockerController : MonoBehaviour
 
     private IEnumerator OpenSessionUseExistenRecord()
     {
-        StartProcessConnecting();
+        StartProcessConnecting(operationType: ServerOperationType.Connecting);
         yield return OpenGuestSession(useExistedPlayerRecord: true);
     }
    
@@ -135,7 +135,7 @@ public class LootLockerController : MonoBehaviour
     {
         if (GuestSessionInited)
         {
-            StartProcessConnecting();
+            StartProcessConnecting(operationType: ServerOperationType.Saving);
             bool NewResultWasSaved = false;
             bool notGetResponse = true;
             LootLockerSDKManager.SubmitScore(_playerIDLootLocker.ToString(), score, _leaderboardKey, (response) =>
@@ -158,7 +158,7 @@ public class LootLockerController : MonoBehaviour
     {
         if (GuestSessionInited)
         {
-            StartProcessConnecting();
+            StartProcessConnecting(CanvasName.TopList, ServerOperationType.Loading);
             GlobalListLoaded = false;
             bool notGetResponse = true;
             LootLockerLeaderboardMember[] table = default(LootLockerLeaderboardMember[]);
@@ -196,7 +196,7 @@ public class LootLockerController : MonoBehaviour
 
     public IEnumerator CoroutineCreateNewGuestIDRecord()
     {
-        StartProcessConnecting();
+        StartProcessConnecting(operationType: ServerOperationType.Connecting);
         if (_playerDataController.ExistGuestPlayerID)
         {
             yield return StopCurrentSession();
@@ -272,9 +272,9 @@ public class LootLockerController : MonoBehaviour
                 ClearSessionData();
                 if (onlyEndSession)
                 {
-                    StopCoroutine(_coroutineProcessCountDown);
+                    FinishOperation();
                     _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: false);
-                    _connectingToServer.SetResultsGoingToOffLineMode(); 
+                    _connectingToServer.DisplayResultAfterSwitchToOffline(_startTime);
                 }
             }
             else
@@ -296,26 +296,38 @@ public class LootLockerController : MonoBehaviour
 
     public void CheckResultsServerOperations(ErrorConnecting finalStatus = ErrorConnecting.NoErrors)
     {
-        StopCoroutine(_coroutineProcessCountDown);
+        FinishOperation();
 
         //To combine ErrorConnecting.TimeOut with other Error if it occurs
         // To have possibility to finish w/o error if good response will be in the one frame with Time.out
         // awating must check the server response and _connecting status, but result check on value of the server response 
         // here if _connecting = false the error in response in other case the ErrorConnecting.TimeOut error
-        if (finalStatus != ErrorConnecting.NoErrors)
-            finalStatus = (_connecting) ? finalStatus : ErrorConnecting.TimeOut | finalStatus;
-
-        CountFrame.DebugLogUpdate(this, $"finalStatus Connecting=[{finalStatus}]");
-        bool statusConnectionNoErrors = finalStatus == ErrorConnecting.NoErrors;
-        if (!statusConnectionNoErrors)
+        if (finalStatus == ErrorConnecting.NoErrors)
+        {
+            _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: true);
+            _connectingToServer.DisplayResultOperationInOnLine(_startTime, successResult: true);
+        }
+        else
+        {
+            //detect Timeout errors
+            ErrorConnecting finalErrorStatus = (_connecting) ? finalStatus : ErrorConnecting.TimeOut | finalStatus;
+            CountFrame.DebugLogUpdate(this, $"finalStatus Connecting=[{finalErrorStatus}]");
             ClearSessionData();
-        _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: statusConnectionNoErrors);
-        _connectingToServer.DisplayResult(resultOK: statusConnectionNoErrors, _startTime);
+            _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: false);
+            _connectingToServer.DisplayResultOperationInOnLine(_startTime, successResult: false);
+        }
     }
 
-    private void StartProcessConnecting()
+    private void FinishOperation()
     {
-        _connectingToServer.StartAnimateProcessConnecting();
+        StopCoroutine(_coroutineProcessCountDown);
+        _mainMenusSceneManager.TemporaryDisableMouse(setDiabled: false);
+    }
+
+    private void StartProcessConnecting(CanvasName canvasName = CanvasName.MainMenu, ServerOperationType operationType = ServerOperationType.Connecting)
+    {
+        _mainMenusSceneManager.TemporaryDisableMouse();
+        _connectingToServer.StartAnimateProcessConnecting(canvasName, operationType);
         _connecting = true;
         _startTime = Time.time;
         _coroutineProcessCountDown = StartCoroutine(CoroutineProcessCountDown());
