@@ -8,13 +8,11 @@ public enum TopListSource
 {
     Demo,
     Local,
-    //Remote
 }
 
 abstract public class TopListController : MonoBehaviour
 {
     [SerializeField] protected Transform _rootRecords;
-    //[SerializeField] protected bool _loadAndShowAtStart = true;
 
     protected List<PlayerData> _topList;
     protected TopListElementBase _topListElement;
@@ -33,20 +31,16 @@ abstract public class TopListController : MonoBehaviour
         _topListElement.CreateTableTopList(_rootRecords);
     }
 
-    abstract public void LoadAndShow(bool multiAsyncOperations = true);
+    abstract public void LoadAndShow();
 
     abstract public void AddCharacterResult(PlayerData newCharacterData);
 
-    protected void ActivateAndCheckTopList(bool activate = true)
+    protected void ActivateAndCheckTopList()
     {
-        if (activate && _topList.Count != 0)
+        if (_topList.Count != 0)
         {
             _topListElement.SetUsedTopList(_topList);
             InitCharacterData = true;
-        }
-        else
-        {
-            InitCharacterData = false;
         }
     }
 }

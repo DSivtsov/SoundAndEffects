@@ -1,6 +1,6 @@
+???Time Solution : InputField was made readOnly = true
 
-
-Check button Reset "Local TopList"
+Remove Trace msg from GameScene
 
 Video Section
 Add fields:

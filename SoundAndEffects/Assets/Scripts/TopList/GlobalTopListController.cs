@@ -17,7 +17,7 @@ public class GlobalTopListController : TopListController
         InitialLoadTopList();
     }
 
-    public override void LoadAndShow(bool multiAsyncOperations = true)
+    public override void LoadAndShow()
     {
         if (_mainMenusSceneManager.IsConnectedToServer)
         {
@@ -39,15 +39,9 @@ public class GlobalTopListController : TopListController
         {
             //The Sorting of TopList by Score did remotely on Server
             _topListElement.UpdateTopList(false);
-            ////In case reload after save result doing only one operation simultenoius
-            //if (multiAsyncOperations)
-            //    _lootLockerController.FinishOneConnectionToServer(MultiOperation.LoadedTopList);
-            //else
-            //    _lootLockerController.CheckResultsServerOperations(resultOK: true);
         }
         else
         {
-            //_lootLockerController.CheckResultsServerOperations(resultOK: false, ErrorConnecting.TopListNotLoaded);
             Debug.LogError($"{this} : Remote TopList was not Loaded");
         }
     }
@@ -63,15 +57,4 @@ public class GlobalTopListController : TopListController
             CountFrame.DebugLogUpdate(this, $" : RemoteTopListController.AddCharacterResult skipped");
         }
     }
-
-    //private IEnumerator CoroutineSaveScoreToLeaderBoard(PlayerData newCharacterData)
-    //{
-    //    yield return _lootLockerController.SendScoreToLeaderBoard(newCharacterData.GetScoreValue());
-    //    //if (_lootLockerController.NewResultWasSaved)
-    //    //{
-    //    //    LoadAndShow(multiAsyncOperations: false);
-    //    //}
-    //    //else
-    //    //    _lootLockerController.CheckResultsServerOperations(resultOK: false, ErrorConnecting.NewResultNotSaved);
-    //}
 }

@@ -19,9 +19,8 @@ public class LocalTopListController : TopListController
         _storedPlainPlayerData = (StoredPlainClass<PlayerData>)_storeObjectController.GetStoredObject();
     }
 
-    public override void LoadAndShow(bool multiAsyncOperations = true)
+    public override void LoadAndShow()
     {
-        //CountFrame.DebugLogUpdate(this, $"LoadAndShow() started");
         LoadTopList();
         UpdateAndShowTopList();
     }
@@ -39,10 +38,12 @@ public class LocalTopListController : TopListController
 
     public void ResetTopList()
     {
-        _topList.Clear();
-        SaveTopList();
-        UpdateAndShowTopList();
-        ActivateAndCheckTopList(false);
+        if (_storeObjectController.DeleteFile())
+        {
+            LoadAndShow();
+        }
+        else
+            Debug.LogWarning($"{this} : Can't do the Reset TopList");
     }
 
     public override void AddCharacterResult(PlayerData newCharacterData)

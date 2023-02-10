@@ -15,6 +15,7 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private GlobalTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
+    [SerializeField] private ModalWindow _modalWindowsResetTopList;
     [SerializeField] private Button _buttonStart;
     [SerializeField] private GameSettingsSO _gameSettings;
 
@@ -69,8 +70,6 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void StartGame(string playerName) => _mainManager?.FromMenusToStartGame(playerName);
 
-    public void ResetTopList() => _localTopListController.ResetTopList();
-
     /// <summary>
     /// If Online mode is active will be create a new Player in the LootLocker
     /// </summary>
@@ -113,5 +112,11 @@ public class MainMenusSceneManager : MonoBehaviour
         {
             InputSystem.EnableDevice(Mouse.current);
         }
+    }
+
+    public void ResetTopList()
+    {
+        _modalWindowsResetTopList.SetActionWindowAcknowledgment(() => _localTopListController.ResetTopList());
+        _modalWindowsResetTopList.ActivateCanvasOverlayWindow();
     }
 }

@@ -133,5 +133,19 @@ namespace GMTools.Manager
                 return IOError.NoError;
             }
         }
+
+        public bool DeleteFile()
+        {
+            try
+            {
+                File.Delete(nameFile);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{this} : DeleteFile() : Can't delete file ({nameFile}) error [{e.Message}]");
+                return false;
+            }
+            return true;
+        }
     }
 }
