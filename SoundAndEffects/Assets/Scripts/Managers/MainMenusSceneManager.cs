@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System;
 
 public class MainMenusSceneManager : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private MainManager _mainManager;
     public bool IsConnectedToServer { get; private set; } = false;
+
+    private bool _notInitedManageConnectionToServer;
 
     private void Awake()
     {
@@ -32,54 +35,78 @@ public class MainMenusSceneManager : MonoBehaviour
             Debug.LogError($"{this} not linked to GameMainManager");
             ActivateMainMenusCamera(true);
         }
-        _buttonStart.interactable = false;
+        ActivateButtonStart(false);
     }
 
     private void Start()
     {
         _localTopListController.LoadAndShow();
-        _playerDataController.InitPlayerAccount();
-        CheckPlayerMode();
-        if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
-            _lootLockerController.SetDisplayOfflineModeActive();
+        _notInitedManageConnectionToServer = true;
+        if (_playerDataController.InitPlayerAccount())
+        {
+            ManageConnectionToServer();
+            ActivateButtonStart(true);
+        }
+        
     }
     /// <summary>
-    /// Check PlayerMode and if it switched to Online then load remote data
+    /// ManageConnectionToServer based on value PlayerMode and IsConnectedToServer
     /// </summary>
-    public void CheckPlayerMode()
+    public void ManageConnectionToServer()
     {
-        if (_playerDataController.Player != null)
+        if (_notInitedManageConnectionToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
         {
-            if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
-                 _lootLockerController.OpenSession();
-            if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
-                _lootLockerController.DisconnectedFromServer();
+            _lootLockerController.SetDisplayOfflineModeActive();
         }
         else
-            Debug.LogWarning($"{this} : _player == null");
+        {
+            //if (_playerDataController.Player != null)
+            //{
+                if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
+                    _lootLockerController.OpenSession();
+                if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+                    _lootLockerController.DisconnectedFromServer();
+            //}
+            //else
+            //    Debug.LogWarning($"{this} : _player == null");
+        }
+        _notInitedManageConnectionToServer = false;
+    }
+
+    public void CreateNewPlayer()
+    {
+        ActivateButtonStart(false);
+        _playerDataController.ActivateCreateNewPlayer(() =>
+        {
+            CreateNewPlayerLootLocker();
+            ActivateButtonStart(true);
+        });
     }
 
     public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
 
-    public void StartGame(string playerName) => _mainManager?.FromMenusToStartGame(playerName);
+    public void StartGame() => _mainManager?.FromMenusToStartGame(_playerDataController.Player.Name);
 
     /// <summary>
-    /// If Online mode is active will be create a new Player in the LootLocker
+    /// If Online mode is active will try to create a new Player in the LootLocker, in Offline creation will be skipped until switching to Online
     /// </summary>
     /// <param name="playerName"></param>
     public void CreateNewPlayerLootLocker()
     {
         if (IsConnectedToServer)
         {
+            //In case if Session is open will call CreateNewGuestIDRecord directly
             StartCoroutine(_lootLockerController.CoroutineCreateNewGuestIDRecord());
         }
         else
         {
-            Debug.LogWarning($"{this}: Not Create NewPlayerLootLocker record in Offline mode");
+            //In case Online mode is active will try to openSession and CreateNewGuestIDRecord
+            CountFrame.DebugLogUpdate(this, $"IsConnectedToServer[{IsConnectedToServer}]: Request to create NewPlayerLootLocker record");
+            ManageConnectionToServer();
         }
     }
 
-    public void TryReconnect() => CheckPlayerMode();
+    public void TryReconnect() => ManageConnectionToServer();
 
     public void ActivateMainMenusCamera(bool activate)
     {

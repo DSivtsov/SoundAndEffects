@@ -1,6 +1,9 @@
+Error in clear env absent information about demading the new User
+After Creation new user and Player MOde online doesn't connect to server
+
 Video Section
 Add fields:
-TurnOff Animation after Death
+TurnOff Animation after Collisions (if not Died)
 
 Check porposal A. Ivashov
 

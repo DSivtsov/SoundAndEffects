@@ -44,7 +44,6 @@ public enum ButtonType
 public static class ButtonActions
 {
     private static MainMenusSceneManager _menuSceneManager;
-    private static PlayerDataController _playerDataController;
     private static GameSettingsSOController _gameSettingsSOController;
 
     public static void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager)
@@ -52,10 +51,6 @@ public static class ButtonActions
         _menuSceneManager = menuSceneManager;
     }
 
-    public static void LinkPlayerDataController(PlayerDataController playerDataController)
-    {
-        _playerDataController = playerDataController;
-    }
     public static void LinkGameSettingsSOController(GameSettingsSOController gameSettingsSOController)
     {
         _gameSettingsSOController = gameSettingsSOController;
@@ -67,7 +62,7 @@ public static class ButtonActions
             switch (buttonType)
             {
                 case ButtonType.StartGame:
-                    _menuSceneManager.StartGame(_playerDataController.Player.Name);
+                    _menuSceneManager.StartGame();
                     break;
                 case ButtonType.QuitGame:
 #if UNITY_EDITOR
@@ -81,7 +76,7 @@ public static class ButtonActions
                     _menuSceneManager.ResetTopList();
                     break;
                 case ButtonType.NewPlayer:
-                    _playerDataController.CreateNewPlayer();
+                    _menuSceneManager.CreateNewPlayer();
                     break;
                 case ButtonType.LoadDefSettings:
                     _gameSettingsSOController.LoadDefaultGameSettings();

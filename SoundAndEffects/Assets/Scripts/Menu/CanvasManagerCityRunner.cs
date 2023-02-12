@@ -11,7 +11,7 @@ public class CanvasManagerCityRunner : CanvasManager
     {
         if (prevCanvasObject?.CanvasName == CanvasName.Settings && nextCanvasObject?.CanvasName == CanvasName.MainMenu)
         {
-            _mainMenusSceneManager.CheckPlayerMode();
+            _mainMenusSceneManager.ManageConnectionToServer();
         }
     }
 }
