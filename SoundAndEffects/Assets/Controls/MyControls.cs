@@ -46,9 +46,9 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Start"",
+                    ""name"": ""PressAnyKey"",
                     ""type"": ""Button"",
-                    ""id"": ""35b809f9-231d-429e-9d05-4c46735785c3"",
+                    ""id"": ""b7edee45-5c4e-4837-b6ef-fcfdea35ca97"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -80,12 +80,12 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""8a68a63a-1d90-4850-8421-38031d487ee7"",
-                    ""path"": ""<Keyboard>/enter"",
+                    ""id"": ""2053c390-ed8b-4554-a5ed-7fdf1e021ccc"",
+                    ""path"": ""<Keyboard>/anyKey"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Start"",
+                    ""action"": ""PressAnyKey"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -98,7 +98,7 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
         m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
         m_Move_Jump = m_Move.FindAction("Jump", throwIfNotFound: true);
         m_Move_Run = m_Move.FindAction("Run", throwIfNotFound: true);
-        m_Move_Start = m_Move.FindAction("Start", throwIfNotFound: true);
+        m_Move_PressAnyKey = m_Move.FindAction("PressAnyKey", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -160,14 +160,14 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
     private IMoveActions m_MoveActionsCallbackInterface;
     private readonly InputAction m_Move_Jump;
     private readonly InputAction m_Move_Run;
-    private readonly InputAction m_Move_Start;
+    private readonly InputAction m_Move_PressAnyKey;
     public struct MoveActions
     {
         private @MyControls m_Wrapper;
         public MoveActions(@MyControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Jump => m_Wrapper.m_Move_Jump;
         public InputAction @Run => m_Wrapper.m_Move_Run;
-        public InputAction @Start => m_Wrapper.m_Move_Start;
+        public InputAction @PressAnyKey => m_Wrapper.m_Move_PressAnyKey;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -183,9 +183,9 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
                 @Run.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnRun;
                 @Run.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnRun;
                 @Run.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnRun;
-                @Start.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnStart;
-                @Start.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnStart;
-                @Start.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnStart;
+                @PressAnyKey.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnPressAnyKey;
+                @PressAnyKey.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnPressAnyKey;
+                @PressAnyKey.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnPressAnyKey;
             }
             m_Wrapper.m_MoveActionsCallbackInterface = instance;
             if (instance != null)
@@ -196,9 +196,9 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
                 @Run.started += instance.OnRun;
                 @Run.performed += instance.OnRun;
                 @Run.canceled += instance.OnRun;
-                @Start.started += instance.OnStart;
-                @Start.performed += instance.OnStart;
-                @Start.canceled += instance.OnStart;
+                @PressAnyKey.started += instance.OnPressAnyKey;
+                @PressAnyKey.performed += instance.OnPressAnyKey;
+                @PressAnyKey.canceled += instance.OnPressAnyKey;
             }
         }
     }
@@ -207,6 +207,6 @@ public partial class @MyControls : IInputActionCollection2, IDisposable
     {
         void OnJump(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
-        void OnStart(InputAction.CallbackContext context);
+        void OnPressAnyKey(InputAction.CallbackContext context);
     }
 }

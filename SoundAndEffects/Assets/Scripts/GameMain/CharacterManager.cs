@@ -14,6 +14,14 @@ public enum PlayerState
     Collision
 }
 
+public enum WaitType
+{
+    waitStart = 0,
+    //waitContinue = 1,
+    waitEndGame = 2,
+    waitContinueGame = 3,
+}
+
 public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
 {
     #region SerializedFields
@@ -24,7 +32,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     /// <summary>
     /// Link to Text in Canvas
     /// </summary>
-    [SerializeField] private TurnOffPressEnter gameCanvasTurnOffPressEnter;
+    [SerializeField] private GameMessages gameCanvasTurnOffKeyPress;
     #endregion
 
     #region NonSerializedFields
@@ -68,7 +76,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private float storeDraglastCollised;
     private Quaternion storeRotationCollised;
     private Vector3 characterInitWordPos;
-    public TypeWaitMsg WaitState { get; private set; }
+    public WaitType CurrentWaitType { get; private set; }
     #endregion
     public bool DiedAnimManFinished { get; private set; }
     public bool CollisionAnimManFinished { get; private set; }
@@ -110,7 +118,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private void OnEnable()
     {
         inputs.Move.Enable();
-        WaitState = TypeWaitMsg.waitEndGame;
+        CurrentWaitType = WaitType.waitEndGame;
     }
     private void OnDisable() => inputs.Move.Disable();
     
@@ -131,9 +139,9 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         DiedAnimManFinished = false;
         CollisionAnimManFinished = false;
         _inAir = false;
-        if (WaitState == TypeWaitMsg.waitEndGame)
+        if (CurrentWaitType == WaitType.waitEndGame)
         {
-            WaitState = TypeWaitMsg.waitStart;
+            CurrentWaitType = WaitType.waitStart;
         }
         //For Demo Purpose Call only in Editor
         SetPhysicsIgnoreObstaclesCollisions();
@@ -154,15 +162,16 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     /// <summary>
     /// It's Start/Restart or end Game after user press Enter after wait State
     /// </summary>
-    private void WasPressedEnter()
+    /// private void WasPressedEnter()WasPressedAnyKey
+    private void WasPressedAnyKey()
     {
         //CountFrame.DebugLog(this, "WasPressedEnter()");
         //The button Start will affect if current state = Stop
-        gameCanvasTurnOffPressEnter.Active(false);
-        if (WaitState != TypeWaitMsg.waitEndGame)
+        gameCanvasTurnOffKeyPress.Active(false);
+        if (CurrentWaitType != WaitType.waitEndGame)
         {//It's Start or Restart Game
             CharacterGo();
-            if (WaitState == TypeWaitMsg.waitStart)
+            if (CurrentWaitType == WaitType.waitStart)
             {
                 gameSceneManager.SwitchMusicCollection(CollectionName.Walking, false);
                 gameSceneManager.SwitchMusicToGameScene();
@@ -185,13 +194,12 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     {
         //If exist the the object with sciprt <TurnOffPressEnter> (initial text message "PressEnter"), activate it
         //Later can turn off by OnStart
-        
-        gameCanvasTurnOffPressEnter.Active(true, WaitState);
+        gameCanvasTurnOffKeyPress.Active(true, CurrentWaitType);
     }
 
     private void Update()
     {
-        if (WaitState == TypeWaitMsg.waitEndGame)
+        if (CurrentWaitType == WaitType.waitEndGame)
         {
             //The game is in a final state, waiting for a username to be entered and Enter to exit using the WasPressedEnter() script
             //Debug.LogWarning($"I'm Here Update() isGameEndState={isGameEndState}");
@@ -204,13 +212,13 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
             {
                 RestoreInitialParametersLastCollisedRigidbody();
                 gameSceneManager.CharacterCollision();
-                WaitState = TypeWaitMsg.waitContinue;
+                CurrentWaitType = WaitType.waitContinueGame;
                 StartNewAttemptGame();
             }
             else if (DiedAnimManFinished)
             {
                 gameSceneManager.CharacterDied();
-                WaitState = TypeWaitMsg.waitEndGame;
+                CurrentWaitType = WaitType.waitEndGame;
                 ShowWaitScreen();
             }
             return;
@@ -483,10 +491,16 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         }
     }
 
-    public void OnStart(InputAction.CallbackContext context)
+    //public void OnStart(InputAction.CallbackContext context)
+    //{
+    //    if (_currentState == PlayerState.Stop && context.phase == InputActionPhase.Started)
+    //        WasPressedAnyKey();        //WasPressedEnter();
+    //}
+
+    public void OnPressAnyKey(InputAction.CallbackContext context)
     {
         if (_currentState == PlayerState.Stop && context.phase == InputActionPhase.Started)
-            WasPressedEnter();
+            WasPressedAnyKey();
     }
     #endregion
 
@@ -523,6 +537,6 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
                 Debug.Log("Was set for Physics -  Ignore collisions between [Player] and [Obstacles]");
             }
         }
-    } 
+    }
     #endregion
 }

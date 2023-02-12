@@ -1,10 +1,4 @@
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using GMTools.Menu;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
@@ -56,7 +50,6 @@ public class MainMenusSceneManager : MonoBehaviour
     {
         if (_playerDataController.Player != null)
         {
-            //Debug.Log($"{this}: IsConnectedToServer[{IsConnectedToServer}] FieldPlayMode[{_gameSettings.FieldPlayMode.GetCurrentValue()}]");
             if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
                  _lootLockerController.OpenSession();
             if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
@@ -95,9 +88,12 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void AddNewCharacterData(PlayerData newCharacterData)
     {
-        Debug.Log(newCharacterData);
+        CountFrame.DebugLogUpdate(this, $"{newCharacterData}]");
         _localTopListController.AddCharacterResult(newCharacterData);
-        _remoteTopListController.AddCharacterResult(newCharacterData);
+        if (!_gameSettings.FieldNotCopyToGlobal.GetCurrentValue())
+        {
+            _remoteTopListController.AddCharacterResult(newCharacterData); 
+        }
     }
 
     public void SetStatusConnectionToServer(bool isConnected) => IsConnectedToServer = isConnected;

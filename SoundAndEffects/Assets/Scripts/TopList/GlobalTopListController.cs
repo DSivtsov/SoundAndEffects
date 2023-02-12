@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GlobalTopListController : TopListController
 {
-    private const int MaximumIterationForGetRemoteTopList = 500;
     [Header("RemoteTopList Options")]
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private MainMenusSceneManager _mainMenusSceneManager;

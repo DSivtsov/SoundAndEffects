@@ -24,9 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Start",
+                    "name": "PressAnyKey",
                     "type": "Button",
-                    "id": "35b809f9-231d-429e-9d05-4c46735785c3",
+                    "id": "b7edee45-5c4e-4837-b6ef-fcfdea35ca97",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -58,12 +58,12 @@
                 },
                 {
                     "name": "",
-                    "id": "8a68a63a-1d90-4850-8421-38031d487ee7",
-                    "path": "<Keyboard>/enter",
+                    "id": "2053c390-ed8b-4554-a5ed-7fdf1e021ccc",
+                    "path": "<Keyboard>/anyKey",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Start",
+                    "action": "PressAnyKey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

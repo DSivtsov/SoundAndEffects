@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
-using UnityEngine.Events;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -57,15 +52,6 @@ public class GameSceneManager : MonoBehaviour
         }
     }
 
-    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
-    //    => (_gameParametersManager.GetListGameComplexityValues(), _gameParametersManager.GetActionOnValueChanged(), _gameParametersManager.GetInitialValueGameComplexity());
-    //{
-    //    List<string> values = _gameParametersManager.GetListGameComplexityValues();
-    //    UnityAction<int> actionOnValueChanged = _gameParametersManager.GetActionOnValueChanged();
-    //    int initialValue = _gameParametersManager.GetInitialValueGameComplexity();
-    //    return (values, actionOnValueChanged, initialValue);
-    //}
-
     /// <summary>
     /// Move EventSystem focus from any buttons to GameObject on current scene, to give possibility to catch the Enter press vs repeat "Button click"
     /// </summary>
@@ -84,7 +70,7 @@ public class GameSceneManager : MonoBehaviour
         SelectGameObjectFromScene(_characterObject);
         _characterDataCtrl.ResetHealth(_overrideCharacterHealth);
         //WaitState before restart Game
-        if (_characterManager.WaitState == TypeWaitMsg.waitEndGame)
+        if (_characterManager.CurrentWaitType == WaitType.waitEndGame)
             _characterDataCtrl.ResetScoreDistance();
         _mainSpawner.ReStartSpawner();
         _characterManager.StartNewAttemptGame();
@@ -122,7 +108,7 @@ public class GameSceneManager : MonoBehaviour
 
     public void CharacterCollision()
     {
-        //Debug.LogWarning("GameSceneManager : CharacterCollision()");
+        CountFrame.DebugLogUpdate(this, "CharacterCollision()");
         _mainSpawner.RemoveAllObstacles();
         _mainSpawner.ReStartSpawner();
     }
@@ -156,7 +142,6 @@ public class GameSceneManager : MonoBehaviour
 
     public void StoreResultAndSwitchGameToMainMenus()
     {
-        //PlayerData newCharacterData = new PlayerData(_graveStoneControl.GetUserName(), _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
         PlayerData newCharacterData = new PlayerData(_nameCurrentPlayer, _characterDataCtrl.SummaryDistance, _characterDataCtrl.SummaryScores);
         if (GameMainManagerLinked)
         {//It's end Game and Scene linked to GameMainManager

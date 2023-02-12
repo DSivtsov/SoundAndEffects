@@ -51,7 +51,7 @@ public class LootLockerController : MonoBehaviour
     /// <summary>
     /// Maximum time for one server operaion, for internal detection the TimeOut error
     /// </summary>
-    private const float MaximumTimePeriod = 5f;
+    private const float MaximumTimePeriod = 10f;
     private bool _connecting;
     private float _startTime;
     private Coroutine _coroutineProcessCountDown;

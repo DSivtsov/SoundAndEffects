@@ -4,74 +4,11 @@ using UnityEngine;
 using TMPro;
 using System;
 
-[Serializable]
-public class PlayerAccount
-{
-    /// <summary>
-    /// The Key used for temporary store a PlayerName in Offline mode
-    /// </summary>
-    private const string LocalPlayerName = "LocalPlayerName";
-    /// <summary>
-    /// The standart key PlayerPref used by LootLocker
-    /// </summary>
-    public const string LocalLootLockerGuestPlayerID = "LocalLootLockerGuestPlayerID";
-    // Computer\HKEY_CURRENT_USER\SOFTWARE\<DefaultCompany>\SoundAndEffects for Build
-    // Computer\HKEY_CURRENT_USER\SOFTWARE\Unity\UnityEditor\<DefaultCompany>\SoundAndEffects for Player in Editor
-
-    [SerializeField] private string name;
-    [SerializeField] private string guestPlayerID;
-
-    public PlayerAccount(string playerName) : this(playerName, null) { }
-
-    public PlayerAccount(string playerName, string guestPlayerID)
-    {
-        this.name = playerName;
-        this.guestPlayerID = guestPlayerID;
-    }
-
-    public string Name => name;
-    public string GuestPlayerID => guestPlayerID;
-
-    public override string ToString() => $"[{name}]-[{guestPlayerID}]";
-
-    public void SaveToRegistry() => PlayerPrefs.SetString(LocalPlayerName, name);
-    public void SetGuestPlayerID(string playerIdentifierLootLocker)
-    {
-        PlayerPrefs.SetString(LocalLootLockerGuestPlayerID, playerIdentifierLootLocker);
-        guestPlayerID = playerIdentifierLootLocker;
-    }
-
-    /// <summary>
-    /// Remove all information related to the Current Guest Session, but not delete the record on the LootLocker Server
-    /// </summary>
-    public void DeleteCurrentGuestPlayerID()
-    {
-        Debug.LogWarning($"DeleteCurrentGuestPlayer() [{guestPlayerID}]");
-        guestPlayerID = null;
-        PlayerPrefs.DeleteKey(LocalLootLockerGuestPlayerID);
-    }
-
-    public void BackUpCurrentPlayerRecord() => Debug.LogError($"Not Realized BackUpCurrentPlayerRecord() [{guestPlayerID}]");
-
-    public static PlayerAccount GetLastPlayerAccount()
-    {
-        if (PlayerPrefs.HasKey(LocalPlayerName))
-        {
-            if (PlayerPrefs.HasKey(LocalLootLockerGuestPlayerID))
-                return new PlayerAccount(PlayerPrefs.GetString(LocalPlayerName), PlayerPrefs.GetString(LocalLootLockerGuestPlayerID));
-            else
-                return new PlayerAccount(PlayerPrefs.GetString(LocalPlayerName));
-        }
-        else
-            return null;
-    }
-}
-
 public class PlayerDataController : MonoBehaviour
 {
-    [SerializeField] TMP_InputField _inputFieldPlayerName;
-    [SerializeField] MainMenusSceneManager _mainMenusSceneManager;
-    [SerializeField] TurnOffPressEnter _mainMenuCanvasTurnOffPressEnter;
+    [SerializeField] private TMP_InputField _inputFieldPlayerName;
+    [SerializeField] private MainMenusSceneManager _mainMenusSceneManager;
+    [SerializeField] private GameObject _menuMessagesContinue;
 
     private const int MaxLenghtPlayerName = 16;
 
@@ -91,7 +28,7 @@ public class PlayerDataController : MonoBehaviour
     public void InitPlayerAccount()
     {
         Player = PlayerAccount.GetLastPlayerAccount();
-        Debug.LogWarning($"{this} GetLastPlayerAccount()[{Player}]");
+        CountFrame.DebugLogUpdate(this,$"GetLastPlayerAccount()[{Player}]");
         UpdateFieldPlayerName();
     }
 
@@ -100,7 +37,7 @@ public class PlayerDataController : MonoBehaviour
         _mainMenusSceneManager.ActivateButtonStart(false);
         _inputFieldPlayerName.readOnly = false;
         _inputFieldPlayerName.ActivateInputField();
-        _mainMenuCanvasTurnOffPressEnter.Active(true, TypeWaitMsg.waitContinue);
+        _menuMessagesContinue.SetActive(true);
     }
 
     /// <summary>
@@ -123,7 +60,7 @@ public class PlayerDataController : MonoBehaviour
         Player.SaveToRegistry();
         UpdateFieldPlayerName();
         _mainMenusSceneManager.CreateNewPlayerLootLocker();
-        _mainMenuCanvasTurnOffPressEnter.Active(activate: false);
+        _menuMessagesContinue.SetActive(false);
     }
 
     /// <summary>

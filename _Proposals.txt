@@ -1,7 +1,3 @@
-???Time Solution : InputField was made readOnly = true
-
-Remove Trace msg from GameScene
-
 Video Section
 Add fields:
 TurnOff Animation after Death

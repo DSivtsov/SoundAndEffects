@@ -1,11 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 using GMTools;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
-using UnityEngine.Events;
 
 public enum SceneState
 {
@@ -20,7 +16,7 @@ public class MainManager : SingletonController<MainManager>
     private MainMenusSceneManager _menuSceneManager;
     private GameSceneManager _gameSceneManager;
 
-    private int _characterHealth;
+    private int _overrideCharacterHealth;
     /*
      * The Start order:
      *  Turn Loader camera
@@ -44,14 +40,10 @@ public class MainManager : SingletonController<MainManager>
         yield return _loaderSceneManager.StartLoadScenes();
     }
 
-    public void SetCharacterHelath(int characterHealth) => _characterHealth = characterHealth;
-
+    public void OverrideCharacterHealth(int overrideCharacterHealth) => _overrideCharacterHealth = overrideCharacterHealth;
     public void LinkMenuSceneManager(MainMenusSceneManager menuSceneManager) => _menuSceneManager = menuSceneManager;
     public void LinkLoaderSceneManager(LoaderSceneManager loaderSceneManager) => _loaderSceneManager = loaderSceneManager;
     public void LinkGameSceneManager(GameSceneManager gameSceneManager) => _gameSceneManager = gameSceneManager;
-
-    //public (List<string> values, UnityAction<int> actionOnValueChanged, int initialValue) GetParametersToInitGameComplexityOption()
-    //    => _gameSceneManager.GetParametersToInitGameComplexityOption();
 
     public bool GetStatusLoadingScenes() => _loaderSceneManager.AllScenesLoaded;
 
@@ -77,7 +69,7 @@ public class MainManager : SingletonController<MainManager>
         CountFrame.DebugLogUpdate(this, $"FromMenusToStartGame()");
         _gameSceneManager.ActivateGameCamera(true);
         SetActiveScene(SceneName.Game);
-        _gameSceneManager.StartNewGame(playerName, _characterHealth);
+        _gameSceneManager.StartNewGame(playerName, _overrideCharacterHealth);
         _menuSceneManager.ActivateMainMenusCamera(false);
     }
 

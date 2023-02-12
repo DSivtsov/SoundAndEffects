@@ -11,7 +11,7 @@ public class GraveStoneControl : MonoBehaviour
     private TextMeshProUGUI _textAphorism;
     private TextMeshProUGUI _textScore;
     private TextMeshProUGUI _textDistance;
-    private TMP_InputField _inputName;
+    private TextMeshProUGUI _textName;
     private CharacterDataController _characterDataCtrl;
 
     //private const UnitSystemDistance _currentDisplayUnitSystemDistance = UnitSystemDistance.ft;
@@ -22,7 +22,7 @@ public class GraveStoneControl : MonoBehaviour
         _textAphorism = _graveStoneGroup.transform.Find("AphorismText").GetComponent<TextMeshProUGUI>();
         _textScore = _graveStoneGroup.transform.Find("GraveStoneText/Score").GetComponent<TextMeshProUGUI>();
         _textDistance = _graveStoneGroup.transform.Find("GraveStoneText/Distance").GetComponent<TextMeshProUGUI>();
-        _inputName = _graveStoneGroup.transform.Find("GraveStoneText/Name/Input").GetComponent<TMP_InputField>();
+        _textName = _graveStoneGroup.transform.Find("GraveStoneText/Name").GetComponent<TextMeshProUGUI>();
         _characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
     }
 
@@ -38,16 +38,12 @@ public class GraveStoneControl : MonoBehaviour
         //Template "Score: 999 999"
         _textScore.text = $"Score: {_characterDataCtrl.SummaryScores:000 000}";
         _graveStoneGroup.SetActive(true);
-        _inputName.text = _nameCurrentPlayer;
-        Debug.LogError("Time Solution : InputField was made readOnly = true");
-        _inputName.readOnly = true;
-        _inputName.ActivateInputField();
-        //Debug.Log("ActivategraveStoneGroupAndFocusInputField()");
+        _textName.text = _nameCurrentPlayer;
     }
     public void DeactivategraveStoneGroup()
     {
         _graveStoneGroup.SetActive(false);
     }
 
-    public string GetUserName() => _inputName.text;
+    public string GetUserName() => _textName.text;
 }
