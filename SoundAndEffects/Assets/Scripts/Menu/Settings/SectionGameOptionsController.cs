@@ -24,14 +24,14 @@ public class SectionGameOptionsController : MonoBehaviour
         if (GameSettingsSOController.Instance.GameSettingsInited)
         {
             LinkFieldsToElement();
-            _gameSettings.ChangedFieldPlaymode += ChangeFieldsOnlinePlaymode;
-            ChangeFieldsOnlinePlaymode(_gameSettings.FieldPlayMode.GetCurrentValue()); 
+            _gameSettings.FieldPlaymodeWasUpdated += ShowGroupFieldsBasedOnPlaymode;
+            ShowGroupFieldsBasedOnPlaymode(_gameSettings.FieldPlayMode.GetCurrentValue()); 
         }
         else
             Debug.LogError($"{this} : Attempt to Use before GameSettingsInited was Inited");
     }
 
-    private void ChangeFieldsOnlinePlaymode(PlayMode currentMode)
+    private void ShowGroupFieldsBasedOnPlaymode(PlayMode currentMode)
     {
         bool playModeIsOnline = currentMode == PlayMode.Online;
         _notCopyToGlobal.SetActive(playModeIsOnline);

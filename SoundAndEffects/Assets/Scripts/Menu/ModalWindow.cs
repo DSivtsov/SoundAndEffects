@@ -5,17 +5,18 @@ public enum ModalWindowButtonType
 {
     Ok = 1,
     Cancel = 2,
+    Close = 3,
 }
 
 abstract public class ModalWindow : MonoBehaviour
 { 
-    [SerializeField] private GameObject _modalWindow;
+    [SerializeField] protected GameObject _modalWindow;
     [SerializeField] private ModalWindowButtonType _AcknButtonType;
 
     private Canvas _canvasOverlay;
-    private Action _actionModalWindow;
+    protected Action _actionModalWindow;
 
-    void Awake()
+    protected void Awake()
     {
         _canvasOverlay = GetComponent<Canvas>();
         foreach (ModalWindowButton btn in _modalWindow.GetComponentsInChildren<ModalWindowButton>(includeInactive: true))
@@ -24,7 +25,7 @@ abstract public class ModalWindow : MonoBehaviour
         }
     }
 
-    private bool IsTrue(ModalWindowButtonType btnType) => btnType == _AcknButtonType;
+    protected bool IsTrue(ModalWindowButtonType btnType) => btnType == _AcknButtonType;
 
     public void ActivateCanvasOverlayWindow(bool activate = true)
     {
@@ -32,15 +33,12 @@ abstract public class ModalWindow : MonoBehaviour
         _modalWindow.SetActive(activate);
     }
 
-    public void ButtonWasPressed(ModalWindowButtonType btnType)
+    public virtual void ButtonWasPressed(ModalWindowButtonType btnType)
     {
         if (IsTrue(btnType))
         {
             _actionModalWindow();
-            //Debug.Log($"ButtonWasPressed[{btnType}] menuName[{_modalWindow.name}] will Call action[{_actionModalWindow.Method.Name}]");
         }
-        //else
-        //    Debug.Log($"ButtonWasPressed[{btnType}] menuName[{_modalWindow.name}] actionPredicate.IsTrue(btnType)[{IsTrue(btnType)}]");
         ActivateCanvasOverlayWindow(activate: false);
     }
 

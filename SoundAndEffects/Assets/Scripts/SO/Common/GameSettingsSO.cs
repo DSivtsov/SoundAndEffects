@@ -17,6 +17,8 @@ public enum GameSettingChangedBit
     MasterVolume = 0b100_000,
     MusicVolume = 0b1_000_000,
     EffectVolume = 0b10_000_000,
+    NotShowIntroduction = 0b100_000_000,
+    NotShowCollisionAnimation = 0b1_000_000_000,
 }
 
 [CreateAssetMenu(fileName = "GameSettingsSO", menuName = "SoundAndEffects/GameSettingsSO")]
@@ -32,10 +34,13 @@ public class GameSettingsSO : ScriptableObject
     [SerializeField] private int _masterVolume;
     [SerializeField] private int _effectVolume;
     [SerializeField] private int _musicVolume;
+    [Header("Video Options")]
+    [SerializeField] private bool _notShowIntroduction;
+    [SerializeField] private bool _notShowCollisionAnimation;
 
     public override string ToString() => JsonUtility.ToJson(this);
 
-    public event Action<PlayMode> ChangedFieldPlaymode;
+    public event Action<PlayMode> FieldPlaymodeWasUpdated;
     public bool NotCopyToGlobal => _notCopyToGlobal;
     public bool DefaultTopListGlobalt => _defaultTopListGlobal;
 
@@ -47,6 +52,8 @@ public class GameSettingsSO : ScriptableObject
     public ExposeField<int> FieldMasterVolume { get; private set; }
     public ExposeField<int> FieldMusicVolume { get; private set; }
     public ExposeField<int> FieldEffectVolume { get; private set; }
+    public ExposeField<bool> FieldNotShowIntroductionText { get; private set; }
+    public ExposeField<bool> FieldNotShowCollisionAnimation { get; private set; }
 
     /// <summary>
     /// Init interface to game setting fields
@@ -63,16 +70,22 @@ public class GameSettingsSO : ScriptableObject
         FieldMasterVolume = new ExposeField<int>(() => _masterVolume, SetNewVolume(_audioContoller, MixerVolume.VolMaster), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
         FieldMusicVolume = new ExposeField<int>(() => _musicVolume, SetNewVolume(_audioContoller, MixerVolume.VolMusic), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
         FieldEffectVolume = new ExposeField<int>(() => _effectVolume, SetNewVolume(_audioContoller, MixerVolume.VolEffects), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
+        FieldNotShowIntroductionText = new ExposeField<bool>(() => _notShowIntroduction, (newValue) => _notShowIntroduction = newValue, _flagGameSettingChanges,
+            GameSettingChangedBit.NotShowIntroduction);
+        FieldNotShowCollisionAnimation = new ExposeField<bool>(() => _notShowCollisionAnimation, (newValue) => _notShowCollisionAnimation = newValue, _flagGameSettingChanges,
+            GameSettingChangedBit.NotShowCollisionAnimation);
     }
-
-    public void CallChangedFieldPlaymode() => ChangedFieldPlaymode?.Invoke(_usedPlayMode);
+    /// <summary>
+    /// Called after load data from disk or after user changed the field
+    /// </summary>
+    public void FieldPlaymodeCanChangeItsValue() => FieldPlaymodeWasUpdated?.Invoke(_usedPlayMode);
 
     private Action<PlayMode> SetNewPlayMode()
     {
         return (newValue) =>
         {
             _usedPlayMode = newValue;
-            CallChangedFieldPlaymode();
+            FieldPlaymodeCanChangeItsValue();
         };
     }
 
@@ -92,5 +105,12 @@ public class GameSettingsSO : ScriptableObject
             _masterVolume = newValue;
             _audioContoller.SetMixerVolume(mixer, newValue);
         };
+    }
+
+    public void SetNotShowIntroductionText()
+    {
+        _notShowIntroduction = true;
+        LinkFieldToElementBase.UpdateElementsValues();
+        GameSettingsSOController.Instance.SaveCustomGameSettings();
     }
 }

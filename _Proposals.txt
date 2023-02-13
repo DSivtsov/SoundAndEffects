@@ -1,5 +1,4 @@
-Error in clear env absent information about demading the new User
-After Creation new user and Player MOde online doesn't connect to server
+Press AnyKey (space) to start/Continue game acting as Jump on place
 
 Video Section
 Add fields:
@@ -7,7 +6,5 @@ TurnOff Animation after Collisions (if not Died)
 
 Check porposal A. Ivashov
 
-Test game in clean Env (absent records in registry related to Online)
-
-Go out from GameObject (to Transform) in SettingsSectionManager
+Go out from GameObject (to Transform) in SettingsSectionManager??? Posibility
 

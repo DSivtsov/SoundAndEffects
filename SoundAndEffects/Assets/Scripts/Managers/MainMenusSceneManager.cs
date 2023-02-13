@@ -10,7 +10,8 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private GlobalTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
-    [SerializeField] private ModalWindow _modalWindowsResetTopList;
+    [SerializeField] private ModalWindowResetTopList _modalWindowsResetTopList;
+    [SerializeField] private ModalWindowIntroduction _modalWindowsIntroduction;
     [SerializeField] private Button _buttonStart;
     [SerializeField] private GameSettingsSO _gameSettings;
 
@@ -18,6 +19,7 @@ public class MainMenusSceneManager : MonoBehaviour
     public bool IsConnectedToServer { get; private set; } = false;
 
     private bool _notInitedManageConnectionToServer;
+    private bool _showIntrodution = false;
 
     private void Awake()
     {
@@ -47,7 +49,10 @@ public class MainMenusSceneManager : MonoBehaviour
             ManageConnectionToServer();
             ActivateButtonStart(true);
         }
-        
+        if (!_gameSettings.FieldNotShowIntroductionText.GetCurrentValue())
+        {
+            Introduction();
+        }
     }
     /// <summary>
     /// ManageConnectionToServer based on value PlayerMode and IsConnectedToServer
@@ -141,5 +146,12 @@ public class MainMenusSceneManager : MonoBehaviour
     {
         _modalWindowsResetTopList.SetActionWindowAcknowledgment(() => _localTopListController.ResetTopList());
         _modalWindowsResetTopList.ActivateCanvasOverlayWindow();
+    }
+
+    public void Introduction()
+    {
+        //_modalWindowsIntroduction.SetActionWindowAcknowledgment(() => Debug.Log($"I Can do something"));
+        _modalWindowsIntroduction.SetActionWindowAcknowledgment(() => _gameSettings.SetNotShowIntroductionText());
+        _modalWindowsIntroduction.ActivateCanvasOverlayWindow();
     }
 }

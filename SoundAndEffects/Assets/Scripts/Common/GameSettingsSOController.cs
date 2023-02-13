@@ -91,7 +91,7 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         ExistCustomSavedSettings = true;
         LinkFieldToElementBase.UpdateElementsValues();
         UpdateInitValues();
-        _gameSettings.CallChangedFieldPlaymode();
+        _gameSettings.FieldPlaymodeCanChangeItsValue();
     }
 
     public void SaveCustomGameSettings()
@@ -108,6 +108,6 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         ExistCustomSavedSettings = false;
         LinkFieldToElementBase.UpdateElementsValues();
         UpdateInitValues();
-        _gameSettings.CallChangedFieldPlaymode();
+        _gameSettings.FieldPlaymodeCanChangeItsValue();
     }
 }

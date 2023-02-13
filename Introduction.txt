@@ -1,0 +1,8 @@
+Information:
+It's possible to play in two modes: Online and Offline. In the Offline mode results will store locally only ({TopList Local}).
+In the Online mode is exist the possibility to copy results to Leader board in Internet ({TopList Global}).
+In {Settings} you can select {playMode} and other parameters.
+In {Help} section you can find information about Score counting and used interface in Game.
+
+Note(!!!):
+Before the first start of the game, a new player must be created ({New User)}
