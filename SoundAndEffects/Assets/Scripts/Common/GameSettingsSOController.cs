@@ -58,7 +58,7 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         if (_gameSettings && _audioContoller)
         {
             SaveDefaultGameSettings();
-            _gameSettings.InitExposedFields(_flagGameSettingChanges, _audioContoller);
+            _gameSettings.InitExposedFields(_flagGameSettingChanges);
             if (File.Exists(_nameFile))
             {
                 LoadCustomGameSettings(); 
@@ -91,7 +91,6 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         ExistCustomSavedSettings = true;
         LinkFieldToElementBase.UpdateElementsValues();
         UpdateInitValues();
-        _gameSettings.FieldPlaymodeCanChangeItsValue();
     }
 
     public void SaveCustomGameSettings()
@@ -108,6 +107,5 @@ public class GameSettingsSOController : SingletonController<GameSettingsSOContro
         ExistCustomSavedSettings = false;
         LinkFieldToElementBase.UpdateElementsValues();
         UpdateInitValues();
-        _gameSettings.FieldPlaymodeCanChangeItsValue();
     }
 }

@@ -11,21 +11,17 @@ public enum ModalWindowButtonType
 abstract public class ModalWindow : MonoBehaviour
 { 
     [SerializeField] protected GameObject _modalWindow;
-    [SerializeField] private ModalWindowButtonType _AcknButtonType;
 
     private Canvas _canvasOverlay;
-    protected Action _actionModalWindow;
+    protected Action _actionBeforeDeactivateModalWindow;
+    protected ModalWindowButtonType _buttonWasPressed;
 
     protected void Awake()
     {
         _canvasOverlay = GetComponent<Canvas>();
         foreach (ModalWindowButton btn in _modalWindow.GetComponentsInChildren<ModalWindowButton>(includeInactive: true))
-        {
             btn.LinkToModalWindowsController(this);
-        }
     }
-
-    protected bool IsTrue(ModalWindowButtonType btnType) => btnType == _AcknButtonType;
 
     public void ActivateCanvasOverlayWindow(bool activate = true)
     {
@@ -33,15 +29,15 @@ abstract public class ModalWindow : MonoBehaviour
         _modalWindow.SetActive(activate);
     }
 
-    public virtual void ButtonWasPressed(ModalWindowButtonType btnType)
+    public void ButtonWasPressed(ModalWindowButtonType btnType)
     {
-        if (IsTrue(btnType))
-        {
-            _actionModalWindow();
-        }
-        ActivateCanvasOverlayWindow(activate: false);
+        _buttonWasPressed = btnType;
+        ActionAfterButtonWasPressed();
     }
+    /// <summary>
+    /// Base ActionAfterButtonWasPressed() deactivate ModalWindow only, special action (_actionBeforeDeactivateModalWindow) must be call before this
+    /// </summary>
+    protected virtual void ActionAfterButtonWasPressed() => ActivateCanvasOverlayWindow(activate: false);
 
-    public void SetActionWindowAcknowledgment(Action action) => this._actionModalWindow = action;
-
+    public void SetActionBeforeDeactivationModalWindow(Action action) => this._actionBeforeDeactivateModalWindow = action;
 }

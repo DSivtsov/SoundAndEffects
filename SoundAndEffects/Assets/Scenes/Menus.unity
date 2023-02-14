@@ -2254,8 +2254,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1591668524}
   m_HandleRect: {fileID: 1591668523}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.2
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3198,8 +3198,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 190, y: -75}
-  m_SizeDelta: {x: 360, y: 50}
+  m_AnchoredPosition: {x: 160, y: -125}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &249944665
 MonoBehaviour:
@@ -3472,7 +3472,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 50}
+  m_SizeDelta: {x: 205, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &259753899
 MonoBehaviour:
@@ -7673,7 +7673,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4281479730
   m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -7686,7 +7686,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -7841,9 +7841,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 681941218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1521e07f751003429fec687d5233b8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 900134b08e7348d46bd0863d48890d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mixer: 1
 --- !u!1 &682065766
 GameObject:
   m_ObjectHideFlags: 0
@@ -8700,7 +8701,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 50}
+  m_SizeDelta: {x: 205, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &748161944
 MonoBehaviour:
@@ -10164,8 +10165,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 891652609}
-  - component: {fileID: 891652610}
   - component: {fileID: 891652611}
+  - component: {fileID: 891652610}
   m_Layer: 5
   m_Name: ToggleNShowAnim
   m_TagString: Untagged
@@ -10191,8 +10192,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -25}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: 252.50005, y: -25}
+  m_SizeDelta: {x: 95, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &891652610
 MonoBehaviour:
@@ -10594,7 +10595,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 1
-  m_CellSize: {x: 360, y: 50}
+  m_CellSize: {x: 300, y: 50}
   m_Spacing: {x: 135, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -10891,8 +10892,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 949426142}
-  - component: {fileID: 949426143}
   - component: {fileID: 949426144}
+  - component: {fileID: 949426143}
   m_Layer: 5
   m_Name: ToggleNShowIntro
   m_TagString: Untagged
@@ -10918,8 +10919,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -25}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: 252.5, y: -25}
+  m_SizeDelta: {x: 95, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &949426143
 MonoBehaviour:
@@ -10978,7 +10979,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 949426141}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8cf662cb6c36ac4cb16d31cf2c4f391, type: 3}
+  m_Script: {fileID: 11500000, guid: a853411df830b8245aa03850f90257e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &949881101
@@ -15237,8 +15238,6 @@ MonoBehaviour:
   _sectionManagerOptions: {fileID: 1581777201}
   _audioSection: {fileID: 519909083}
   _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
-  _mixerMain: {fileID: 24100000, guid: 02c9cfcf54be38642ae0fd325220bae6, type: 2}
-  _jukeBoxSO: {fileID: 11400000, guid: 851587f95f07a824ba3c2d95cfc0ebcf, type: 2}
   _UISequenceType: {fileID: 1274072316}
   _UIMasterVolume: {fileID: 1309533753}
   _UIMusicVolume: {fileID: 681941221}
@@ -15272,9 +15271,6 @@ MonoBehaviour:
   _sectionManager: {fileID: 1581777201}
   _gameSection: {fileID: 1856997950}
   _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
-  _titleOnlineOptions: {fileID: 1561792059}
-  _notCopyToGlobal: {fileID: 956370318}
-  _defaultTopListGlobal: {fileID: 1679230699}
   _UIPlayMode: {fileID: 5642838976731185972}
   _UINotCopyToGlobal: {fileID: 56504576}
   _UIDefaultTopListGlobal: {fileID: 2478013894695431106}
@@ -15396,9 +15392,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1309533750}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1521e07f751003429fec687d5233b8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 900134b08e7348d46bd0863d48890d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mixer: 0
 --- !u!1 &1316264763
 GameObject:
   m_ObjectHideFlags: 0
@@ -15760,8 +15757,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 190, y: -125}
-  m_SizeDelta: {x: 360, y: 50}
+  m_AnchoredPosition: {x: 160, y: -75}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1364144176
 MonoBehaviour:
@@ -17031,9 +17028,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1465424225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1521e07f751003429fec687d5233b8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 900134b08e7348d46bd0863d48890d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mixer: 2
 --- !u!1 &1469824923
 GameObject:
   m_ObjectHideFlags: 0
@@ -20871,6 +20869,7 @@ MonoBehaviour:
   _modalWindowsIntroduction: {fileID: 1916038051}
   _buttonStart: {fileID: 979888446}
   _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
+  _toggleBoolNShowIntro: {fileID: 949426144}
 --- !u!114 &1829886749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22626,7 +22625,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _modalWindow: {fileID: 1353513198}
-  _AcknButtonType: 1
 --- !u!114 &1916038051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22640,7 +22638,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _modalWindow: {fileID: 1477924119}
-  _AcknButtonType: 3
 --- !u!1 &1924781889
 GameObject:
   m_ObjectHideFlags: 0
@@ -24011,8 +24008,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 190, y: -25}
-  m_SizeDelta: {x: 360, y: 50}
+  m_AnchoredPosition: {x: 160, y: -25}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1999935340
 GameObject:
@@ -27760,6 +27757,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 925aa3cce5f09394e9e4d39f79fb61a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _titleOnlineOptions: {fileID: 1561792059}
+  _notCopyToGlobal: {fileID: 956370318}
+  _defaultTopListGlobal: {fileID: 1679230699}
 --- !u!114 &5642838976731185973
 MonoBehaviour:
   m_ObjectHideFlags: 0

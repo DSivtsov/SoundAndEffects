@@ -5,24 +5,24 @@ using UnityEngine.UI;
 
 public class ToggleBool : MonoBehaviour, IElement<bool>
 {
-    private Toggle _toggle;
+    protected Toggle _toggle;
     private bool _toggleIsInit = false;
 
     public event Action<bool> onNewValue;
 
     private void Awake()
     {
-        if (!_toggleIsInit)
-        {
-            InitElement();
-            _toggleIsInit = true;
-        }
+        InitElement();
     }
 
     public void InitElement()
     {
-        _toggle = GetComponent<Toggle>();
-        _toggle.onValueChanged.AddListener((toggleIsOn) => onNewValue?.Invoke(toggleIsOn));
+        if (!_toggleIsInit)
+        {
+            _toggle = GetComponent<Toggle>();
+            _toggle.onValueChanged.AddListener((toggleIsOn) => onNewValue?.Invoke(toggleIsOn));
+            _toggleIsInit = true;
+        }
     }
 
     public void SetValue(bool value)

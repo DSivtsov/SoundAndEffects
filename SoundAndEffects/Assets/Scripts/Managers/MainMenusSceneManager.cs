@@ -10,16 +10,16 @@ public class MainMenusSceneManager : MonoBehaviour
     [SerializeField] private GlobalTopListController _remoteTopListController;
     [SerializeField] private LootLockerController _lootLockerController;
     [SerializeField] private PlayerDataController _playerDataController;
-    [SerializeField] private ModalWindowResetTopList _modalWindowsResetTopList;
-    [SerializeField] private ModalWindowIntroduction _modalWindowsIntroduction;
+    [SerializeField] private ModalWindowOK _modalWindowsResetTopList;
+    [SerializeField] private ModalWindowCloseWithToggle _modalWindowsIntroduction;
     [SerializeField] private Button _buttonStart;
     [SerializeField] private GameSettingsSO _gameSettings;
+    [SerializeField] private ToggleBoolNShowIntro _toggleBoolNShowIntro;
 
     private MainManager _mainManager;
     public bool IsConnectedToServer { get; private set; } = false;
 
     private bool _notInitedManageConnectionToServer;
-    private bool _showIntrodution = false;
 
     private void Awake()
     {
@@ -65,15 +65,10 @@ public class MainMenusSceneManager : MonoBehaviour
         }
         else
         {
-            //if (_playerDataController.Player != null)
-            //{
                 if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
                     _lootLockerController.OpenSession();
                 if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
                     _lootLockerController.DisconnectedFromServer();
-            //}
-            //else
-            //    Debug.LogWarning($"{this} : _player == null");
         }
         _notInitedManageConnectionToServer = false;
     }
@@ -144,14 +139,17 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void ResetTopList()
     {
-        _modalWindowsResetTopList.SetActionWindowAcknowledgment(() => _localTopListController.ResetTopList());
+        _modalWindowsResetTopList.SetActionBeforeDeactivationModalWindow(() => _localTopListController.ResetTopList());
         _modalWindowsResetTopList.ActivateCanvasOverlayWindow();
     }
 
     public void Introduction()
     {
-        //_modalWindowsIntroduction.SetActionWindowAcknowledgment(() => Debug.Log($"I Can do something"));
-        _modalWindowsIntroduction.SetActionWindowAcknowledgment(() => _gameSettings.SetNotShowIntroductionText());
+        _modalWindowsIntroduction.SetActionBeforeDeactivationModalWindow(() =>
+            {
+                _toggleBoolNShowIntro.SetNotShowIntroductionWindows();
+                GameSettingsSOController.Instance.SaveCustomGameSettings();
+            });
         _modalWindowsIntroduction.ActivateCanvasOverlayWindow();
     }
 }

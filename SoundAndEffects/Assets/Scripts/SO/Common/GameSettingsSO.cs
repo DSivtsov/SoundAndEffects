@@ -40,10 +40,6 @@ public class GameSettingsSO : ScriptableObject
 
     public override string ToString() => JsonUtility.ToJson(this);
 
-    public event Action<PlayMode> FieldPlaymodeWasUpdated;
-    public bool NotCopyToGlobal => _notCopyToGlobal;
-    public bool DefaultTopListGlobalt => _defaultTopListGlobal;
-
     public ExposeField<ComplexitySO> FieldComplexityGame { get; private set; }
     public ExposeField<PlayMode> FieldPlayMode { get; private set; }
     public ExposeField<bool> FieldNotCopyToGlobal { get; private set; }
@@ -58,59 +54,28 @@ public class GameSettingsSO : ScriptableObject
     /// <summary>
     /// Init interface to game setting fields
     /// </summary>
-    /// <param name="_flagGameSettingChanges"></param>
-    public void InitExposedFields(FlagGameSettingChanged _flagGameSettingChanges, AudioContoller _audioContoller)
+    /// <param name="flagGameSettingChanges"></param>
+    public void InitExposedFields(FlagGameSettingChanged flagGameSettingChanges)
     {
-        FieldComplexityGame = new ExposeField<ComplexitySO>(() => _complexityGame, (newValue) => _complexityGame = newValue, _flagGameSettingChanges, GameSettingChangedBit.ComplexityGame);
-        FieldPlayMode = new ExposeField<PlayMode>(() => _usedPlayMode, SetNewPlayMode(), _flagGameSettingChanges, GameSettingChangedBit.PlayMode);
-        FieldNotCopyToGlobal = new ExposeField<bool>(() => _notCopyToGlobal, (newValue) => _notCopyToGlobal = newValue, _flagGameSettingChanges, GameSettingChangedBit.NotCopyToGlobal);
-        FieldByDefaultShowGlobalTopList = new ExposeField<bool>(() => _defaultTopListGlobal, (newValue) => _defaultTopListGlobal = newValue, _flagGameSettingChanges,
+        FieldComplexityGame = new ExposeField<ComplexitySO>(() => _complexityGame, (newValue) => _complexityGame = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.ComplexityGame);
+        FieldPlayMode = new ExposeField<PlayMode>(() => _usedPlayMode, (newValue) => _usedPlayMode = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.PlayMode);
+        FieldNotCopyToGlobal = new ExposeField<bool>(() => _notCopyToGlobal, (newValue) => _notCopyToGlobal = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.NotCopyToGlobal);
+        FieldByDefaultShowGlobalTopList = new ExposeField<bool>(() => _defaultTopListGlobal, (newValue) => _defaultTopListGlobal = newValue, flagGameSettingChanges,
             GameSettingChangedBit.ByDefaultShowGlobalTopList);
-        FieldSequenceType = new ExposeField<SequenceType>(() => _musicSequenceType, SetNewSequence(_audioContoller), _flagGameSettingChanges, GameSettingChangedBit.SequenceType);
-        FieldMasterVolume = new ExposeField<int>(() => _masterVolume, SetNewVolume(_audioContoller, MixerVolume.VolMaster), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
-        FieldMusicVolume = new ExposeField<int>(() => _musicVolume, SetNewVolume(_audioContoller, MixerVolume.VolMusic), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
-        FieldEffectVolume = new ExposeField<int>(() => _effectVolume, SetNewVolume(_audioContoller, MixerVolume.VolEffects), _flagGameSettingChanges, GameSettingChangedBit.MasterVolume);
-        FieldNotShowIntroductionText = new ExposeField<bool>(() => _notShowIntroduction, (newValue) => _notShowIntroduction = newValue, _flagGameSettingChanges,
+        FieldSequenceType = new ExposeField<SequenceType>(() => _musicSequenceType, (newValue) => _musicSequenceType = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.SequenceType);
+        FieldMasterVolume = new ExposeField<int>(() => _masterVolume, (newValue) => _masterVolume = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.MasterVolume);
+        FieldMusicVolume = new ExposeField<int>(() => _musicVolume, (newValue) => _musicVolume = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.MasterVolume);
+        FieldEffectVolume = new ExposeField<int>(() => _effectVolume, (newValue) => _effectVolume = newValue, flagGameSettingChanges,
+            GameSettingChangedBit.MasterVolume);
+        FieldNotShowIntroductionText = new ExposeField<bool>(() => _notShowIntroduction, (newValue) => _notShowIntroduction = newValue, flagGameSettingChanges,
             GameSettingChangedBit.NotShowIntroduction);
-        FieldNotShowCollisionAnimation = new ExposeField<bool>(() => _notShowCollisionAnimation, (newValue) => _notShowCollisionAnimation = newValue, _flagGameSettingChanges,
+        FieldNotShowCollisionAnimation = new ExposeField<bool>(() => _notShowCollisionAnimation, (newValue) => _notShowCollisionAnimation = newValue, flagGameSettingChanges,
             GameSettingChangedBit.NotShowCollisionAnimation);
-    }
-    /// <summary>
-    /// Called after load data from disk or after user changed the field
-    /// </summary>
-    public void FieldPlaymodeCanChangeItsValue() => FieldPlaymodeWasUpdated?.Invoke(_usedPlayMode);
-
-    private Action<PlayMode> SetNewPlayMode()
-    {
-        return (newValue) =>
-        {
-            _usedPlayMode = newValue;
-            FieldPlaymodeCanChangeItsValue();
-        };
-    }
-
-    private Action<SequenceType> SetNewSequence(AudioContoller _audioContoller)
-    {
-        return (newValue) =>
-        {
-            _musicSequenceType = newValue;
-            _audioContoller.SetSequenceType(newValue);
-        };
-    }
-
-    private Action<int> SetNewVolume(AudioContoller _audioContoller, MixerVolume mixer)
-    {
-        return (newValue) =>
-        {
-            _masterVolume = newValue;
-            _audioContoller.SetMixerVolume(mixer, newValue);
-        };
-    }
-
-    public void SetNotShowIntroductionText()
-    {
-        _notShowIntroduction = true;
-        LinkFieldToElementBase.UpdateElementsValues();
-        GameSettingsSOController.Instance.SaveCustomGameSettings();
     }
 }

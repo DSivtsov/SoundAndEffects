@@ -12,7 +12,7 @@ public enum MixerVolume
     VolEffects
 }
 
-public class AudioContoller : MonoBehaviour
+public class AudioContoller : SingletonController<AudioContoller>
 {
     [SerializeField] private GameSettingsSO _gameSettings;
     [SerializeField] private AudioMixer _mixerMain;
@@ -22,8 +22,10 @@ public class AudioContoller : MonoBehaviour
     private PlayJukeBox[] _arrPlayJukeBoxes;
     private MainManager _mainManager;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         _mixerVolumes = Enum.GetNames(typeof(MixerVolume));
         _mainManager = MainManager.Instance;
     }

@@ -29,7 +29,7 @@ namespace GMTools.Menu.Elements
         private Toggle[] myArrToggles = new Toggle[TwoTogglesInGroup];
 
         //At OnEnable() the m_Toggles may not be initiated use Coroutine or Start() or don't use the internal m_Toggles
-        private void Awake()
+        protected void Awake()
         {
             //Start run once and after all OnEnable(), also the code doesn't linked with "m_Toggles.OnEnable"
             InitElement();
@@ -46,7 +46,7 @@ namespace GMTools.Menu.Elements
         
         public event Action<T> onNewValue = delegate { };
 
-        public void SetValue(T value)
+        public virtual void SetValue(T value)
         {
             if (ToggleGroupIsInit)
             {

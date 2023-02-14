@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GameSettings
   m_EditorClassIdentifier: 
   _complexityGame: {fileID: 11400000, guid: 493672eca4e90604dab64e19513a97e8, type: 2}
-  _usedPlayMode: 2
-  _notCopyToGlobal: 1
+  _usedPlayMode: 1
+  _notCopyToGlobal: 0
   _defaultTopListGlobal: 1
   _musicSequenceType: 2
   _masterVolume: -15

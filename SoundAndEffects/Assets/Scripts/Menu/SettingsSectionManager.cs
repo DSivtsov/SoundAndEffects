@@ -19,6 +19,8 @@ public class SettingsSectionManager : SectionManager
     protected new void Awake()
     {
         base.Awake();
+        CountFrame.DebugLogUpdate(this, "LoadSectionValues()");
+        //LinkFieldToElementBase.UpdateElementsValues();
         _gameSettingsSOController = GameSettingsSOController.Instance;
         if (_gameSettingsSOController.GameSettingsInited)
         {

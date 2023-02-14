@@ -8,8 +8,9 @@ public class SectionVideoOptionsController : MonoBehaviour
 {
     [SerializeField] private SettingsSectionManager _sectionManagerOptions;
     [SerializeField] private SectionObject _audioSection;
-    [Header("Video Options Parameters")]
     [SerializeField] private GameSettingsSO _gameSettings;
+    //[Header("Video Options Parameters")]
+
     [Header("UI Elements")]
     [SerializeField] private ToggleBool _UINotShowIntroductionText;
     [SerializeField] private ToggleBool _UINotShowCollisionAnimation;
@@ -26,13 +27,8 @@ public class SectionVideoOptionsController : MonoBehaviour
 
     private void LinkFieldsToElement()
     {
-        //Debug.LogError($"{this} : LinkFieldsToElement()");
         LinkFieldToElementBase.Link(_gameSettings.FieldNotShowCollisionAnimation, _UINotShowCollisionAnimation);
         LinkFieldToElementBase.Link(_gameSettings.FieldNotShowIntroductionText, _UINotShowIntroductionText);
-
-
-        //Debug.LogWarning($"{this} : LoadSectionValues()");
-        LinkFieldToElementBase.UpdateElementsValues();
     }
 }
 

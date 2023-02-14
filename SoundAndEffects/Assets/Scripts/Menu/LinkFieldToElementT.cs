@@ -10,10 +10,6 @@ public abstract class LinkFieldToElementBase
     /// </summary>
     public static void UpdateElementsValues()
     {
-        //if (UpdateElementValue != null)
-        //{
-        //    UnityEngine.Debug.Log($"GetInvocationList()?.Length={UpdateElementValue.GetInvocationList()?.Length}");
-        //}
         UpdateElementValue?.Invoke();
     }
 

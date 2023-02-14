@@ -23,12 +23,12 @@ namespace GMTools.Menu.Elements
         private Type _enumType = typeof(T);
         private IList _listEnumValues;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             InitElement();
         }
 
-        public void InitElement()
+        public virtual void InitElement()
         {
             if (!DropdownListIsInit)
             {
@@ -43,7 +43,6 @@ namespace GMTools.Menu.Elements
 
         private void InitDropdownList(List<string> dropdownOptions)
         {
-            //Debug.LogError($"{this} : InitDropdownList()");
             _dropdownOption.ClearOptions();
             _dropdownOption.AddOptions(dropdownOptions);
             _dropdownOption.onValueChanged.AddListener((selectedIdx) => { onNewValue.Invoke(ConvertIdxToEnum(selectedIdx)); });
@@ -53,7 +52,7 @@ namespace GMTools.Menu.Elements
 
         private int ConvertEnumtoIdx(T value) => Convert.ToInt32(value);
 
-        public void SetValue(T value)
+        public virtual void SetValue(T value)
         {
             if (DropdownListIsInit)
             {
@@ -62,7 +61,6 @@ namespace GMTools.Menu.Elements
             else
                 Debug.LogError($"{this} : Attemp SetValue but DropdownListEnum is not inited");
         }
-
     }
 }
 
