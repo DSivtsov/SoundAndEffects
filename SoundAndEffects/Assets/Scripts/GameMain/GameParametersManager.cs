@@ -9,10 +9,6 @@ using UnityEngine.Events;
 public class GameParametersManager : MonoBehaviour
 {
     [SerializeField] private GameSettingsSO _gameSettings;
-    //[Header("Game Complexity Jumps")]
-    //[SerializeField] private ComplexitySO _gameComplexity;
-    //[Tooltip("The array of ComplexitySO")]
-    //[SerializeField] private ComplexitySO[] _arrGameComplexity;
     [Tooltip("The array of ForceJumpSO")]
     [SerializeField] private ForceJumpSO[] _arrForceJump;
 
@@ -104,6 +100,7 @@ public class GameParametersManager : MonoBehaviour
         LevelChanged.Invoke(Level);
         _countSpawnedAtThisLivel = 0;
         UpdateLevelComplexity();
+        _characterManager.SetShowCollisionAnimation(!_gameSettings.FieldNotShowCollisionAnimation.GetCurrentValue());
     }
 
     //public UnityAction<int> GetActionOnValueChanged() => (int newValue) =>

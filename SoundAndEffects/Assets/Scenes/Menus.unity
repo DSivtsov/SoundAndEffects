@@ -8723,9 +8723,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Not Show
+  m_text: 'Not Show Animation
 
-    Collision Animation'
+    after Collision'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -17252,13 +17252,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Information:\nIt's possible to play in two modes: Online and Offline.
-    In the Offline mode results will store locally only ({TopList Local}).\r\nIn
-    the Online mode is exist the possibility to copy results to Leader board in Internet
-    ({TopList Global}).\r\nIn {Settings} you can select {playMode} and other parameters.\r\nIn
+  m_text: "Information:\r\nIt's possible to play in two modes: Online and Offline.
+    In the Offline mode results will store locally only {TopList Local}.\r\nIn the
+    Online mode is exist the possibility to copy results to Leader board in Internet
+    {TopList Global}.\r\nOn the Leader board will be stored the best player's result
+    only.\r\nIn {Settings} you can select {playMode} and other parameters.\r\nIn
     {Help} section you can find information about Score counting and used interface
-    in Game.\n\nNote(!!!):\n\rBefore the first start of the game, a new player must
-    be created ({New User)}\r"
+    in Game.\r\n\n\rNote. Before the first start of the game, a new player must be
+    created {New Player}\r"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

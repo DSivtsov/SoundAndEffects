@@ -1,8 +1,8 @@
 Press AnyKey (space) to start/Continue game acting as Jump on place
 
 Video Section
-Add fields:
-TurnOff Animation after Collisions (if not Died)
+
+Change Leader board Stage from Pilot to Product
 
 Check porposal A. Ivashov
 

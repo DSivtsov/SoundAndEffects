@@ -16,10 +16,13 @@ public class PlayerDataController : MonoBehaviour
     private readonly string GetInputFieldNoteLenght = $"(min {MinNameLenght} max {MaxLenghtPlayerName} symbols)";
 
     public PlayerAccount Player { get; private set; }
+    public PlayerAccount PlayerPrevious { get; private set; }
+
+    public bool PlayerAccountInited => Player != null;
 
     public bool ExistGuestPlayerID => Player.GuestPlayerID != null;
 
-    private Action ActionAfterEnteredNewPlayerName;
+    private Action _actionAfterEnteredNewPlayerName;
 
     private void Awake()
     {
@@ -36,30 +39,25 @@ public class PlayerDataController : MonoBehaviour
                 {
                     newPlayerName = newPlayerName.Substring(0, MaxLenghtPlayerName);
                 }
-                EnteredRightNewPlayerName(newPlayerName);
+                EnteredNameNewPlayerAccount(newPlayerName);
             });
         ActivateInputFieldAndInfoMessage(activate: false);
     }
 
-    /// <summary>
-    /// Init Player Account
-    /// </summary>
-    /// <returns>true if PlayerAccount inited</returns>
-    public bool InitPlayerAccount()
+    public void LoadLastPlayerAccount()
     {
         Player = PlayerAccount.GetLastPlayerAccount();
         CountFrame.DebugLogUpdate(this,$"GetLastPlayerAccount()[{Player}]");
         UpdateFieldPlayerName();
-        return Player != null;
     }
 
     /// <summary>
     /// Activate _inputFieldPlayerName
     /// </summary>
-    /// <param name="action"></param>
-    public void ActivateCreateNewPlayer(Action action)
+    /// <param name="actionAfterCreateNewPlayerAccount"></param>
+    public void CreateNewPlayerAccount(Action actionAfterCreateNewPlayerAccount)
     {
-        ActionAfterEnteredNewPlayerName = action;
+        _actionAfterEnteredNewPlayerName = actionAfterCreateNewPlayerAccount;
         ActivateInputFieldAndInfoMessage();
     }
 
@@ -81,13 +79,14 @@ public class PlayerDataController : MonoBehaviour
         }
     }
 
-    private void EnteredRightNewPlayerName(string newPlayerName)
+    private void EnteredNameNewPlayerAccount(string newCheckedPlayerName)
     {
-        Player = new PlayerAccount(newPlayerName);
-        Player.SaveToRegistry();
+        PlayerPrevious = Player;
+        BackUpCurrentPlayerRecord(PlayerPrevious);
+        Player = new PlayerAccount(newCheckedPlayerName);
         UpdateFieldPlayerName();
         ActivateInputFieldAndInfoMessage(false);
-        ActionAfterEnteredNewPlayerName();
+        _actionAfterEnteredNewPlayerName();
     }
 
     public void UpdateFieldPlayerName()
@@ -96,6 +95,9 @@ public class PlayerDataController : MonoBehaviour
         {
             _inputFieldPlayerName.text = Player.Name;
         }
-        //_inputFieldPlayerName.readOnly = true;
     }
+
+    public void BackUpCurrentPlayerRecord(PlayerAccount playerPrevious) => Debug.LogError($"Not Realized BackUpCurrentPlayerRecord() [{playerPrevious}]");
+
+    public void RestorePreviousPlayer() => Player = PlayerPrevious;
 }

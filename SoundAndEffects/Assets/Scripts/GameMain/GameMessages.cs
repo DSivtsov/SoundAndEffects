@@ -22,7 +22,7 @@ public class GameMessages : MonoBehaviour
         textTop.SetActive(false);
     }
 
-    public void Active(bool activate, WaitType waitType = WaitType.waitStart)
+    public void Active(bool activate, WaitType waitType)
     {
         switch (waitType)
         {

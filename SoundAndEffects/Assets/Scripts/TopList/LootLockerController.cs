@@ -63,6 +63,8 @@ public class LootLockerController : MonoBehaviour
 
     public void SetDisplayOfflineModeActive() => _connectingToServer.DisplayOfflineModeActive();
 
+    public void SetDisplayOnineModeNotActive() => _connectingToServer.DisplayOnineModeNotActive();
+
     public void OpenSession()
     {
         if (_playerDataController.ExistGuestPlayerID)
@@ -72,7 +74,7 @@ public class LootLockerController : MonoBehaviour
         else
         {
             CountFrame.DebugLogUpdate(this, $"PlayerPrefs doesn't have the Key(_guestPlayerIDKey)");
-            StartCoroutine(CoroutineCreateNewGuestIDRecord());
+            StartCoroutine(CoroutineCreateNewGuestIDRecord(isExistOpenSession: false));
         }
     }
 
@@ -81,7 +83,7 @@ public class LootLockerController : MonoBehaviour
         if (_playerDataController.ExistGuestPlayerID)
         {
             StartProcessConnecting(operationType: ServerOperationType.Disconnecting);
-            StartCoroutine(StopCurrentSession(onlyEndSession: true)); 
+            StartCoroutine(EndCurrentSession(stopAfterEndSession: true)); 
         }
         else
             CountFrame.DebugLogUpdate(this, $"DisconnectedFromServer() but absent the Key(_guestPlayerIDKey)");
@@ -111,7 +113,11 @@ public class LootLockerController : MonoBehaviour
         if (useExistedPlayerRecord)
             LootLockerSDKManager.StartGuestSession(_playerDataController.Player.GuestPlayerID, (response) => onComplete(response));
         else
+        {
+            //Delete the standard key "LootLockerGuestPlayerID" of LootLockerSDKManager, if it exists, getting a new guest session is not possible
+            PlayerPrefs.DeleteKey("LootLockerGuestPlayerID");
             LootLockerSDKManager.StartGuestSession((response) => onComplete(response)); 
+        } 
         yield return new WaitWhile(() => notGetResponse && _connecting);
         if (GuestSessionInited)
         {
@@ -121,7 +127,7 @@ public class LootLockerController : MonoBehaviour
             {
                 //In this Case the process is not finished yet
                 _playerDataController.Player.SetGuestPlayerID(player_identifier);
-                Debug.LogWarning($"SetGuestPlayerID(response.player_identifier)[{player_identifier}]");
+                CountFrame.DebugLogUpdate(this, $"useExistedPlayerRecord[{useExistedPlayerRecord}] SetGuestPlayerID(response.player_identifier)[{player_identifier}]");
             }
         }
         else
@@ -193,21 +199,24 @@ public class LootLockerController : MonoBehaviour
         else
             CountFrame.DebugLogUpdate(this, $"CoroutineGetScoreFromLeaderBoard Canceled - GuestSession not inited");
     }
-
-    public IEnumerator CoroutineCreateNewGuestIDRecord()
+    /// <summary>
+    /// In case error IsConnected set to false, the Player Data name will set to new name, the GuestPlayerID to null and all saved to Registry
+    /// </summary>
+    /// <param name="isExistOpenSession"></param>
+    /// <returns></returns>
+    public IEnumerator CoroutineCreateNewGuestIDRecord(bool isExistOpenSession)
     {
         StartProcessConnecting(operationType: ServerOperationType.Connecting);
-        if (_playerDataController.ExistGuestPlayerID)
+        if (isExistOpenSession)
         {
-            yield return StopCurrentSession();
-            if (!GuestSessionInited)
+            yield return EndCurrentSession();
+            Debug.LogWarning("NotCheked StopCurrentSession(): GuestSessionInited = true");
+            if (GuestSessionInited)
             {
                 CountFrame.DebugLogUpdate(this, $"CoroutineCreateNewGuestIDRecord Canceled - StopCurrentSession not finished successfully");
+                _playerDataController.Player.SaveToRegistry();
                 yield break;
             }
-            //BackUp and Remove the current Player Record
-            _playerDataController.Player.BackUpCurrentPlayerRecord();
-            _playerDataController.Player.DeleteCurrentGuestPlayerID();
         }
         yield return OpenGuestSession(useExistedPlayerRecord: false);
         if (GuestSessionInited)
@@ -217,6 +226,7 @@ public class LootLockerController : MonoBehaviour
         else
         {
             CountFrame.DebugLogUpdate(this, $"CoroutineCreateNewGuestIDRecord Canceled - GuestSession for New Player not inited");
+            _playerDataController.Player.SaveToRegistry();
         }
     }
 
@@ -236,22 +246,19 @@ public class LootLockerController : MonoBehaviour
         if (NewNameSaved)
         {
             CheckResultsServerOperations();
+            _playerDataController.Player.SaveToRegistry();
         }
         else
         {
             CheckResultsServerOperations(ErrorConnecting.NewNameNotSaved);
-            CreationPlayerNotFinished();
+            //Very Important Case: Record was created in LootLocker, but for that record not set the coresponded Player Name
+            //the Player Data name will set to new name, the GuestPlayerID to null and all saved to Registry
+            _playerDataController.Player.SetToNullGuestPlayerID();
+            _playerDataController.Player.SaveToRegistry();
         }
     }
 
-    private void CreationPlayerNotFinished()
-    {
-        //Very Important Case: Record was created in LootLocker, but not set the coresponded Player Name
-        Debug.LogError("!!!Called _playerDataController.Player.DeleteCurrentGuestPlayerID()");
-        _playerDataController.Player.DeleteCurrentGuestPlayerID();
-    }
-
-    private IEnumerator StopCurrentSession(bool onlyEndSession = false)
+    private IEnumerator EndCurrentSession(bool stopAfterEndSession = false)
     {
         if (GuestSessionInited && _sessionTokenLootLocker != null)
         {
@@ -270,7 +277,7 @@ public class LootLockerController : MonoBehaviour
             if (sessionStoped)
             {
                 ClearSessionData();
-                if (onlyEndSession)
+                if (stopAfterEndSession)
                 {
                     FinishOperation();
                     _mainMenusSceneManager.SetStatusConnectionToServer(isConnected: false);

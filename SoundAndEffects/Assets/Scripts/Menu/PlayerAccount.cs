@@ -33,33 +33,34 @@ public class PlayerAccount
 
     public override string ToString() => $"[{name}]-[{guestPlayerID}]";
 
-    public void SaveToRegistry() => PlayerPrefs.SetString(LocalPlayerName, name);
-    public void SetGuestPlayerID(string playerIdentifierLootLocker)
+    public void SaveToRegistry()
     {
-        PlayerPrefs.SetString(LocalLootLockerGuestPlayerID, playerIdentifierLootLocker);
-        guestPlayerID = playerIdentifierLootLocker;
+        CountFrame.DebugLogUpdate($"PlayerAccount: SaveToRegistry()[{this}]");
+        PlayerPrefs.SetString(LocalPlayerName, name);
+        PlayerPrefs.SetString(LocalLootLockerGuestPlayerID, guestPlayerID);
     }
+
+    public void SetGuestPlayerID(string playerIdentifierLootLocker) => guestPlayerID = playerIdentifierLootLocker;
 
     /// <summary>
     /// Remove all information related to the Current Guest Session, but not delete the record on the LootLocker Server
     /// </summary>
-    public void DeleteCurrentGuestPlayerID()
+    public void SetToNullGuestPlayerID()
     {
-        Debug.LogWarning($"DeleteCurrentGuestPlayer() [{guestPlayerID}]");
+        CountFrame.DebugLogUpdate($"PlayerAccount: DeleteCurrentGuestPlayerID()[{PlayerPrefs.GetString("LootLockerGuestPlayerID", "")}]");
         guestPlayerID = null;
-        PlayerPrefs.DeleteKey(LocalLootLockerGuestPlayerID);
     }
-
-    public void BackUpCurrentPlayerRecord() => Debug.LogError($"Not Realized BackUpCurrentPlayerRecord() [{guestPlayerID}]");
 
     public static PlayerAccount GetLastPlayerAccount()
     {
-        if (PlayerPrefs.HasKey(LocalPlayerName))
+        string localPlayerName;
+        string localLootLockerGuestPlayerID;
+        if (PlayerPrefs.HasKey(LocalPlayerName) && (localPlayerName = PlayerPrefs.GetString(LocalPlayerName)).Length != 0)
         {
-            if (PlayerPrefs.HasKey(LocalLootLockerGuestPlayerID))
-                return new PlayerAccount(PlayerPrefs.GetString(LocalPlayerName), PlayerPrefs.GetString(LocalLootLockerGuestPlayerID));
+            if (PlayerPrefs.HasKey(LocalLootLockerGuestPlayerID) && (localLootLockerGuestPlayerID = PlayerPrefs.GetString(LocalLootLockerGuestPlayerID)).Length != 0)
+                return new PlayerAccount(localPlayerName, localLootLockerGuestPlayerID);
             else
-                return new PlayerAccount(PlayerPrefs.GetString(LocalPlayerName));
+                return new PlayerAccount(localPlayerName);
         }
         else
             return null;

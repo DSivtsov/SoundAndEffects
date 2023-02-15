@@ -20,7 +20,7 @@ public class SettingsSectionManager : SectionManager
     {
         base.Awake();
         CountFrame.DebugLogUpdate(this, "LoadSectionValues()");
-        //LinkFieldToElementBase.UpdateElementsValues();
+        LinkFieldToElementBase.UpdateElementsValues();
         _gameSettingsSOController = GameSettingsSOController.Instance;
         if (_gameSettingsSOController.GameSettingsInited)
         {
@@ -30,6 +30,7 @@ public class SettingsSectionManager : SectionManager
         }
         else
             Debug.LogError($"{this} : Attempt to use the UpdateGameSettingsControlButtons() before GameSettingsInited==true");
+        AudioContoller.Instance.SetFinishingInitialization(StatusInitialization.SettingsSectionManagerInited);
     }
 
     protected new void Start()

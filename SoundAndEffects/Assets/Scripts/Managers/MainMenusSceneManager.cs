@@ -18,8 +18,10 @@ public class MainMenusSceneManager : MonoBehaviour
 
     private MainManager _mainManager;
     public bool IsConnectedToServer { get; private set; } = false;
-
-    private bool _notInitedManageConnectionToServer;
+    public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
+    public void StartGame() => _mainManager?.FromMenusToStartGame(_playerDataController.Player.Name);
+    public void ActivateMainMenusCamera(bool activate) => cameraMainMenus.SetActive(activate);
+    public void SetStatusConnectionToServer(bool isConnected) => IsConnectedToServer = isConnected;
 
     private void Awake()
     {
@@ -43,12 +45,21 @@ public class MainMenusSceneManager : MonoBehaviour
     private void Start()
     {
         _localTopListController.LoadAndShow();
-        _notInitedManageConnectionToServer = true;
-        if (_playerDataController.InitPlayerAccount())
+
+        _playerDataController.LoadLastPlayerAccount();
+
+        if (_playerDataController.PlayerAccountInited)
         {
-            ManageConnectionToServer();
-            ActivateButtonStart(true);
+            if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+                _lootLockerController.SetDisplayOfflineModeActive();
+            else
+                CheckPlayModeAndStateConnectionToServer();
+            ActivateButtonStart(true); 
         }
+        else
+            if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
+            _lootLockerController.SetDisplayOnineModeNotActive();
+
         if (!_gameSettings.FieldNotShowIntroductionText.GetCurrentValue())
         {
             Introduction();
@@ -57,60 +68,42 @@ public class MainMenusSceneManager : MonoBehaviour
     /// <summary>
     /// ManageConnectionToServer based on value PlayerMode and IsConnectedToServer
     /// </summary>
-    public void ManageConnectionToServer()
+    public void CheckPlayModeAndStateConnectionToServer()
     {
-        if (_notInitedManageConnectionToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+        if (_playerDataController.PlayerAccountInited)
         {
-            _lootLockerController.SetDisplayOfflineModeActive();
+            if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
+                _lootLockerController.OpenSession();
+            if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
+                _lootLockerController.DisconnectedFromServer(); 
         }
-        else
-        {
-                if (!IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
-                    _lootLockerController.OpenSession();
-                if (IsConnectedToServer && _gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Offline)
-                    _lootLockerController.DisconnectedFromServer();
-        }
-        _notInitedManageConnectionToServer = false;
     }
 
     public void CreateNewPlayer()
     {
         ActivateButtonStart(false);
-        _playerDataController.ActivateCreateNewPlayer(() =>
+        //After calling  CreateNewPlayerAccount() user can't skip creation New Player
+        _playerDataController.CreateNewPlayerAccount(() =>
         {
-            CreateNewPlayerLootLocker();
+            if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
+                CreateLootLockerRecordNewPlayerAccount();
+            else
+                _playerDataController.Player.SaveToRegistry();
             ActivateButtonStart(true);
         });
     }
 
-    public void ActivateButtonStart(bool activate) => _buttonStart.interactable = activate;
-
-    public void StartGame() => _mainManager?.FromMenusToStartGame(_playerDataController.Player.Name);
-
     /// <summary>
-    /// If Online mode is active will try to create a new Player in the LootLocker, in Offline creation will be skipped until switching to Online
+    /// It will call in Online mode only
     /// </summary>
     /// <param name="playerName"></param>
-    public void CreateNewPlayerLootLocker()
+    public void CreateLootLockerRecordNewPlayerAccount()
     {
+        CountFrame.DebugLogUpdate(this, $"IsConnectedToServer[{IsConnectedToServer}]: Request to create NewPlayerLootLocker record");
         if (IsConnectedToServer)
-        {
-            //In case if Session is open will call CreateNewGuestIDRecord directly
-            StartCoroutine(_lootLockerController.CoroutineCreateNewGuestIDRecord());
-        }
+            StartCoroutine(_lootLockerController.CoroutineCreateNewGuestIDRecord(isExistOpenSession: true));
         else
-        {
-            //In case Online mode is active will try to openSession and CreateNewGuestIDRecord
-            CountFrame.DebugLogUpdate(this, $"IsConnectedToServer[{IsConnectedToServer}]: Request to create NewPlayerLootLocker record");
-            ManageConnectionToServer();
-        }
-    }
-
-    public void TryReconnect() => ManageConnectionToServer();
-
-    public void ActivateMainMenusCamera(bool activate)
-    {
-        cameraMainMenus.SetActive(activate);
+            StartCoroutine(_lootLockerController.CoroutineCreateNewGuestIDRecord(isExistOpenSession: false));
     }
 
     public void AddNewCharacterData(PlayerData newCharacterData)
@@ -122,8 +115,6 @@ public class MainMenusSceneManager : MonoBehaviour
             _remoteTopListController.AddCharacterResult(newCharacterData); 
         }
     }
-
-    public void SetStatusConnectionToServer(bool isConnected) => IsConnectedToServer = isConnected;
 
     public void TemporaryDisableMouse(bool setDiabled = true)
     {

@@ -88,7 +88,7 @@ public static class ButtonActions
                     _gameSettingsSOController.SaveCustomGameSettings();
                     break;
                 case ButtonType.TryReconnect:
-                    _menuSceneManager.TryReconnect();
+                    _menuSceneManager.CheckPlayModeAndStateConnectionToServer();
                     break;
                 default:
                     Debug.LogError($"ButtonPressed for [{buttonType}] button not set");

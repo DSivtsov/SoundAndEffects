@@ -146,5 +146,6 @@ public class DisplayConnectingToServer : MonoBehaviour
 
     public void DisplayOfflineModeActive() => _moArr.SetModeStatus(ModeOffline, Color.yellow, ModeStatusActive, Color.green);
 
+    public void DisplayOnineModeNotActive() => _moArr.SetModeStatus(ModeOnline, Color.yellow, ModeStatusNotActive, Color.green);
     private void ActivateButtonTryReconnect(bool activate = true) => _btnTryRecconect.SetActive(activate);
 }

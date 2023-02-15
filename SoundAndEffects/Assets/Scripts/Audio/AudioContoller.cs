@@ -11,6 +11,14 @@ public enum MixerVolume
     VolMusic,
     VolEffects
 }
+[Flags]
+public enum StatusInitialization : byte
+{
+    NothingInited = 0b00,
+    AudioContollerInited = 0b01,
+    SettingsSectionManagerInited = 0b10,
+    AllInited = 0b11,
+}
 
 public class AudioContoller : SingletonController<AudioContoller>
 {
@@ -21,7 +29,11 @@ public class AudioContoller : SingletonController<AudioContoller>
     private string[] _mixerVolumes;
     private PlayJukeBox[] _arrPlayJukeBoxes;
     private MainManager _mainManager;
-
+    /// <summary>
+    /// Before Finishing Initialization of AudioController and SettingsSectionsManager the switching current playing is disabled
+    /// </summary>
+    private bool _skipSwitchCurrentPlaying = true;
+    private StatusInitialization _statusInitialization = StatusInitialization.NothingInited;
     protected override void Awake()
     {
         base.Awake();
@@ -60,7 +72,8 @@ public class AudioContoller : SingletonController<AudioContoller>
             yield return null;
         } while (!_mainManager.GetStatusLoadingScenes());
         FillArrPlayJukeBox();
-        SetSequenceType(_gameSettings.FieldSequenceType.GetCurrentValue(), true);
+        SetSequenceType(_gameSettings.FieldSequenceType.GetCurrentValue());
+        SetFinishingInitialization(StatusInitialization.AudioContollerInited);
     }
 
     /// <summary>
@@ -78,14 +91,20 @@ public class AudioContoller : SingletonController<AudioContoller>
     /// Change SequenceType for PlayJukeBoxes in game
     /// </summary>
     /// <param name="sequenceType"></param>
-    /// <param name="skipInitial">don't set the value for _initialPlayJukeBox</param>
-    public void SetSequenceType(SequenceType sequenceType, bool skipInitial = false)
+    /// <param name="skipCurrentPlaying">don't set the value for _initialPlayJukeBox</param>
+    public void SetSequenceType(SequenceType sequenceType)
     {
         for (int i = 0; i < _arrPlayJukeBoxes.Length; i++)
         {
             //to escape the restarting of currently playing music
-            if (skipInitial && _arrPlayJukeBoxes[i] == _initialPlayJukeBox) continue;
+            if (_skipSwitchCurrentPlaying && _arrPlayJukeBoxes[i] == _initialPlayJukeBox) continue;
             _arrPlayJukeBoxes[i].SwitchJukeBoxSequenceType(sequenceType);
         }
+    }
+
+    public void SetFinishingInitialization(StatusInitialization status)
+    {
+        _statusInitialization |= status;
+        _skipSwitchCurrentPlaying = !(_statusInitialization == StatusInitialization.AllInited);
     }
 }

@@ -76,6 +76,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private float storeDraglastCollised;
     private Quaternion storeRotationCollised;
     private Vector3 characterInitWordPos;
+    private bool _showMakeGymnasticAnim;
     public WaitType CurrentWaitType { get; private set; }
     #endregion
     public bool DiedAnimManFinished { get; private set; }
@@ -114,6 +115,8 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         characterInitWordPos = transform.position;
         //textTurnOffPressEnter = FindObjectOfType<TurnOffPressEnter>();
     }
+
+    public void SetShowCollisionAnimation(bool show) => _showMakeGymnasticAnim = show;
 
     private void OnEnable()
     {
@@ -167,7 +170,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     {
         //CountFrame.DebugLog(this, "WasPressedEnter()");
         //The button Start will affect if current state = Stop
-        gameCanvasTurnOffKeyPress.Active(false);
+        gameCanvasTurnOffKeyPress.Active(false, CurrentWaitType);
         if (CurrentWaitType != WaitType.waitEndGame)
         {//It's Start or Restart Game
             CharacterGo();
@@ -404,22 +407,23 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     /// Start CollisionAnim after finish set CollisionAnimManFinished = true
     /// </summary>
     /// <param name="showMakeGymnasticAnim"></param>
-    private void StartAndCheckFinishCollisionAnim(bool showMakeGymnasticAnim = true)
+    private void StartAndCheckFinishCollisionAnim()
     {
         //Coroutine for guarantee must run before SetTriger is initiated and Transition starts, so as not to miss the exit from the current state
-        StartCoroutine(CheckFinishCollisionAnim(showMakeGymnasticAnim));
+        StartCoroutine(CheckFinishCollisionAnim());
         //Initiate the Tsansition
         animatorCharacter.SetTrigger(hashCollision_t);
     }
 
-    private IEnumerator CheckFinishCollisionAnim(bool showMakeGymnasticAnim)
+    private IEnumerator CheckFinishCollisionAnim()
     {
+        //= SingletonGame.Instance.GetGameParametersManager().
         //The coroutine runs before the animator exits the AnimatorState_Alive state.
         while (IsCurrentAnimatorState(AnimatorLayerIndex_Death, AnimatorState_Alive)) { yield return null; }
 
         //Pause till finishing the hashCollision_t animation
         do { yield return null; } while (!IsCurrentAnimatorState(AnimatorLayerIndex_Death, AnimatorState_Alive));
-        if (showMakeGymnasticAnim)
+        if (_showMakeGymnasticAnim)
             StartCoroutine(CharacterMakeGyme());
         else
             CollisionAnimManFinished = true;
