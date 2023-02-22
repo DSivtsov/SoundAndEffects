@@ -72,13 +72,6 @@ crashlytics-build.properties
 #/Assets/TextMesh Pro*
 /Assets/TextMesh Pro/Documentation*
 
-#Base Objects from Course
-/Assets/Course Library*
-
-#Included /Assets/_MyLib/ except follow:
-/Assets/_MyLib/Controls*
-/Assets/_MyLib/Prefab*
-
 /UserSettings/EditorUserSettings.asset
 /*.txt
 /_packages

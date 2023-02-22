@@ -2,6 +2,8 @@ Posibility to show Intro Screen before finishing of loading
 Sound run listen in fly
 Press AnyKey (space) to start/Continue game acting as Jump on place
 
+Create NewPlayer press enter w/o change name (old name creation new Rec in LootLocker especially)
+
 Video Section
 
 Change Leader board Stage from Pilot to Product
