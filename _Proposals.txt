@@ -1,3 +1,5 @@
+Posibility to show Intro Screen before finishing of loading
+Sound run listen in fly
 Press AnyKey (space) to start/Continue game acting as Jump on place
 
 Video Section
