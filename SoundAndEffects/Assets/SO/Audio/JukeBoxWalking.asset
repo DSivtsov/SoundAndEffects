@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: JukeBoxWalking
   m_EditorClassIdentifier: 
   audioClips:
-  - {fileID: 8300000, guid: b7307f7710b35c74892567caa5644c25, type: 3}
-  - {fileID: 8300000, guid: cabffe14d8ef13d4aa99b744406a2c1f, type: 3}
-  - {fileID: 8300000, guid: d2d512caff17614408f8bc23ce7ae786, type: 3}
+  - {fileID: 8300000, guid: 131e117c9336aa6439f19bef5a6f8da8, type: 3}
+  - {fileID: 8300000, guid: e404087fc3b92ab48a5353c6626348e9, type: 3}
   - {fileID: 8300000, guid: cd62d8294af21944da4fcb6dfa3d27b4, type: 3}
-  sequenceType: 1
+  - {fileID: 8300000, guid: faedef3f8a33c61449e3688012ef55cf, type: 3}
+  sequenceType: 2
   initValue: 0
   loadDelayTime: 3
   crossDeltaTime: 0

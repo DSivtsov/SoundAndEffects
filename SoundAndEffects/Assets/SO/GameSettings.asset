@@ -18,7 +18,7 @@ MonoBehaviour:
   _defaultTopListGlobal: 1
   _musicSequenceType: 2
   _masterVolume: -15
-  _effectVolume: 0
-  _musicVolume: 0
+  _effectVolume: 10
+  _musicVolume: -7
   _notShowIntroduction: 0
   _notShowCollisionAnimation: 0
