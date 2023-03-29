@@ -75,3 +75,4 @@ crashlytics-build.properties
 /UserSettings/EditorUserSettings.asset
 /*.txt
 /_packages
+/Assets/WorldMaterialsFree*

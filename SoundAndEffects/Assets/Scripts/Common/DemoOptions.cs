@@ -13,7 +13,7 @@ public class DemoOptions : MonoBehaviour
     {
         if (_activateDemoOptions)
         {
-            Debug.LogWarning($"{this} : Demo options activated");
+            Debug.LogWarning($"{this} : Will use Demo options");
             MainManager.Instance.OverrideCharacterHealth(overrideCharacterHealth: _characterHealth);
         }
     }

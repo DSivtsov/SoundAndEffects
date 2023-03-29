@@ -1,0 +1,39 @@
+Note
+	Line 2404: File 'Animations_Static' has rig import warnings. See Import Messages in Rig Import Tab for more details.
+	Line 2405: File 'Animations_Static' has animation import warnings. See Import Messages in Animation Import Settings for more details.
+	Line 2411: File 'Animations' has rig import warnings. See Import Messages in Rig Import Tab for more details.
+	Line 2412: File 'Animations' has animation import warnings. See Import Messages in Animation Import Settings for more details.
+	Line 2428: File 'Animations_IK' has animation import warnings. See Import Messages in Animation Import Settings for more details.
+	
+FX_Base material was not upgraded. There's no upgrader to convert Simple/Unlit Vertex Color_Alpha shader to selected pipeline
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Rendering.MaterialUpgrader:Upgrade (UnityEngine.Material,System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:403)
+UnityEditor.Rendering.MaterialUpgrader:UpgradeProjectFolder (System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,System.Collections.Generic.HashSet`1<string>,string,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:358)
+UnityEditor.Rendering.Universal.UniversalRenderPipelineMaterialUpgrader:UpgradeProjectMaterials () (at Library/PackageCache/com.unity.render-pipelines.universal@10.9.0/Editor/UniversalRenderPipelineMaterialUpgrader.cs:25)
+
+(Filename: Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs Line: 403)
+
+LiberationSans SDF - Drop Shadow material was not upgraded. There's no upgrader to convert TextMeshPro/Mobile/Distance Field shader to selected pipeline
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Rendering.MaterialUpgrader:Upgrade (UnityEngine.Material,System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:403)
+UnityEditor.Rendering.MaterialUpgrader:UpgradeProjectFolder (System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,System.Collections.Generic.HashSet`1<string>,string,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:358)
+UnityEditor.Rendering.Universal.UniversalRenderPipelineMaterialUpgrader:UpgradeProjectMaterials () (at Library/PackageCache/com.unity.render-pipelines.universal@10.9.0/Editor/UniversalRenderPipelineMaterialUpgrader.cs:25)
+
+(Filename: Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs Line: 403)
+
+LiberationSans SDF - Outline material was not upgraded. There's no upgrader to convert TextMeshPro/Mobile/Distance Field shader to selected pipeline
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Rendering.MaterialUpgrader:Upgrade (UnityEngine.Material,System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:403)
+UnityEditor.Rendering.MaterialUpgrader:UpgradeProjectFolder (System.Collections.Generic.List`1<UnityEditor.Rendering.MaterialUpgrader>,System.Collections.Generic.HashSet`1<string>,string,UnityEditor.Rendering.MaterialUpgrader/UpgradeFlags) (at Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs:358)
+UnityEditor.Rendering.Universal.UniversalRenderPipelineMaterialUpgrader:UpgradeProjectMaterials () (at Library/PackageCache/com.unity.render-pipelines.universal@10.9.0/Editor/UniversalRenderPipelineMaterialUpgrader.cs:25)
+
+(Filename: Library/PackageCache/com.unity.render-pipelines.core@10.9.0/Editor/MaterialUpgrader.cs Line: 403)

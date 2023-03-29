@@ -7,7 +7,6 @@ public class LoaderSceneManager : MonoBehaviour
     [SerializeField] private GameObject _loaderCamera;
     [SerializeField] private LoaderScenes _loaderScenes;
     [SerializeField] private PlayJukeBox _playJukeBoxLoaderMenus;
-    //[SerializeField] private GameSettingsSOController _gameSettingsController;
 
     private const bool MakePauseBeforeStartLoad = true;
 
@@ -21,17 +20,9 @@ public class LoaderSceneManager : MonoBehaviour
         else
         {
             Debug.LogError($"{this} not linked to GameMainManager");
-            //ActivateLoaderCamera(true);
-            //ActivateMusicLoaderMenus(true);
-            //StartCoroutine(StartLoadScenes());
         }
 
     }
-    //private void Start()
-    //{
-    //    StartCoroutine(StartLoadScenes());
-    //    //_gameSettingsController.InitGameSettings();
-    //}
 
     //Postpone the start of loading
     //Before start loading show the loader screen and start music

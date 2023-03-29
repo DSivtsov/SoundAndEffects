@@ -25,15 +25,15 @@ public class PlayJukeBox : MonoBehaviour
     public bool _jukeBoxActive = false;
     private bool initAudioSources = false;
     private AudioSource[] _audioSources = new AudioSource[2];
-    private AudioControls _audioControls;
+    private AudioUI _audioControls;
     private bool _notSkipAudioControls;
     #endregion
 
     private void Awake()
     {
-        if (AudioControls.Instance)
+        if (AudioUI.Instance)
         {
-            _audioControls = AudioControls.Instance;
+            _audioControls = AudioUI.Instance;
             _notSkipAudioControls = true;
         }
         else

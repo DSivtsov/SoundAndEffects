@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6eac80af47b3cf248a12b6d99d825f63, type: 3}
-  m_Name: ForceJumpNormal
+  m_Name: EasyComplexityParameters
   m_EditorClassIdentifier: 
-  _complexity: {fileID: 11400000, guid: 393e55977e1ab304eb0485e8407547e5, type: 2}
-  _forceJumpWalk: 400
-  _forceJumpRun: 500
-  _jumpComplexityMultipler: 2
+  _complexity: {fileID: 11400000, guid: a385e0b8191559e45bd9a781a116b3ba, type: 2}
+  _forceJumpWalk: 450
+  _forceJumpRun: 550

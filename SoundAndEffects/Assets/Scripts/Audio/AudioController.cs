@@ -20,7 +20,7 @@ public enum StatusInitialization : byte
     AllInited = 0b11,
 }
 
-public class AudioContoller : SingletonController<AudioContoller>
+public class AudioController : SingletonController<AudioController>
 {
     [SerializeField] private GameSettingsSO _gameSettings;
     [SerializeField] private AudioMixer _mixerMain;

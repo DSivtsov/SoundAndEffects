@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using GMTools;
 using System.Collections;
 
-public class AudioControls : SingletonController<AudioControls>
+public class AudioUI : SingletonController<AudioUI>
 {
     #region NonSerializedFields
     public event Action MusicSwitchToNextClip;

@@ -23,7 +23,7 @@ public enum GameSettingSOState
 public class GameSettingsSOController : SingletonController<GameSettingsSOController>
 {
     [SerializeField] private GameSettingsSO _gameSettings;
-    [SerializeField] private AudioContoller _audioContoller;
+    [SerializeField] private AudioController _audioContoller;
     [SerializeField, ReadOnly] private string _nameFile = "GameSettingsSO.txt";
     [SerializeField, ReadOnly] private string _nameFileDefault = "GameSettingsSODefault.txt";
 

@@ -48,7 +48,6 @@ public class PlaySetAudio : MonoBehaviour
 
     private void OnDisable()
     {
-        //Debug.Log($"{this} OnDisable()");
         Destroy(SoundtrackGameObject);
     }
 

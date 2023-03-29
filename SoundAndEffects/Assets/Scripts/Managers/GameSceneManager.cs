@@ -1,54 +1,58 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class GameSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject gameCamera;
-    [Header("For Testing purpose only, used in Editor only")]
-    [SerializeField] private GameObject buttonRestart;
+    [SerializeField] private PlayJukeBoxCollection _playJukeBoxGameCollection;
+    [SerializeField] private GraveStoneControl _graveStoneControl;
+    [SerializeField] private MainSpawner _mainSpawner;
 
     private MainManager _gameMainManager;
     private CharacterDataController _characterDataCtrl;
-    private MainSpawner _mainSpawner;
-    private GraveStoneControl _graveStoneControl;
     private GameParametersManager _gameParametersManager;
     private GameObject _characterObject;
     private CharacterManager _characterManager;
-    private PlayJukeBoxCollection _playJukeBoxGameCollection;
 
     private const int DecreaseAmmountLife = -1;
     private string _nameCurrentPlayer;
+    private bool _activateButtonLocalRestart = false;
+
     public bool GameMainManagerLinked { get; private set; }
 
     private void Awake()
     {
         CountFrame.DebugLogUpdate(this, $"Awake()");
         _characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
-        _mainSpawner = SingletonGame.Instance.GetMainSpawner();
-        _graveStoneControl = SingletonGame.Instance.GetGraveStoneControl();
         _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
         _gameMainManager = MainManager.Instance;
         _characterManager = SingletonGame.Instance.GetCharacterManager();
         _characterObject = _characterManager.gameObject;
-        _playJukeBoxGameCollection = SingletonGame.Instance.GetPlayJukeBox();
 
         if (_gameMainManager)
         {
             GameMainManagerLinked = true;
             _gameMainManager.LinkGameSceneManager(this);
-            //Camera will manage by GameMainManager
+            //at Normal Mode GameController and GameCamera must be off 
             ActivateGameCamera(false);
-            //Initially the GameController must be off
             _characterObject.SetActive(false);
         }
         else
         {
-            Debug.LogError($"{this} not linked to GameMainManager");
+            Debug.LogWarning($"{this} not linked to GameMainManager");
             GameMainManagerLinked = false;
+            //At UnitTest Mode GameController and GameCamera must be on 
             _characterObject.SetActive(true);
             ActivateGameCamera(true);
-            //TurnOnMusic();
-            Debug.LogWarning($"Music at Awake not TurnOn because in build will be used Music from Menu Scene before game was started");
+        }
+    }
+
+    private void Start()
+    {
+        if (!GameMainManagerLinked)
+        {
+            StartNewGame("Test"); 
         }
     }
 
@@ -60,20 +64,31 @@ public class GameSceneManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(gameObject);
     }
 
-    public void StartNewGame(string playerName, int _overrideCharacterHealth = 0)
+    public void StartNewGame(string playerName, int overrideCharacterHealth = 0)
     {
         _nameCurrentPlayer = playerName;
-        ActivateButtonLocalRestart(false);
+        //_activateButtonLocalRestart = false;
+        ActivateButtonLocalRestart(activate: false);
         _gameParametersManager.ReInitParameters();
         //The Character GameObject will be Turn off at EndGame to reinit the Character Animator
         _characterObject.SetActive(true);
         SelectGameObjectFromScene(_characterObject);
-        _characterDataCtrl.ResetHealth(_overrideCharacterHealth);
-        //WaitState before restart Game
-        if (_characterManager.CurrentWaitType == WaitType.waitEndGame)
-            _characterDataCtrl.ResetScoreDistance();
+        ResetHealthWithOverride(overrideCharacterHealth);
+        ////WaitState before restart Game
+        //if (_characterManager.CurrentWaitType == WaitType.waitEndGame)
+        _characterDataCtrl.ResetScoreDistance();
         _mainSpawner.ReStartSpawner();
         _characterManager.StartNewAttemptGame();
+    }
+    /// <summary>
+    /// For not linked mode will use value from Inspector otherwise the overrideCharacterHealth value
+    /// </summary>
+    /// <param name="overrideCharacterHealth"></param>
+    private void ResetHealthWithOverride(int overrideCharacterHealth)
+    {
+        if (_gameMainManager)
+            _gameParametersManager.OverrideStartHealth(overrideCharacterHealth); 
+        _characterDataCtrl.ResetHealth();
     }
 
     public void ActivateGameMusic(bool activate = true)
@@ -151,14 +166,29 @@ public class GameSceneManager : MonoBehaviour
         else
         {
             Debug.Log(newCharacterData);
-            ActivateButtonLocalRestart(true); 
+            //_activateButtonLocalRestart = true;
+            ActivateButtonLocalRestart(activate: true);
+            ActivateGameMusic(activate: false);
         }
         //It's common part of the EndGame  for Scenes are linked or  NOT linked to GameMainManager
         ClearSceneAfterEndGame();
     }
 
-    public void ActivateButtonLocalRestart(bool activate)
+#if UNITY_EDITOR
+    private void OnGUI()
     {
-        buttonRestart.SetActive(activate);
+        if (_activateButtonLocalRestart)
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.button);
+            style.normal.textColor = Color.red;
+            if (GUI.Button(new Rect(800, 5, 100, 30), "Restart", style))
+            {
+                Debug.LogError("Restart");
+                StartNewGame(_nameCurrentPlayer);
+            } 
+        }
     }
+#endif
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    private void ActivateButtonLocalRestart(bool activate) => _activateButtonLocalRestart = activate;
 }

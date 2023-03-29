@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
-
+/*
+ * Service class to manager Displaying of status connection to Server at MainMenu Canvas and at TopList Canvas
+ */
 [Serializable]
 public class ModeOperationArray
 {

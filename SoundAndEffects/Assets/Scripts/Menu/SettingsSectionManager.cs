@@ -30,7 +30,7 @@ public class SettingsSectionManager : SectionManager
         }
         else
             Debug.LogError($"{this} : Attempt to use the UpdateGameSettingsControlButtons() before GameSettingsInited==true");
-        AudioContoller.Instance.SetFinishingInitialization(StatusInitialization.SettingsSectionManagerInited);
+        AudioController.Instance.SetFinishingInitialization(StatusInitialization.SettingsSectionManagerInited);
     }
 
     protected new void Start()

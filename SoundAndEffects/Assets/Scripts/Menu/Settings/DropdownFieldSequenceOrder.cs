@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DropdownFieldSequenceOrder : DropdownListEnum<SequenceType>
 {
-    private AudioContoller _audioContoller;
+    private AudioController _audioContoller;
     private bool _dropdownFieldSequenceOrderIsInited = false;
 
     protected override void Awake()
@@ -19,7 +19,7 @@ public class DropdownFieldSequenceOrder : DropdownListEnum<SequenceType>
         if (!_dropdownFieldSequenceOrderIsInited)
         {
             base.InitElement();
-            _audioContoller = AudioContoller.Instance;
+            _audioContoller = AudioController.Instance;
             _dropdownFieldSequenceOrderIsInited = true;
         }
     }

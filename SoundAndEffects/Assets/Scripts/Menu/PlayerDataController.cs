@@ -7,8 +7,8 @@ using System;
 public class PlayerDataController : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _inputFieldPlayerName;
-    [SerializeField] private GameObject _inputFieldNoteLenght;
-    [SerializeField] private GameObject _menuMessagesContinue;
+    [SerializeField] private TextMeshProUGUI _txtInputFieldNoteLenght;
+    [SerializeField] private TextMeshProUGUI _menuMessagesContinue;
 
     private const int MinNameLenght = 8;
     private const int MaxLenghtPlayerName = 16;
@@ -26,22 +26,27 @@ public class PlayerDataController : MonoBehaviour
 
     private void Awake()
     {
-        _inputFieldNoteLenght.GetComponent<TextMeshProUGUI>().text = GetInputFieldNoteLenght;
-        _inputFieldPlayerName.onEndEdit.AddListener((string newPlayerName) =>
-            {
-                if (newPlayerName.Length < MinNameLenght)
-                {
-                    Debug.LogWarning($"{this} : PlayerName can't less than {MinNameLenght} symbols");
-                    _inputFieldPlayerName.ActivateInputField();
-                    return;
-                }
-                if (newPlayerName.Length > MaxLenghtPlayerName)
-                {
-                    newPlayerName = newPlayerName.Substring(0, MaxLenghtPlayerName);
-                }
-                EnteredNameNewPlayerAccount(newPlayerName);
-            });
+        _txtInputFieldNoteLenght.text = GetInputFieldNoteLenght;
+        _inputFieldPlayerName.onEndEdit.AddListener(CheckNewPlayerName);
         ActivateInputFieldAndInfoMessage(activate: false);
+    }
+
+    private void CheckNewPlayerName(string newPlayerName)
+    {
+        if (newPlayerName.Length<MinNameLenght)
+        {
+            Debug.LogWarning($"{this} : PlayerName can't less than {MinNameLenght} symbols");
+            _txtInputFieldNoteLenght.color = Color.red;
+            _inputFieldPlayerName.ActivateInputField();
+            return;
+        }
+        else
+            _txtInputFieldNoteLenght.color = Color.green;
+        if (newPlayerName.Length > MaxLenghtPlayerName)
+        {
+            newPlayerName = newPlayerName.Substring(0, MaxLenghtPlayerName);
+        }
+        EnteredNameNewPlayerAccount(newPlayerName);
     }
 
     public void LoadLastPlayerAccount()
@@ -58,6 +63,7 @@ public class PlayerDataController : MonoBehaviour
     public void CreateNewPlayerAccount(Action actionAfterCreateNewPlayerAccount)
     {
         _actionAfterEnteredNewPlayerName = actionAfterCreateNewPlayerAccount;
+        _inputFieldPlayerName.text = null;
         ActivateInputFieldAndInfoMessage();
     }
 
@@ -65,8 +71,8 @@ public class PlayerDataController : MonoBehaviour
     {
         if (activate)
         {
-            _inputFieldNoteLenght.SetActive(true);
-            _menuMessagesContinue.SetActive(true);
+            //_txtInputFieldNoteLenght.gameObject.SetActive(true);
+            _menuMessagesContinue.gameObject.SetActive(true);
             _inputFieldPlayerName.readOnly = false;
             _inputFieldPlayerName.ActivateInputField(); 
         }
@@ -74,8 +80,8 @@ public class PlayerDataController : MonoBehaviour
         {
             _inputFieldPlayerName.DeactivateInputField();
             _inputFieldPlayerName.readOnly = true;
-            _menuMessagesContinue.SetActive(false);
-            _inputFieldNoteLenght.SetActive(false);
+            _menuMessagesContinue.gameObject.SetActive(false);
+            //_txtInputFieldNoteLenght.gameObject.SetActive(false);
         }
     }
 

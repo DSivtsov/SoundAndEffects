@@ -60,10 +60,7 @@ public class MainMenusSceneManager : MonoBehaviour
             if (_gameSettings.FieldPlayMode.GetCurrentValue() == PlayMode.Online)
             _lootLockerController.SetDisplayOnineModeNotActive();
 
-        if (!_gameSettings.FieldNotShowIntroductionText.GetCurrentValue())
-        {
-            Introduction();
-        }
+        //Introduction();
     }
     /// <summary>
     /// ManageConnectionToServer based on value PlayerMode and IsConnectedToServer
@@ -136,11 +133,14 @@ public class MainMenusSceneManager : MonoBehaviour
 
     public void Introduction()
     {
-        _modalWindowsIntroduction.SetActionBeforeDeactivationModalWindow(() =>
+        if (!_gameSettings.FieldNotShowIntroductionText.GetCurrentValue())
+        {
+            _modalWindowsIntroduction.SetActionBeforeDeactivationModalWindow(() =>
             {
                 _toggleBoolNShowIntro.SetNotShowIntroductionWindows();
                 GameSettingsSOController.Instance.SaveCustomGameSettings();
             });
-        _modalWindowsIntroduction.ActivateCanvasOverlayWindow();
+            _modalWindowsIntroduction.ActivateCanvasOverlayWindow();
+        }
     }
 }

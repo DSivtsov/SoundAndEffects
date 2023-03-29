@@ -2573,7 +2573,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 469116337}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3782,7 +3782,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _connectingToServer: {fileID: 8430895066919544763}
-  _playerDataController: {fileID: 1829886749}
+  _playerDataController: {fileID: 8430895066919544762}
   _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
   _mainMenusSceneManager: {fileID: 1829886746}
 --- !u!4 &298108477
@@ -5582,9 +5582,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 738985402}
+  - {fileID: 177464475}
   - {fileID: 2125400921}
   - {fileID: 1994288442}
-  - {fileID: 177464475}
   m_Father: {fileID: 490443982}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20827,7 +20827,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1829886745}
   - component: {fileID: 1829886746}
-  - component: {fileID: 1829886749}
   m_Layer: 0
   m_Name: MainMenusSceneManager
   m_TagString: Untagged
@@ -20865,27 +20864,12 @@ MonoBehaviour:
   _localTopListController: {fileID: 177328800}
   _remoteTopListController: {fileID: 1481363661}
   _lootLockerController: {fileID: 298108476}
-  _playerDataController: {fileID: 1829886749}
+  _playerDataController: {fileID: 8430895066919544762}
   _modalWindowsResetTopList: {fileID: 1916038050}
   _modalWindowsIntroduction: {fileID: 1916038051}
   _buttonStart: {fileID: 979888446}
   _gameSettings: {fileID: 11400000, guid: 182efdde65bd1e14492c682e8703b5c5, type: 2}
   _toggleBoolNShowIntro: {fileID: 949426144}
---- !u!114 &1829886749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1829886744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f16e9a9b20945f943ba8263b955a8cc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _inputFieldPlayerName: {fileID: 2125400922}
-  _inputFieldNoteLenght: {fileID: 177464474}
-  _menuMessagesContinue: {fileID: 40232264}
 --- !u!1 &1837507178
 GameObject:
   m_ObjectHideFlags: 0
@@ -23873,7 +23857,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 469116337}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -25411,7 +25395,7 @@ RectTransform:
   m_Children:
   - {fileID: 394680093}
   m_Father: {fileID: 469116337}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -28016,6 +28000,7 @@ GameObject:
   - component: {fileID: 8430895066919544760}
   - component: {fileID: 8430895066919544764}
   - component: {fileID: 8430895066919544763}
+  - component: {fileID: 8430895066919544762}
   m_Layer: 5
   m_Name: CanvasMainMenusScene
   m_TagString: Untagged
@@ -28023,6 +28008,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!114 &8430895066919544762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8430895066919544761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16e9a9b20945f943ba8263b955a8cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputFieldPlayerName: {fileID: 2125400922}
+  _txtInputFieldNoteLenght: {fileID: 177464476}
+  _menuMessagesContinue: {fileID: 40232266}
 --- !u!114 &8430895066919544763
 MonoBehaviour:
   m_ObjectHideFlags: 0

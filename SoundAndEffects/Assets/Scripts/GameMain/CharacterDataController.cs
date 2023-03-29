@@ -17,7 +17,7 @@ public class CharacterDataController : MonoBehaviour
         }
     }
 
-    [SerializeField] private int _maxHealth;
+    private const int MaxHealth = 3;
 
     public event Action<int> HealthChanged;
     public event Action<int> ScoreChanged;
@@ -35,10 +35,10 @@ public class CharacterDataController : MonoBehaviour
     public int Health
     {
         get => _health;
-        set
+        private set
         {
-            if (value > _maxHealth)
-                _health = _maxHealth;
+            if (value > MaxHealth)
+                _health = MaxHealth;
             else if (value < 0)
                 _health = 0;
             else
@@ -64,14 +64,14 @@ public class CharacterDataController : MonoBehaviour
         _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
     }
 
-    private void Start()
-    {
-        if (!SingletonGame.Instance.GetGameSceneManager().GameMainManagerLinked)
-        {
-            ResetHealth();
-            ResetScoreDistance();
-        }
-    }
+    //private void Start()
+    //{
+    //    if (!SingletonGame.Instance.GetGameSceneManager().GameMainManagerLinked)
+    //    {
+    //        ResetHealth();
+    //        ResetScoreDistance();
+    //    }
+    //}
 
     private void FixedUpdate()
     {
@@ -87,12 +87,9 @@ public class CharacterDataController : MonoBehaviour
             return;
         }
     }
-    public void ResetHealth(int _overrideCharacterHealth = 0)
+    public void ResetHealth()
     {
-        if (_overrideCharacterHealth != 0)
-            Health = _overrideCharacterHealth; 
-        else
-            Health = _maxHealth;
+        Health = _gameParametersManager.StartHealth;
         HealthChanged?.Invoke(Health);
     }
     public void ResetScoreDistance()

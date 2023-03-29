@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ForceJump", menuName = "SoundAndEffects/ForceJump")]
-public class ForceJumpSO : ScriptableObject
+public class ComplexityParametersSO : ScriptableObject
 {
     [SerializeField] private ComplexitySO _complexity;
     //Speed at m/s
     [SerializeField] private float _forceJumpWalk = 350f;
     [SerializeField] private float _forceJumpRun = 450f;
-    [SerializeField] private int _jumpComplexityMultipler = 1;
+    [Tooltip("Complexity multipler for score")]
+    [SerializeField] private int _complexityMultipler = 1;
 
     public float ForceJumpWalk { get => _forceJumpWalk; }
     public float ForceJumpRun { get => _forceJumpRun; }
-    public int JumpComplexityMultipler { get => _jumpComplexityMultipler; }
+    public int ComplexityMultiplerScore { get => _complexityMultipler; }
 
     public ComplexitySO Complexity { get => _complexity; }
     /// <summary>

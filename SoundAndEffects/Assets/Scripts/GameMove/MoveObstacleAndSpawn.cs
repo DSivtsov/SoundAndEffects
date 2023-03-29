@@ -65,12 +65,13 @@ public class MoveObstacleAndSpawn : MonoBehaviour
         worldPositionXDistanceAfter = initRigidbodyWorldPositionX - spawnerType.DistanceAfter;
         //CountFrame.DebugLogFixedUpdate(this, $"worldPositionXDistanceAfter={worldPositionXDistanceAfter}={initRigidbodyWorldPositionX} - {spawnerType.DistanceAfter} ");
         _characterInitLocPosX = SingletonGame.Instance.GetCharacterManager().GetCharacterInitWordPosX() - initRigidbodyWorldPositionX;
-    }
-
-    private void Start()
-    {
         gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
     }
+
+    //private void Start()
+    //{
+    //    gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
+    //}
 
     /// <summary>
     /// Action in case of changing WorldSpeed. Can be override by Direved class
@@ -89,11 +90,14 @@ public class MoveObstacleAndSpawn : MonoBehaviour
         //float newX = (   spawnerType.DistanceBeforeMin + (float)( (spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble() )    )
         //    * gameParametersManager.Multiplier;
         //double dNewRND = random.NextDouble();
+        CountFrame.DebugLogFixedUpdate(this, $" {distanceAfter:f1} + {gameParametersManager == null} ");
+        CountFrame.DebugLogFixedUpdate(this, $" {spawnerType}");
         float newX = distanceAfter + (spawnerType.DistanceBeforeMin + (float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin) * random.NextDouble()))
             * gameParametersManager.Multiplier;
         //CountFrame.DebugLogFixedUpdate(this, $" newX={newX:F1} = {distanceAfter:f1} + {gameParametersManager.Multiplier:F1} * ({spawnerType.DistanceBeforeMin:F1}" +
         //    $" + {(float)((spawnerType.DistanceBeforeMax - spawnerType.DistanceBeforeMin)):F1}*{dNewRND:F1})");
-        arrSpawnedObstacleWScore.Enqueue(new SpawnedObstacleWScore(lastSpawnedObstacle, spawnerType.BaseScore * gameParametersManager.Level * gameParametersManager.JumpComplexityMultiplier));
+        arrSpawnedObstacleWScore.Enqueue(new SpawnedObstacleWScore(lastSpawnedObstacle,
+            spawnerType.BaseScore * gameParametersManager.Level * gameParametersManager.ComplexityMultiplierScore));
         if (notFirst)
         {
             lastSpawnedObstacle.position = initRigidbodyWorldPosition + Vector3.right * newX; 

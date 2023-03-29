@@ -12,9 +12,9 @@ public class TempActivateGameObject : MonoBehaviour
 #if UNITY_EDITOR
     private void Awake()
     {
+        string strMsg;
         for (int i = 0; i < _tempGameObject.Length; i++)
         {
-            string strMsg;
             strMsg = $"Temporary for [{gameObject.scene.name}] Scene was activate [{_tempGameObject[i].name}] GameObject.";
             MonoBehaviour script;
             if (script = _tempGameObject[i].GetComponent<MonoBehaviour>())
@@ -22,27 +22,28 @@ public class TempActivateGameObject : MonoBehaviour
                 string strPath = AssetDatabase.GetAssetPath(MonoScript.FromMonoBehaviour(script));
                 if (strPath.IndexOf("Packages/") == 0)
                 {
-                    //Debug.Log(strPath);
                     //if object haven't a MonoBehaviour sciprt from Asset folder it will be activate w/o additional checks
-                    _tempGameObject[i].SetActive(true);
                     Debug.LogWarning(strMsg);
+                    _tempGameObject[i].SetActive(true);
                     continue;
                 }
                 Type type = script.GetType();
                 UnityEngine.Object[] objects = FindObjectsOfType(type, includeInactive: true);
                 if (objects.Length == 1)
                 {
+                    Debug.LogWarning($"{strMsg} As a result exist the {objects.Length} GameObjects with [{type}] script");
                     _tempGameObject[i].SetActive(true);
-                    strMsg += $" As a result exist the {objects.Length} GameObjects with [{type}] script";
                 }
                 else
                     //if can exist two indentical object not create the temporary object
                     continue;
             }
             else
+            {
                 //if object doesn't have a MonoBehaviour component it will be activate w/o additional checks 
-                _tempGameObject[i].SetActive(true);
-            Debug.LogWarning(strMsg);
+                Debug.LogWarning(strMsg);
+                _tempGameObject[i].SetActive(true); 
+            }
         }
     }
 #endif

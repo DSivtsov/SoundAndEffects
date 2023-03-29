@@ -26,18 +26,10 @@ public class MainManager : SingletonController<MainManager>
      */
     private void Start()
     {
-        StartCoroutine(InitGameSettingLoadScenes());
-    }
-
-    private IEnumerator InitGameSettingLoadScenes()
-    {
         _loaderSceneManager.ActivateLoaderCamera(true);
-
         GameSettingsSOController.Instance.InitGameSettings();
-        yield return new WaitUntil(() => GameSettingsSOController.Instance.GameSettingsInited);
         _loaderSceneManager.ActivateMusicLoaderMenus(true);
-
-        yield return _loaderSceneManager.StartLoadScenes();
+        StartCoroutine(_loaderSceneManager.StartLoadScenes());
     }
 
     public void OverrideCharacterHealth(int overrideCharacterHealth) => _overrideCharacterHealth = overrideCharacterHealth;
@@ -53,6 +45,7 @@ public class MainManager : SingletonController<MainManager>
     {
         CountFrame.DebugLogUpdate(this, $"AllScenesLoaded()");
         FromLoaderToMenus();
+        _menuSceneManager.Introduction();
     }
 
     public void FromLoaderToMenus()
@@ -67,9 +60,9 @@ public class MainManager : SingletonController<MainManager>
     public void FromMenusToStartGame(string playerName)
     {
         CountFrame.DebugLogUpdate(this, $"FromMenusToStartGame()");
-        _gameSceneManager.ActivateGameCamera(true);
         SetActiveScene(SceneName.Game);
         _gameSceneManager.StartNewGame(playerName, _overrideCharacterHealth);
+        _gameSceneManager.ActivateGameCamera(true);
         _menuSceneManager.ActivateMainMenusCamera(false);
     }
 

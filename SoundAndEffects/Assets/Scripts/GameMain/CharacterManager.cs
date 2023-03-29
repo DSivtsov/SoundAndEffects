@@ -27,7 +27,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     #region SerializedFields
     [SerializeField] private ParticleSystem explosionDied;
     [SerializeField] private ParticleSystem explosionNotDied;
-    [SerializeField] private GameObject dirtSplatter;
+    [SerializeField] private ParticleSystem dirtSplatter;
     [SerializeField] private int ReactForceAtCollision = 2;
     /// <summary>
     /// Link to Text in Canvas
@@ -38,11 +38,13 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     #region NonSerializedFields
     private GameSceneManager gameSceneManager;
     private CharacterCollisionGround checkPlayer;
+
     private bool WasPressedJump;
     //The current selected the difficulty level 
-    private ForceJumpSO forceJumpSO;
+    private ComplexityParametersSO _complexityParameters;
     private MovingWorldSO movingWorld;
     private CharacterDataController characterDataCtrl;
+    private GameParametersManager _gameParametersManager;
     private MyControls inputs;
     private Animator animatorCharacter;
     private Rigidbody rigidbodyCharacter;
@@ -68,6 +70,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     private bool isWasCollision;
     private PlayerState _currentState;
     private bool _inAir;
+    private bool _isJumping;
     private bool keyChangeSpeedPressed;
     private const float changeSoundMovementDelay = .25f;
     private const float DragObstacleAfterLightCollision = 0.5f;
@@ -88,6 +91,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         gameSceneManager = SingletonGame.Instance.GetGameSceneManager();
         checkPlayer = SingletonGame.Instance.GetPlayerCollisionGround();
         characterDataCtrl = SingletonGame.Instance.GetCharacterDataCtrl();
+        _gameParametersManager = SingletonGame.Instance.GetGameParametersManager();
         inputs = new MyControls();
         inputs.Move.SetCallbacks(this);
 
@@ -124,7 +128,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
         CurrentWaitType = WaitType.waitEndGame;
     }
     private void OnDisable() => inputs.Move.Disable();
-    
+
     public void Start()
     {
         if (!gameSceneManager.GameMainManagerLinked)
@@ -153,7 +157,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
 #if UNITY_EDITOR
         //For Demo Purpose Call only in Editor
         //If IsWalking initialy set to true For Demo Purpose
-        if (SingletonGame.Instance.IsWalkingAfterStart)
+        if (_gameParametersManager.IsWalkingAfterStart)
             CharacterGo();
         else
             ShowWaitScreen();
@@ -226,33 +230,54 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
             }
             return;
         }
+        if (WasPressedJump)
+        {
+            animatorCharacter.SetTrigger(hashJump_trig);
+            rigidbodyCharacter.AddForce(Vector3.up * currentForceJump, ForceMode.Impulse);
+            gameSound.PlaySound(PlayerState.Jump);
+            DirtSplatterSetActive(false);
+            _isJumping = true;
+            WasPressedJump = false;
+            return;
+        }
+        if (_isJumping)
+        {
+            if (!checkPlayer.IsGrounded)
+            {
+                _isJumping = false;
+                _inAir = true;
+            }
+            return;
+        }
         if (checkPlayer.IsGrounded)
         {
-            if (WasPressedJump)
-            {
-                animatorCharacter.SetTrigger(hashJump_trig);
-                rigidbodyCharacter.AddForce(Vector3.up * currentForceJump, ForceMode.Impulse);
-                gameSound.PlaySound(PlayerState.Jump);
-                dirtSplatter.SetActive(false);
-                _inAir = true;
-                WasPressedJump = false;
-                return;
-            }
             if (_inAir)
             {
                 _inAir = false;
                 if (!keyChangeSpeedPressed)
                 {
-                    gameSound.PlaySound(_currentState, changeSoundMovementDelay);
-                    dirtSplatter.SetActive((_currentState == PlayerState.Run) ? true : false);
+                    //gameSound.PlaySound(_currentState, changeSoundMovementDelay);
+                    gameSound.PlaySound(_currentState);
+                    DirtSplatterSetActive((_currentState == PlayerState.Run) ? true : false);
+                    return;
                 }
             }
             if (keyChangeSpeedPressed)
             {
                 ChangeMoveSpeed();
+                keyChangeSpeedPressed = false;
             }
         }
     }
+
+    private void DirtSplatterSetActive(bool active)
+    {
+        if (active)
+            dirtSplatter.Play();
+        else
+            dirtSplatter.Stop();
+    }
+
     /// <summary>
     /// Check the current Animator state in the Layer
     /// </summary>
@@ -284,34 +309,33 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
                 animatorCharacter.SetBool(hashStatic_b, true);
                 animatorCharacter.SetFloat(hashSpeed_f, 0.26f);
                 UpdateWorldMoveSpeed(PlayerState.Walk);
-                currentForceJump = forceJumpSO.ForceJumpWalk;
+                currentForceJump = _complexityParameters.ForceJumpWalk;
                 gameSound.PlaySound(PlayerState.Walk, changeSoundMovementDelay);
-                dirtSplatter.SetActive(false);
+                DirtSplatterSetActive(false);
                 break;
             case PlayerState.Run:
                 //animatorCharacter.SetBool(hashStatic_b, false);
                 animatorCharacter.SetBool(hashStatic_b, true);
                 animatorCharacter.SetFloat(hashSpeed_f, 0.51f);
                 UpdateWorldMoveSpeed(PlayerState.Run);
-                currentForceJump = forceJumpSO.ForceJumpRun;
+                currentForceJump = _complexityParameters.ForceJumpRun;
                 gameSound.PlaySound(PlayerState.Run, changeSoundMovementDelay);
-                dirtSplatter.SetActive(true);
+                DirtSplatterSetActive(true);
                 break;
             default:
                 Debug.LogError("SetMoveState wrong state");
                 break;
         }
-        keyChangeSpeedPressed = false;
     }
 
-    public void SetForceJumpSO(ForceJumpSO newForceJumpSO) => forceJumpSO = newForceJumpSO;
+    public void SetForceJump(ComplexityParametersSO complexityParameters) => _complexityParameters = complexityParameters;
 
     /// <summary>
     /// Set Animation, WorldSpeed and State for Character Idle (not Walk or Run Anim) 
     /// </summary>
     private void CharacterIdle()
     {
-        dirtSplatter.SetActive(false);
+        DirtSplatterSetActive(false);
         animatorCharacter.SetFloat(hashSpeed_f, 0);
         //WorldStop();
         currentForceJump = 0;
@@ -469,16 +493,16 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     #region Mapping for Action Map
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (checkPlayer.IsGrounded && context.phase == InputActionPhase.Started)
+        if (context.phase == InputActionPhase.Started && checkPlayer.IsGrounded && !_isJumping)
         {
-            WasPressedJump = true;
+            if (_currentState != PlayerState.Stop)
+                WasPressedJump = true;
         }
     }
 
     public void OnRun(InputAction.CallbackContext context)
     {
         //The button Run/Walk will affect if current state != Stop
-        //if (_currentState != PlayerState.Stop && _currentState != PlayerState.Jump)
         if (_currentState != PlayerState.Stop)
         {
             switch (context.phase)
@@ -527,7 +551,7 @@ public class CharacterManager : MonoBehaviour, MyControls.IMoveActions
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
     private void SetPhysicsIgnoreObstaclesCollisions()
     {
-        if (SingletonGame.Instance.IsPlayerNotCollide)
+        if (_gameParametersManager.IsPlayerNotCollide)
         {
             int layPlayer = LayerMask.NameToLayer("Player");
             int layObstacle = LayerMask.NameToLayer("Obstacles");

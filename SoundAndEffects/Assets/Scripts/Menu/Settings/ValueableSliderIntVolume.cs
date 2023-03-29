@@ -7,7 +7,7 @@ public class ValueableSliderIntVolume : ValueableSliderInt
 {
     [SerializeField] private MixerVolume _mixer;
 
-    private AudioContoller _audioContoller;
+    private AudioController _audioContoller;
     private bool _sliderIntVolumeIsInited = false;
 
     protected override void Awake()
@@ -22,7 +22,7 @@ public class ValueableSliderIntVolume : ValueableSliderInt
         if (!_sliderIntVolumeIsInited)
         {
             base.InitElement();
-            _audioContoller = AudioContoller.Instance;
+            _audioContoller = AudioController.Instance;
             _sliderIntVolumeIsInited = true;
         }
     }
